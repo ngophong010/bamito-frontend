@@ -1,233 +1,215 @@
 import axios from "../axios";
 
-let handleGetProductTypeService = (id) => {
-  return axios.get(`/api/product-type/get-product-type?id=${id}`, {
-    withCredentials: true,
+const handleGetProductTypeService = ({id}) => {
+  return axios.get(`/api/product-type/get-product-type`, {
+    params: { id },
   });
 };
 
-let handleGetAllProductTypeService = (limit, page, name, pagination) => {
+const handleGetAllProductTypeService = ({limit, page, name, pagination}) => {
   return axios.get(
-    `/api/product-type/get-all-product-type?limit=${limit}&page=${page}&name=${name}&pagination=${pagination}`,
-    { withCredentials: true }
+    `/api/product-type/get-all-product-type`,
+    { params: { limit, page, name, pagination }, 
+  });
+};
+
+const handleCreateProductTypeService = (data) => {
+  return axios.post(`/api/product-type/create-product-type`, data);
+};
+
+const handleUpdateProductTypeService = (data) => {
+  return axios.put(`/api/product-type/update-product-type`, data);
+};
+
+const handleDeleteProductTypeService = ({id}) => {
+  return axios.delete(`/api/product-type/delete-product-type`, {
+    params: { id },
+  });
+};
+
+const handleGetAllBrandService = ({limit, page, name, pagination}) => {
+  return axios.get(
+    `/api/brand/get-all-brand`, {
+      params: {
+        limit,
+        page,
+        name,
+        pagination
+      },
+    }
   );
 };
 
-let handleCreateProductTypeService = (data) => {
-  return axios.post(`/api/product-type/create-product-type`, data, {
-    withCredentials: true,
+const handleCreateBrandService = (data) => {
+  return axios.post(`/api/brand/create-brand`, data);
+};
+
+const handleUpdateBrandService = (data) => {
+  return axios.put(`/api/brand/update-brand`, data);
+};
+
+const handleDeleteBrandService = ({id}) => {
+  return axios.delete(`/api/brand/delete-brand`, {
+    params: { id },
   });
 };
 
-let handleUpdateProductTypeService = (data) => {
-  return axios.put(`/api/product-type/update-product-type`, data, {
-    withCredentials: true,
-  });
-};
-
-let handleDeleteProductTypeService = (id) => {
-  return axios.delete(`/api/product-type/delete-product-type?id=${id}`, {
-    withCredentials: true,
-  });
-};
-
-let handleGetAllBrandService = (limit, page, name, pagination) => {
+const handleGetAllSizeService = ({limit, page, name}) => {
   return axios.get(
-    `/api/brand/get-all-brand?limit=${limit}&page=${page}&name=${name}&pagination=${pagination}`,
-    { withCredentials: true }
+    `/api/size/get-all-size`,
+    { params: { limit, page, name }, }
   );
 };
 
-let handleCreateBrandService = (data) => {
-  return axios.post(`/api/brand/create-brand`, data, { withCredentials: true });
+const handleCreateSizeService = (data) => {
+  return axios.post(`/api/size/create-size`, data);
 };
 
-let handleUpdateBrandService = (data) => {
-  return axios.put(`/api/brand/update-brand`, data, { withCredentials: true });
+const handleUpdateSizeService = (data) => {
+  return axios.put(`/api/size/update-size`, data);
 };
 
-let handleDeleteBrandService = (id) => {
-  return axios.delete(`/api/brand/delete-brand?id=${id}`, {
-    withCredentials: true,
+const handleDeleteSizeService = ({id}) => {
+  return axios.delete(`/api/size/delete-size`, {
+    params: { id },
   });
 };
 
-let handleGetAllSizeService = (limit, page, name) => {
+const handleGetAllProductService = ({limit, page, name}) => {
   return axios.get(
-    `/api/size/get-all-size?limit=${limit}&page=${page}&name=${name}`,
-    { withCredentials: true }
+    `/api/product/get-all-product`,
+    { params: { limit, page, name } }
   );
 };
 
-let handleCreateSizeService = (data) => {
-  return axios.post(`/api/size/create-size`, data, { withCredentials: true });
+const handleCreateProductService = (data) => {
+  return axios.post(`/api/product/create-product`, data);
 };
 
-let handleUpdateSizeService = (data) => {
-  return axios.put(`/api/size/update-size`, data, { withCredentials: true });
+const handleUpdateProductService = (data) => {
+  return axios.put(`/api/product/update-product`, data);
 };
 
-let handleDeleteSizeService = (id) => {
-  return axios.delete(`/api/size/delete-size?id=${id}`, {
-    withCredentials: true,
+const handleDeleteProductService = (id) => {
+  return axios.delete(`/api/product/delete-product`, {
+    params: { id },
+  });
+};
+const handleGetProductService = ({productId}) => {
+  return axios.get(`/api/product/get-product`, {
+    params: { productId },
   });
 };
 
-let handleGetAllProductService = (limit, page, name) => {
+const handleGetAllProductSizeService = ({productId, limit, page}) => {
   return axios.get(
-    `/api/product/get-all-product?limit=${limit}&page=${page}&name=${encodeURIComponent(
-      name
-    )}`,
-    { withCredentials: true }
+    `/api/product-size/get-all-product-size`,
+    { params: { productId, limit, page } }
   );
 };
 
-let handleCreateProductService = (data) => {
-  return axios.post(`/api/product/create-product`, data, {
-    withCredentials: true,
-  });
-};
-
-let handleUpdateProductService = (data) => {
-  return axios.put(`/api/product/update-product`, data, {
-    withCredentials: true,
-  });
-};
-
-let handleDeleteProductService = (id) => {
-  return axios.delete(`/api/product/delete-product?id=${id}`, {
-    withCredentials: true,
-  });
-};
-let handleGetProductService = (productId) => {
-  return axios.get(`/api/product/get-product?productId=${productId}`, {
-    withCredentials: true,
-  });
-};
-
-let handleGetAllProductSizeService = (productId, limit, page) => {
-  return axios.get(
-    `/api/product-size/get-all-product-size?productId=${productId}&limit=${limit}&page=${page}`,
-    { withCredentials: true }
-  );
-};
-
-let handleGetAllProductOfTheProductType = (
+const handleGetAllProductOfTheProductType = ({
   productTypeId,
   limit,
   page,
   sort,
   filter
-) => {
+}) => {
   return axios.get(
-    `/api/product/get-all-product-of-the-product-type?productTypeId=${productTypeId}&limit=${limit}&page=${page}&sort=${sort}&filter=${filter}`,
-    { withCredentials: true }
+    `/api/product/get-all-product-of-the-product-type`,
+    { params: { productTypeId, limit, page, sort, filter } }
   );
 };
 
-let handleGetAllSizeOfTheProductType = (productTypeId) => {
+const handleGetAllSizeOfTheProductType = ({productTypeId}) => {
   return axios.get(
-    `/api/size/get-all-size-product-type?productTypeId=${productTypeId}`,
-    { withCredentials: true }
+    `/api/size/get-all-size-product-type`,
+    { params: { productTypeId } }
   );
 };
 
-let handleCreateProductSizeService = (data) => {
-  return axios.post(`/api/product-size/create-product-size`, data, {
-    withCredentials: true,
-  });
+const handleCreateProductSizeService = (data) => {
+  return axios.post(`/api/product-size/create-product-size`, data);
 };
 
-let handleDeleteProductSizeService = (id) => {
+const handleDeleteProductSizeService = (id) => {
   return axios.delete(`/api/product-size/delete-product-size?id=${id}`, {
     withCredentials: true,
   });
 };
 
-let handleUpdateProductSizeService = (data) => {
-  return axios.put(`/api/product-size/update-product-size`, data, {
-    withCredentials: true,
-  });
+const handleUpdateProductSizeService = (data) => {
+  return axios.put(`/api/product-size/update-product-size`, data);
 };
 
-let handleCreateNewVoucher = (data) => {
-  return axios.post(`/api/voucher/create-voucher`, data, {
-    withCredentials: true,
-  });
+const handleCreateNewVoucher = (data) => {
+  return axios.post(`/api/voucher/create-voucher`, data);
 };
 
-let handleUpdateVoucherService = (data) => {
-  return axios.put(`/api/voucher/update-voucher`, data, {
-    withCredentials: true,
-  });
+const handleUpdateVoucherService = (data) => {
+  return axios.put(`/api/voucher/update-voucher`, data);
 };
 
-let handleDeleteVoucher = (id) => {
+const handleDeleteVoucher = (id) => {
   return axios.delete(`/api/voucher/delete-voucher?id=${id}`, {
     withCredentials: true,
   });
 };
-let handleGetAllVoucher = (limit, page, pagination) => {
+const handleGetAllVoucher = ({limit, page, pagination}) => {
   return axios.get(
-    `/api/voucher/get-all-voucher?limit=${limit}&page=${page}&pagination=${pagination}`,
-    { withCredentials: true }
+    `/api/voucher/get-all-voucher`,
+    { params: { limit, page, pagination } },
   );
 };
 
-let handleGetAllVoucherUserService = () => {
-  return axios.get(`/api/voucher/get-all-voucher-user`, {
-    withCredentials: true,
+const handleGetAllVoucherUserService = () => {
+  return axios.get(`/api/voucher/get-all-voucher-user`);
+};
+
+const handleGetAllProductFeedback = ({userId}) => {
+  return axios.get(`/api/product/get-product-feedback`, {
+    params: { userId },
   });
 };
 
-let handleGetAllProductFeedback = (userId) => {
-  return axios.get(`/api/product/get-product-feedback?userId=${userId}`, {
-    withCredentials: true,
+const handleCreateFeedbackService = (data) => {
+  return axios.post(`/api/feedback/create-feedback`, data);
+};
+
+const handleAllFeedbackService = ({productId}) => {
+  return axios.get(`/api/feedback/get-all-feedback`, {
+    params: { productId },
   });
 };
 
-let handleCreateFeedbackService = (data) => {
-  return axios.post(`/api/feedback/create-feedback`, data, {
-    withCredentials: true,
-  });
+const handleUpdateFeedbackService = (data) => {
+  return axios.put(`/api/feedback/update-feedback`, data);
 };
 
-let handleAllFeedbackService = (productId) => {
-  return axios.get(`/api/feedback/get-all-feedback?productId=${productId}`, {
-    withCredentials: true,
-  });
-};
-
-let handleUpdateFeedbackService = (data) => {
-  return axios.put(`/api/feedback/update-feedback`, data, {
-    withCredentials: true,
-  });
-};
-
-let handleDeleteFeedbackService = (id, userId) => {
+const handleDeleteFeedbackService = (id, userId) => {
   return axios.delete(
-    `/api/feedback/delete-feedback?feedbackId=${id}&userId=${userId}`,
-    { withCredentials: true }
+    `/api/feedback/delete-feedback`,
+    { params: { id, userId } }
   );
 };
 
-let handleGetAllProductSaleOffService = (limit, page) => {
+const handleGetAllProductSaleOffService = ({limit, page}) => {
   return axios.get(
-    `/api/product/get-product-sale-off?limit=${limit}&page=${page}`,
-    { withCredentials: true }
+    `/api/product/get-product-sale-off`,
+    { params: { limit, page } },
   );
 };
 
-let handleGetAllProductFavorute = (limit, page, userId) => {
+const handleGetAllProductFavorute = ({limit, page, userId}) => {
   return axios.get(
-    `/api/product/get-product-favourite?userId=${userId}&limit=${limit}&page=${page}`,
-    { withCredentials: true }
+    `/api/product/get-product-favourite`,
+    { params: { limit, page, userId } },
   );
 };
 
-let handleGetProductName = (productId) => {
-  return axios.get(`/api/product/get-product-name?productId=${productId}`, {
-    withCredentials: true,
+const handleGetProductName = ({productId}) => {
+  return axios.get(`/api/product/get-product-name`, {
+    params: { productId },
   });
 };
 
