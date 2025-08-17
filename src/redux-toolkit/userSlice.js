@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   login: false,
-  userInfo: [],
+  userInfo: null,
   favourites: [],
   cartId: null,
 };
@@ -16,13 +16,15 @@ export const userSlice = createSlice({
       state.userInfo = action.payload;
     },
     logOut: (state) => {
-      state.login = false;
-      state.userInfo = [];
-      state.favourites = [];
-      state.cartId = null;
+      state.login = initialState.login;
+      state.userInfo = initialState.userInfo;
+      state.favourites = initialState.favourites;
+      state.cartId = initialState.cartId;
     },
     updateAvatar: (state, action) => {
-      state.userInfo.avatar = action.payload;
+      if (state.userInfo) {
+        state.userInfo.avatar = action.payload;
+      }
     },
     updateFavourites: (state, action) => {
       state.favourites = action.payload;
