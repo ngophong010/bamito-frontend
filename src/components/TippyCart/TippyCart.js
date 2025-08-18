@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchAllProductCart } from "../../redux-toolkit/cartSlice";
 import "./TippyCart.scss";
-import { convertSlugUrl } from "@/utils/commonUtils";
-import { handleGetProductTypeService } from "@/services/productService";
+import { createSlug } from "@/utils/formatters";
+import { handleGetProductTypeService } from "@/services/productTypeService";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", {
   style: "decimal",
@@ -56,9 +56,9 @@ const TippyCart = () => {
             <Link
               className="product-item"
               key={index}
-              href={`/${convertSlugUrl(
+              href={`/${createSlug(
                 product.productTypeName
-              )}-${product.productTypeId.toLowerCase()}/${convertSlugUrl(
+              )}-${product.productTypeId.toLowerCase()}/${createSlug(
                 product.name
               )}-${product.productId.toLowerCase()}`}
             >
