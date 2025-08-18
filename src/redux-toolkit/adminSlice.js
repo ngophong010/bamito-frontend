@@ -4,13 +4,15 @@ import {
   handleGetAllRoleService,
   handleCheckEmailExisted,
 } from "../services/userService";
+import {
+  handleGetAllSizeService,
+  handleGetAllProductSizeService,
+} from "../services/productSizeService"
 import dayjs from "dayjs";
 import {
   handleGetAllBrandService,
   handleGetAllProductTypeService,
-  handleGetAllSizeService,
   handleGetAllProductService,
-  handleGetAllProductSizeService,
   handleGetAllSizeOfTheProductType,
   handleGetAllVoucher,
 } from "../services/productService";
