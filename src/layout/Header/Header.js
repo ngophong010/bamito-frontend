@@ -22,7 +22,7 @@ import Search from "../../components/Search/Search";
 import { handleChangePage } from "../../redux-toolkit/paginationSlice";
 import { USER_MENU } from "../../utils/menu";
 import TippyCart from "../../components/TippyCart/TippyCart";
-import { convertSlugUrl } from "@/utils/commonUtils";
+import { createSlug } from "@/utils/formatters";
 import ProductTypesMenu from "@/components/ProductTypesMenu/ProductTypesMenu";
 import { useCallback } from "react";
 
@@ -51,7 +51,7 @@ const CART_TIPPY_OFFSET = [-26, 5];
 //   const handleChangeProductType = (productTypeId, productTypeName) => {
 //     dispatch(handleChangePage(1));
 //     router.push(
-//       `/${convertSlugUrl(productTypeName)}-${productTypeId.toLowerCase()}`
+//       `/${createSlug(productTypeName)}-${productTypeId.toLowerCase()}`
 //     );
 //     // router.push(`/product/${productTypeId}`);
 //   };
@@ -101,9 +101,6 @@ function Header() {
     fetchProductTypes();
   }, []);
 
-  // const handleLogOut = () => {
-  //   dispatch(logOut());
-  // };
   const handleLogOut = useCallback(() => dispatch(logOut()), [dispatch]);
 
   const handleProductTypeClick = useCallback(() => {
@@ -165,7 +162,7 @@ function Header() {
         SALE OFF
       </Link>
 
-      <Link href="/feed" className="btn-feed" onClick={{handleClickFeed}}>
+      <Link href="/feed" className="btn-sale-off" onClick={handleClickFeed}>
         TIN TỨC
       </Link>
 
