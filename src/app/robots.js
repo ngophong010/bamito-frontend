@@ -1,12 +1,17 @@
 export default function robots() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/user/*", "/admin/*"],
+      disallow: [
+        "/user/", // More specific disallow rules are often better
+        "/admin/",
+        "/cart",
+        "/checkout",
+      ],
     },
-    sitemap: [
-      `${process.env.VERCEL_URL ?? 'localhost:3000'}/sitemap.xml`,
-    ],
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }
