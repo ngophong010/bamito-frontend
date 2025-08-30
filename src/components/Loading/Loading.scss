@@ -1,0 +1,21 @@
+.loading-container {
+    position: relative;
+
+    &.is-loading > :not(.loading-overlay) {
+        pointer-events: none;
+        filter: blur(2px);
+    }
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 1000; /* Ensure it is above other content */
+}
