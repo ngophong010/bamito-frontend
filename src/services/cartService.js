@@ -4,7 +4,7 @@ let handleCreatCartService = (data) => {
   return axios.post("/api/cart/create-cart", data, { withCredentials: true });
 };
 
-let hadnleAddProductToCart = (data) => {
+let handleAddProductToCart = (data) => {
   return axios.post(`/api/cart/add-product-to-cart`, data, {
     withCredentials: true,
   });
@@ -31,7 +31,7 @@ let handleDeleteProductCartService = (productId, sizeId, userId) => {
 
 export {
   handleCreatCartService,
-  hadnleAddProductToCart,
+  handleAddProductToCart,
   handleGetAllProductCart,
   handleUpdateProductCartService,
   handleDeleteProductCartService,
