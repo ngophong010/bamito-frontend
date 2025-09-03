@@ -111,6 +111,7 @@ In the project directory, you can run:
 
 The project follows a modern, feature-sliced architecture to ensure scalability and maintainability.
 
+```
 . # Root of the repository
 └── src # Main source folder
 ├── app # Next.js App Router: pages and layouts
@@ -123,7 +124,7 @@ The project follows a modern, feature-sliced architecture to ensure scalability 
 ├── styles # Global SCSS styles, variables, mixins
 ├── types # Shared TypeScript interfaces and type definitions
 └── utils # Helper functions (formatters, validators)
-
+```
 
 ---
 
