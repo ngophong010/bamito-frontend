@@ -111,17 +111,18 @@ In the project directory, you can run:
 
 The project follows a modern, feature-sliced architecture to ensure scalability and maintainability.
 
-/src
-├── /app/ # Next.js App Router: Contains all pages and layouts.
-├── /components/ # Reusable, "dumb" UI components (Button, Card, Loading).
-├── /contexts/ # React Context providers (e.g., ThemeContext).
-├── /hooks/ # Custom React hooks (e.g., useAuth, useDebounce).
-├── /layout/ # Major layout components (Header, Footer, Sidebar).
-├── /redux-toolkit/ # All Redux Toolkit slices, the store, and hooks.
-├── /services/ # The API layer for all communication with the backend.
-├── /styles/ # Global SCSS styles, variables, and mixins.
-├── /types/ # Shared TypeScript interfaces and type definitions.
-└── /utils/ # Pure helper functions (formatters, validators).
+. # Root of the repository
+└── src # Main source folder
+├── app # Next.js App Router: pages and layouts
+├── components # Reusable UI components (Button, Card, Loading)
+├── contexts # React Context providers (e.g., ThemeContext)
+├── hooks # Custom React hooks (e.g., useAuth, useDebounce)
+├── layout # Layout components (Header, Footer, Sidebar)
+├── redux-toolkit # Redux Toolkit slices, store, and hooks
+├── services # API layer for backend communication
+├── styles # Global SCSS styles, variables, mixins
+├── types # Shared TypeScript interfaces and type definitions
+└── utils # Helper functions (formatters, validators)
 
 
 ---
