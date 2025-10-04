@@ -37,3 +37,17 @@ export interface FilterOptions {
 
 // You can add any other types that are shared between your
 // frontend and backend communication layer here.
+
+// This interface defines the shape of all paginated API responses.
+export interface PaginatedApiResponse<T> {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  items: T[]; // A generic array of items
+}
+
+// Example of a standard JSend-style success response
+export interface SuccessApiResponse<T> {
+    status: 'success';
+    data: T;
+}
