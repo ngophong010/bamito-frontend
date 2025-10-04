@@ -1,105 +1,124 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
-import { handleGetAllProductCart } from "../services/cartService";
+import { getCart, addOrUpdateCartItem, removeCartItem } from "../services/cartService";
+import { CartData, CartItem, CartItemUpdateData, CartItemIdentifiers } from "../types";
 
-import type { ServiceResponse } from "@/types/shared.js";
-
+// Note: The logOut action is likely handled by a global API interceptor now,
+// but we can still listen for it here to clear the cart.
 import { logOut } from "./userSlice";
-
-interface CartProduct {
-  productId: number;
-  name: string;
-  image: string;
-  price: number;
-  discount: number;
-  quantity: number;
-  totalPrice: number;
-  sizeName: string;
-  // ... and any other properties you need
-}
 
 // Define the shape of the cart slice's state
 interface CartState {
-  allProduct: CartProduct[];
-  totalProduct: number;
+  products: CartItem[]; // FIX: Use plural 'products' for an array
+  totalCount: number;    // FIX: Use a more generic 'totalCount'
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
-// Define the shape of the data returned by your API
-interface CartData {
-    products: CartProduct[];
-    totalProduct: number;
-}
-
 const initialState: CartState = {
-  allProduct: [],
-  totalProduct: 0,
+  products: [],
+  totalCount: 0,
   status: 'idle',
   error: null,
 };
 
-export const fetchAllProductCart = createAsyncThunk<
-  CartData, // The type of the data returned on success
-  { userId: number }, // The type of the payload argument
-  { rejectValue: string } // The type of the value returned on failure
+// ===============================================================
+// --- ASYNC THUNKS ---
+// ===============================================================
+
+// FIX: Rename the thunk and remove the unnecessary payload argument.
+export const fetchCart = createAsyncThunk<
+  CartData, // Return type on success
+  void,     // No argument is passed to the thunk
+  { rejectValue: string }
 >(
-  "cart/fetchAllProductCart",
-  async (payload, { dispatch, rejectWithValue }) => {
+  "cart/fetchCart",
+  async (_, { rejectWithValue }) => {
     try {
-      const { data: res }: { data: ServiceResponse } = await handleGetAllProductCart(payload.userId);
-      if (res && res.errCode === 0) {
-        // The thunk should RETURN the data. This becomes the `action.payload`
-        // in the `fulfilled` case.
-        return res.data as CartData;
-      } else {
-        // If it's a predictable API error, reject with the message.
-        return rejectWithValue(res.message || 'Failed to fetch cart.');
-      }
+      // FIX: Call the new, secure service function with no arguments.
+      const cartData = await getCart();
+      return cartData;
     } catch (error: any) {
-      if (error?.response?.data?.errCode === -4) {
-        // Handle session expiry globally
-        dispatch(logOut());
-        return rejectWithValue("Phiên bản đăng nhập hết hạn");
-      }
-      // For unexpected errors, reject with a generic message.
-      return rejectWithValue(error.message || 'An unexpected error occurred.');
+      // The apiClient interceptor might handle global errors,
+      // but we can still return a specific error message for this slice.
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch cart.');
     }
   }
 );
 
+export const addItemToCart = createAsyncThunk(
+    "cart/addItem",
+    async (itemData: CartItemUpdateData, { dispatch, rejectWithValue }) => {
+        try {
+            await addOrUpdateCartItem(itemData);
+            // After successfully adding, re-fetch the entire cart to ensure data is in sync.
+            dispatch(fetchCart()); 
+        } catch (error: any) {
+            toast.error("Thêm sản phẩm thất bại!");
+            return rejectWithValue(error.response?.data?.message || 'Failed to add item.');
+        }
+    }
+);
+
+export const removeItemFromCart = createAsyncThunk(
+    "cart/removeItem",
+    async (itemIdentifiers: CartItemIdentifiers, { dispatch, rejectWithValue }) => {
+        try {
+            await removeCartItem(itemIdentifiers);
+            toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
+            // Also re-fetch the cart to update the state.
+            dispatch(fetchCart());
+        } catch (error: any) {
+            toast.error("Xóa sản phẩm thất bại!");
+            return rejectWithValue(error.response?.data?.message || 'Failed to remove item.');
+        }
+    }
+);
+
+
+// ===============================================================
 // --- THE SLICE ---
+// ===============================================================
 
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
-  // `reducers` are for synchronous actions only
   reducers: {
-    clearCart: (state) => {
-      state.allProduct = [];
-      state.totalProduct = 0;
+    // This synchronous reducer is now less needed, but can be kept for an instant UI clear on logout.
+    clearCartState: (state) => {
+      state.products = [];
+      state.totalCount = 0;
+      state.status = 'idle';
     }
   },
-  // ENHANCEMENT 2: `extraReducers` handles the actions dispatched by `createAsyncThunk`
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllProductCart.pending, (state) => {
+      // Cases for fetching the cart
+      .addCase(fetchCart.pending, (state) => {
         state.status = 'loading';
-        state.error = null;
       })
-      .addCase(fetchAllProductCart.fulfilled, (state, action: PayloadAction<CartData>) => {
+      .addCase(fetchCart.fulfilled, (state, action: PayloadAction<CartData>) => {
         state.status = 'succeeded';
-        state.allProduct = action.payload.products;
-        state.totalProduct = action.payload.totalProduct;
+        state.products = action.payload.products;
+        state.totalCount = action.payload.totalProduct; // Match the API response key
       })
-      .addCase(fetchAllProductCart.rejected, (state, action) => {
+      .addCase(fetchCart.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload as string; // `action.payload` is the string from `rejectWithValue`
+        state.error = action.payload as string;
+      })
+      // Case for when the user logs out from the userSlice
+      .addCase(logOut, (state) => {
+          // When the logOut action from userSlice is dispatched anywhere in the app,
+          // this cartSlice reducer will also run, clearing its state.
+          state.products = [];
+          state.totalCount = 0;
+          state.status = 'idle';
+          state.error = null;
       });
   },
 });
 
-export const { clearCart } = cartSlice.actions;
+export const { clearCartState } = cartSlice.actions;
 
 export default cartSlice.reducer;

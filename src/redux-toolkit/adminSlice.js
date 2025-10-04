@@ -7,7 +7,7 @@ import {
 import {
   handleGetAllSizeService,
   handleGetAllProductSizeService,
-} from "../services/productSizeService"
+} from "../services/inventoryService"
 import dayjs from "dayjs";
 import {
   handleGetAllBrandService,

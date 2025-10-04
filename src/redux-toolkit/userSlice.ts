@@ -1,61 +1,50 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserProfile } from "@/types"; // It's better to import from a central types file
 
-export interface UserInfo {
-  id: number;
-  userName: string;
-  email: string;
-  avatar: string | null;
-  phoneNumber?: string | null;
-  // ... other user properties
-  roleData: {
-    roleId: string;
-  }
-}
+// NOTE: I've replaced your local UserInfo with the more robust UserProfile from /types
+// and made the state more consistent.
 
-// Define the shape of the user slice's state
 interface UserState {
-  login: boolean;
-  userInfo: UserInfo | null; // It's either a UserInfo object or null
-  favourites: number[];
-  cartId: number | null;
+  isLoggedIn: boolean;
+  profile: UserProfile | null;
+  favouriteProductIds: number[];
 }
 
 const initialState: UserState = {
-  login: false,
-  userInfo: null, // FIX: Changed from [] to null
-  favourites: [],
-  cartId: null,
+  isLoggedIn: false,
+  profile: null,
+  favouriteProductIds: [],
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logIn: (state, action) => {
-      state.login = true;
-      state.userInfo = action.payload;
+    // Action to set user data upon successful login
+    setLoginSuccess: (state, action: PayloadAction<UserProfile>) => {
+      state.isLoggedIn = true;
+      state.profile = action.payload;
     },
+    // Action to clear all user data on logout
     logOut: (state) => {
-      state.login = initialState.login;
-      state.userInfo = initialState.userInfo;
-      state.favourites = initialState.favourites;
-      state.cartId = initialState.cartId;
+      state.isLoggedIn = false;
+      state.profile = null;
+      state.favouriteProductIds = [];
     },
-    updateAvatar: (state, action) => {
-      if (state.userInfo) {
-        state.userInfo.avatar = action.payload;
+    // Action to update just the avatar
+    updateAvatar: (state, action: PayloadAction<string>) => {
+      if (state.profile) {
+        state.profile.avatar = action.payload;
       }
     },
-    updateFavourites: (state, action) => {
-      state.favourites = action.payload;
-    },
-    updateCartId: (state, action) => {
-      state.cartId = action.payload;
+    // Action to set the full list of favourite product IDs
+    setFavourites: (state, action: PayloadAction<number[]>) => {
+      state.favouriteProductIds = action.payload;
     },
   },
 });
 
-export const { logOut, logIn, updateAvatar, updateFavourites, updateCartId } =
-  userSlice.actions;
+// Export the synchronous actions
+export const { setLoginSuccess, logOut, updateAvatar, setFavourites } = userSlice.actions;
 
 export default userSlice.reducer;
