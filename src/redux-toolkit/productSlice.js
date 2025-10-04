@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   handleGetAllProductService,
   handleGetAllProductOfTheProductType,
-  handleGetAllProductSaleOffService,
+  handlegetAllProductsOnSaleService,
   handleGetAllProductFavorute,
 } from "../services/productService";
 import { toast } from "react-toastify";
@@ -79,7 +79,7 @@ export const fetchAllProductSaleOffRedux = createAsyncThunk(
   "admin/fetchAllProductSaleOffRedux",
   async (params, thunkAPI) => {
     try {
-      let res = await handleGetAllProductSaleOffService(
+      let res = await handlegetAllProductsOnSaleService(
         params?.limit,
         params?.page
       );
