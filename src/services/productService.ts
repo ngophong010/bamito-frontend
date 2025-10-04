@@ -1,5 +1,5 @@
 import axios from "../axios";
-import type { ServiceResponse, FilterOptions } from "@/types/shared";
+import type { ServiceResponse, FilterOptions } from "@/types/common";
 
 // ===============================================================
 // --- TYPE DEFINITIONS for function parameters ---

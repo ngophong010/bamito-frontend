@@ -1,5 +1,5 @@
 import axios from "../axios";
-import type { ServiceResponse } from "@/types/shared";
+import type { ServiceResponse } from "@/types/common";
 
 /**
  * @desc    Get all of the current user's favourite product IDs

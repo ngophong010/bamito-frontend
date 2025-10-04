@@ -1,5 +1,5 @@
 import axios from "../axios";
-import type { ServiceResponse } from "@/types/shared";
+import type { ServiceResponse } from "@/types/common";
 
 // --- TYPE DEFINITIONS for function parameters ---
 interface LoginData {
