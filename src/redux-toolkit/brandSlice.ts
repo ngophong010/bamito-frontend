@@ -57,7 +57,7 @@ export const brandSlice = createSlice({
       .addCase(fetchBrands.fulfilled, (state, action: PayloadAction<PaginatedApiResponse<Brand>>) => {
         state.status = 'succeeded';
         // 8. Update the state with the payload returned by the thunk
-        state.items = action.payload.items; // Assuming the service returns 'items'
+        state.items = action.payload.items;
         state.totalItems = action.payload.totalItems;
         state.totalPages = action.payload.totalPages;
         state.currentPage = action.payload.currentPage;

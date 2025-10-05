@@ -13,3 +13,4 @@ export * from './deliveryAddress';
 export * from './cart';
 export * from './order';
 export * from './voucher';
+export * from './feed';

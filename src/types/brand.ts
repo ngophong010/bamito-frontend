@@ -8,3 +8,5 @@ export interface BrandCreateData {
   brandId: string;
   name: string;
 }
+
+export type BrandUpdateData = Partial<BrandCreateData>;

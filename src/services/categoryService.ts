@@ -1,5 +1,6 @@
 import apiClient from './apiClient';
-
+import { SuccessApiResponse } from '../types';
+import { PaginatedApiResponse } from '../types/common';
 // ===============================================================
 // --- INTERFACES & TYPES ---
 // These define the shape of the data for this resource.
@@ -28,7 +29,6 @@ export interface CategoryCreateData {
 // The shape of the data needed to update a category
 export type CategoryUpdateData = Partial<CategoryCreateData>;
 
-
 // ===============================================================
 // --- SERVICE FUNCTIONS ---
 // Each function maps to a specific RESTful API endpoint.
@@ -39,8 +39,8 @@ export type CategoryUpdateData = Partial<CategoryCreateData>;
  * Maps to: GET /api/v1/categories
  * @param params - Optional query parameters for pagination, sorting, and filtering.
  */
-export const getAllCategories = async (params?: { limit?: number; page?: number; name?: string; pagination?: boolean }): Promise<CategoriesApiResponse> => {
-  const response = await apiClient.get('/categories', { params });
+export const getAllCategories = async (params?: { limit?: number; page?: number; name?: string; pagination?: boolean }): Promise<PaginatedApiResponse<Category>> => {
+  const response = await apiClient.get<SuccessApiResponse<PaginatedApiResponse<Category>>>('/categories', { params });
   return response.data.data;
 };
 
@@ -49,10 +49,17 @@ export const getAllCategories = async (params?: { limit?: number; page?: number;
  * Maps to: GET /api/v1/categories/details/:categoryId
  * @param categoryId - The public business ID of the category (e.g., 'RACKETS').
  */
-export const getCategoryById = async (categoryId: string): Promise<Category> => {
-  const response = await apiClient.get(`/categories/details/${categoryId}`);
+export const getCategoryById = async (id: number): Promise<Category> => {
+  const response = await apiClient.get<SuccessApiResponse<Category>>(`/categories/${id}`);
   return response.data.data;
 };
+
+// This one is for public pages, it finds by the STRING business key
+export const getCategoryByBusinessId = async (categoryId: string): Promise<Category> => {
+  const response = await apiClient.get<SuccessApiResponse<Category>>(`/categories/details/${categoryId}`);
+  return response.data.data;
+};
+
 
 /**
  * Creates a new category.

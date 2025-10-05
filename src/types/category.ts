@@ -8,3 +8,5 @@ export interface CategoryCreateData {
   categoryId: string;
   name: string;
 }
+
+export type CategoryUpdateData = Partial<CategoryCreateData>;
