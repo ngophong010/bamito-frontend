@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import { SuccessApiResponse } from '../types';
 
 // ===============================================================
 // --- INTERFACES & TYPES ---
@@ -77,4 +78,11 @@ export const updateBrand = async (id: number, data: BrandUpdateData): Promise<Br
 export const deleteBrand = async (id: number): Promise<void> => {
   // A successful DELETE request typically returns a 204 No Content status, so we don't expect data back.
   await apiClient.delete(`/brands/${id}`);
+};
+
+export const getAllBrandsList = async (): Promise<Brand[]> => {
+    const response = await apiClient.get<SuccessApiResponse<Brand[]>>('/brands', { 
+        params: { pagination: false } 
+    });
+    return response.data.data;
 };

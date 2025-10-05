@@ -16,8 +16,10 @@ export interface ProductListItem {
 }
 
 // The shape of a Product when fetching full details
-export interface ProductDetails extends ProductListItem {
+export interface ProductDetails extends Omit<ProductListItem, 'rating'> { // 1. Omit the old 'rating'
     descriptionHTML: string | null;
     inventory: Inventory[];
+    // 2. Add the more specific properties for the detail view
+    averageRating: number;
     feedbackCount: number;
 }

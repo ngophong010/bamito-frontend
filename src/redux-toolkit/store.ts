@@ -22,18 +22,22 @@ import cartReducer from "./cartSlice";
 import feedReducer from "./feedSlice";
 import brandReducer from './brandSlice';
 import categoryReducer from './categorySlice';
+import otpReducer from './otpSlice';
+import authReducer from './authSlice';
 
 // 2. Combine all your slice reducers into a single rootReducer
 const rootReducer = combineReducers({
   user: userReducer,
   brands: brandReducer,
   categories: categoryReducer,
-  product: productReducer,
+  products: productReducer,
   admin: adminReducer,
   search: searchReducer,
   order: orderReducer,
   cart: cartReducer,
   feed: feedReducer,
+  otp: otpReducer,
+  auth: authReducer,
 });
 
 // 3. Create the persist configuration

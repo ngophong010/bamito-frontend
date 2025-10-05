@@ -17,7 +17,6 @@ export interface ProductFilterOptions {
     price?: [number, number];
 }
 
-
 // ===============================================================
 // --- SERVICE FUNCTIONS ---
 // ===============================================================
@@ -56,7 +55,7 @@ export const getProductsByCategory = async (
  * Fetches a paginated list of all products currently on sale.
  * Maps to: GET /api/v1/products/on-sale
  */
-export const getProductsOnSale = async (params?: { limit?: number; page?: number }): Promise<PaginatedApiResponse<ProductListItem>> => {
+export const getProductsOnSale = async (params?: { limit?: number; page?: number; sort?: string }): Promise<PaginatedApiResponse<ProductListItem>> => {
   const response = await apiClient.get<SuccessApiResponse<PaginatedApiResponse<ProductListItem>>>('/products/on-sale', { params });
   return response.data.data;
 };
