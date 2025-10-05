@@ -14,18 +14,20 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 
 // 1. Import all your individual slice reducers
 import userReducer from "./userSlice";
-import paginationReducer from "./paginationSlice";
 import productReducer from "./productSlice";
 import adminReducer from "./adminSlice";
 import searchReducer from "./searchSlice";
-import orderReducer from "./orderSlice";
+import orderReducer from "./profileOrderSlice";
 import cartReducer from "./cartSlice";
 import feedReducer from "./feedSlice";
+import brandReducer from './brandSlice';
+import categoryReducer from './categorySlice';
 
 // 2. Combine all your slice reducers into a single rootReducer
 const rootReducer = combineReducers({
   user: userReducer,
-  pagination: paginationReducer,
+  brands: brandReducer,
+  categories: categoryReducer,
   product: productReducer,
   admin: adminReducer,
   search: searchReducer,

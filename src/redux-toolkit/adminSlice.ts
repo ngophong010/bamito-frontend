@@ -505,7 +505,6 @@ export const {
   fetchAllProductSizeFailed,
   fetchAllProductSizeOfTheProductTypeSuccess,
   fetchAllProductSizeOfTheProductTypeFailed,
-  CRUDProuctSize,
   UpdateDataPost,
   fetchAllVoucherSuccess,
   fetchAllVoucherFailed,
