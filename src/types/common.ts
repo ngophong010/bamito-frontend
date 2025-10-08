@@ -1,4 +1,12 @@
-// /src/types/shared.ts
+/**
+ * Base interface for all entities in the system
+ */
+export interface BaseEntity {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    isDeleted: boolean;
+}
 
 /**
  * Defines the strict, consistent "contract" for ALL responses

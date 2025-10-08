@@ -1,12 +1,13 @@
 import apiClient from './apiClient';
-import { OrderSummary, 
-    OrderDetails, 
-    PaginatedApiResponse, 
-    SuccessApiResponse } from '../types'; // Assuming you create a central types file
-
-// ===============================================================
-// --- INTERFACES & TYPES ---
-// ===============================================================
+import { OrderRepository } from '@/repositories/OrderRepository';
+import { Order, OrderStatus, OrderStats } from '@/types/order';
+import { PaginatedApiResponse } from '@/types/common';
+import { 
+    CreateOrderDTO, 
+    UpdateOrderDTO, 
+    UpdateOrderStatusDTO, 
+    OrderFilterParams 
+} from '@/types/dtos/order.dto';
 
 interface StatisticsResponse {
     totalIncome: number;
@@ -15,66 +16,86 @@ interface StatisticsResponse {
     allTotalOrder: { label: string; quantity: number }[];
 }
 
-interface SalesReportResponse {
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    reportItems: OrderDetails[];
+class OrderService {
+    private readonly repository: OrderRepository;
+
+    constructor() {
+        this.repository = new OrderRepository(apiClient);
+    }
+
+    /**
+     * [ADMIN] Get all orders with filtering and pagination
+     */
+    async getAllOrders(params: OrderFilterParams): Promise<PaginatedApiResponse<Order>> {
+        return this.repository.getOrders(params);
+    }
+
+    /**
+     * Get orders for a specific user
+     */
+    async getUserOrders(
+        userId: number,
+        params?: Omit<OrderFilterParams, 'userId'>
+    ): Promise<PaginatedApiResponse<Order>> {
+        return this.repository.getUserOrders(userId, params);
+    }
+
+    /**
+     * Get detailed information about a specific order
+     */
+    async getOrderDetails(orderId: number): Promise<Order> {
+        return this.repository.getById(orderId);
+    }
+
+    /**
+     * Create a new order
+     */
+    async createOrder(data: CreateOrderDTO): Promise<Order> {
+        return this.repository.create(data);
+    }
+
+    /**
+     * Update order details
+     */
+    async updateOrder(orderId: number, data: UpdateOrderDTO): Promise<Order> {
+        return this.repository.update(orderId, data);
+    }
+
+    /**
+     * Update order status
+     */
+    async updateOrderStatus(orderId: number, data: UpdateOrderStatusDTO): Promise<Order> {
+        return this.repository.updateStatus(orderId, data);
+    }
+
+    /**
+     * Cancel an order
+     */
+    async cancelOrder(orderId: number, reason: string): Promise<Order> {
+        return this.repository.cancelOrder(orderId, reason);
+    }
+
+    /**
+     * Get order statistics
+     */
+    async getOrderStats(params?: { fromDate?: string; toDate?: string; status?: OrderStatus[] }): Promise<OrderStats> {
+        return this.repository.getOrderStats(params);
+    }
+
+    /**
+     * Delete an order (soft delete)
+     */
+    async deleteOrder(orderId: number): Promise<void> {
+        return this.repository.delete(orderId);
+    }
+
+    /**
+     * Get sales report
+     */
+    async getSalesReport(params: OrderFilterParams): Promise<PaginatedApiResponse<Order>> {
+        return this.repository.getOrders(params);
+    }
 }
 
-// ===============================================================
-// --- ADMIN-ONLY SERVICE FUNCTIONS ---
-// ===============================================================
-
-/**
- * [ADMIN] Fetches a paginated list of all orders, filterable by status.
- * Maps to: GET /api/v1/orders
- */
-export const getAllOrders = async (params: { status?: number; limit?: number; page?: number }): Promise<PaginatedApiResponse<OrderSummary>> => {
-  const response = await apiClient.get<SuccessApiResponse<PaginatedApiResponse<OrderSummary>>>('/orders', { params });
-  return response.data.data;
-};
-
-/**
- * [ADMIN] Fetches the full details of a single order by its ID.
- * Maps to: GET /api/v1/orders/:id
- */
-export const getOrderDetails = async (id: number): Promise<OrderDetails> => {
-  const response = await apiClient.get<SuccessApiResponse<OrderDetails>>(`/orders/${id}`);
-  return response.data.data;
-};
-
-/**
- * [ADMIN] Updates the status of an order.
- * Maps to: PATCH /api/v1/orders/:id/status
- */
-export const updateOrderStatus = async (id: number, status: number): Promise<OrderDetails> => {
-  const response = await apiClient.patch<SuccessApiResponse<OrderDetails>>(`/orders/${id}/status`, { status });
-  return response.data.data;
-};
-
-/**
- * [ADMIN] Soft-deletes an order.
- * Maps to: DELETE /api/v1/orders/:id
- */
-export const deleteOrder = async (id: number): Promise<void> => {
-  await apiClient.delete(`/orders/${id}`);
-};
-
-/**
- * [ADMIN] Fetches sales and user statistics.
- * Maps to: GET /api/v1/statistics
- */
-export const getStatistics = async (): Promise<StatisticsResponse> => {
-    const response = await apiClient.get('/statistics');
-    return response.data.data;
-};
-
-/**
- * [ADMIN] Fetches a sales report for a given time period.
- * Maps to: GET /api/v1/reports/sales
- */
-export const getSalesReport = async (params: { timeStart: string; timeEnd: string; limit?: number; page?: number }): Promise<SalesReportResponse> => {
-    const response = await apiClient.get('/reports/sales', { params });
-    return response.data.data;
-};
+// Export a singleton instance
+export const orderService = new OrderService();

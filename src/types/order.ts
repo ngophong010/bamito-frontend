@@ -1,33 +1,38 @@
 import { UserProfile } from './user';
 import { Voucher } from './voucher';
+import { BaseEntity } from './common';
 
-// The shape of a single item within a detailed order
-export interface OrderItem {
-  id: number;
-  quantity: number;
-  price: number; // Snapshot of the price at time of purchase
-  productName: string;
-  productImage: string | null;
-  sizeName: string;
+export enum OrderStatus {
+    PENDING = 1,
+    PROCESSING = 2,
+    SHIPPED = 3,
+    DELIVERED = 4,
+    CANCELLED = 5,
+    REFUNDED = 6
 }
 
-// The shape of an Order in a list (summary view)
-export interface OrderSummary {
+// The shape of a single item within an order
+export interface OrderItem {
+    id: number;
+    quantity: number;
+    price: number; // Snapshot of the price at time of purchase
+    productName: string;
+    productImage: string | null;
+    sizeName: string;
+}
+
+// The core Order interface that extends BaseEntity
+export interface Order extends BaseEntity {
     id: number;
     orderId: string;
     totalPrice: number;
     payment: string;
-    status: number;
+    status: OrderStatus;
     createdAt: string;
-    user: Pick<UserProfile, 'userName'>;
-}
-
-// The shape of a full Order when fetching details
-export interface OrderDetails extends Omit<OrderSummary, 'user'> {
-  deliveryAddress: string;
-  user: Pick<UserProfile, 'userName' | 'phoneNumber'>;
-  voucher: Pick<Voucher, 'voucherId' | 'voucherPrice'> | null;
-  items: OrderItem[];
+    deliveryAddress: string;
+    user: Pick<UserProfile, 'userName' | 'phoneNumber'>;
+    voucher: Pick<Voucher, 'voucherId' | 'voucherPrice'> | null;
+    items: OrderItem[];
 }
 
 // Data needed to create an order
@@ -39,5 +44,18 @@ export interface OrderCreateData {
         productId: number;
         sizeId: number;
         quantity: number;
+    }[];
+}
+
+// Order statistics interface
+export interface OrderStats {
+    totalOrders: number;
+    totalRevenue: number;
+    averageOrderValue: number;
+    ordersByStatus: Record<OrderStatus, number>;
+    dailyOrders: {
+        date: string;
+        count: number;
+        revenue: number;
     }[];
 }
