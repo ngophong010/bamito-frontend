@@ -1,4 +1,4 @@
-import { Order } from '@/types/order';
+import { Order, OrderStatus, OrderStats } from '@/types/order';
 import { IBaseRepository } from './IBaseRepository';
 import { PaginatedApiResponse } from '@/types/common';
 import { CreateOrderDTO, UpdateOrderDTO, UpdateOrderStatusDTO, OrderFilterParams } from '@/types/dtos/order.dto';
@@ -38,14 +38,9 @@ export interface IOrderRepository extends IBaseRepository<Order, CreateOrderDTO,
      * Get order statistics
      * @param params Date range and other filter parameters
      */
-    getOrderStats(params: {
+    getOrderStats(params?: {
         fromDate?: string;
         toDate?: string;
-        status?: string[];
-    }): Promise<{
-        totalOrders: number;
-        totalRevenue: number;
-        averageOrderValue: number;
-        ordersByStatus: Record<string, number>;
-    }>;
+        status?: OrderStatus[];
+    }): Promise<OrderStats>;
 }
