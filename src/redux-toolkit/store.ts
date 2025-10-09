@@ -14,24 +14,30 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 
 // 1. Import all your individual slice reducers
 import userReducer from "./userSlice";
-import paginationReducer from "./paginationSlice";
 import productReducer from "./productSlice";
 import adminReducer from "./adminSlice";
 import searchReducer from "./searchSlice";
-import orderReducer from "./orderSlice";
+import orderReducer from "./profileOrderSlice";
 import cartReducer from "./cartSlice";
 import feedReducer from "./feedSlice";
+import brandReducer from './brandSlice';
+import categoryReducer from './categorySlice';
+import otpReducer from './otpSlice';
+import authReducer from './authSlice';
 
 // 2. Combine all your slice reducers into a single rootReducer
 const rootReducer = combineReducers({
   user: userReducer,
-  pagination: paginationReducer,
-  product: productReducer,
+  brands: brandReducer,
+  categories: categoryReducer,
+  products: productReducer,
   admin: adminReducer,
   search: searchReducer,
   order: orderReducer,
   cart: cartReducer,
   feed: feedReducer,
+  otp: otpReducer,
+  auth: authReducer,
 });
 
 // 3. Create the persist configuration
