@@ -1,92 +1,113 @@
 import apiClient from './apiClient';
-import { SuccessApiResponse } from '../types';
-import { PaginatedApiResponse } from '../types/common';
-// ===============================================================
-// --- INTERFACES & TYPES ---
-// These define the shape of the data for this resource.
-// ===============================================================
+import { CategoryRepository } from '@/repositories/CategoryRepository';
+import { Category } from '@/types/category';
+import { PaginatedApiResponse } from '@/types/common';
+import {
+    CreateCategoryDTO,
+    UpdateCategoryDTO,
+    CategoryFilterParams,
+    CategoryTreeNode,
+    CategoryStatsDTO
+} from '@/types/dtos/category.dto';
 
-export interface Category {
-  id: number;
-  categoryId: string;
-  name: string;
+class CategoryService {
+    private readonly repository: CategoryRepository;
+
+    constructor() {
+        this.repository = new CategoryRepository(apiClient);
+    }
+
+    /**
+     * Get all categories with filtering and pagination
+     */
+    async getCategories(params?: CategoryFilterParams): Promise<PaginatedApiResponse<Category>> {
+        return this.repository.getCategories(params);
+    }
+
+    /**
+     * Get a category by ID
+     */
+    async getCategoryById(id: number): Promise<Category> {
+        return this.repository.getById(id);
+    }
+
+    /**
+     * Get a category by its business ID (slug)
+     */
+    async getCategoryByBusinessId(categoryId: string): Promise<Category> {
+        return this.repository.getByBusinessId(categoryId);
+    }
+
+    /**
+     * Create a new category
+     */
+    async createCategory(data: CreateCategoryDTO): Promise<Category> {
+        return this.repository.create(data);
+    }
+
+    /**
+     * Update a category
+     */
+    async updateCategory(id: number, data: UpdateCategoryDTO): Promise<Category> {
+        return this.repository.update(id, data);
+    }
+
+    /**
+     * Delete a category
+     */
+    async deleteCategory(id: number): Promise<void> {
+        return this.repository.delete(id);
+    }
+
+    /**
+     * Get category tree structure
+     */
+    async getCategoryTree(includeInactive?: boolean): Promise<CategoryTreeNode[]> {
+        return this.repository.getCategoryTree(includeInactive);
+    }
+
+    /**
+     * Get category statistics
+     */
+    async getCategoryStats(): Promise<CategoryStatsDTO> {
+        return this.repository.getCategoryStats();
+    }
+
+    /**
+     * Get subcategories of a category
+     */
+    async getSubcategories(parentId: number): Promise<Category[]> {
+        return this.repository.getSubcategories(parentId);
+    }
+
+    /**
+     * Get breadcrumb path to a category
+     */
+    async getCategoryBreadcrumb(categoryId: number): Promise<Category[]> {
+        return this.repository.getCategoryBreadcrumb(categoryId);
+    }
+
+    /**
+     * Move a category to a new parent
+     */
+    async moveCategory(categoryId: number, newParentId?: number): Promise<Category> {
+        return this.repository.moveCategory(categoryId, newParentId);
+    }
+
+    /**
+     * Update category display order
+     */
+    async updateCategoryOrder(orderedIds: number[]): Promise<void> {
+        return this.repository.updateCategoryOrder(orderedIds);
+    }
+
+    /**
+     * Toggle category active status
+     */
+    async toggleCategoryStatus(categoryId: number, isActive: boolean): Promise<Category> {
+        return this.repository.toggleCategoryStatus(categoryId, isActive);
+    }
 }
 
-// The shape of the paginated response from GET /categories
-interface CategoriesApiResponse {
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-  categories: Category[];
-}
-
-// The shape of the data needed to create a category
-export interface CategoryCreateData {
-  categoryId: string;
-  name: string;
-}
-
-// The shape of the data needed to update a category
-export type CategoryUpdateData = Partial<CategoryCreateData>;
-
-// ===============================================================
-// --- SERVICE FUNCTIONS ---
-// Each function maps to a specific RESTful API endpoint.
-// ===============================================================
-
-/**
- * Fetches a paginated and filterable list of all categories.
- * Maps to: GET /api/v1/categories
- * @param params - Optional query parameters for pagination, sorting, and filtering.
- */
-export const getAllCategories = async (params?: { limit?: number; page?: number; name?: string; pagination?: boolean }): Promise<PaginatedApiResponse<Category>> => {
-  const response = await apiClient.get<SuccessApiResponse<PaginatedApiResponse<Category>>>('/categories', { params });
-  return response.data.data;
-};
-
-/**
- * Fetches a single category by its public-facing string ID.
- * Maps to: GET /api/v1/categories/details/:categoryId
- * @param categoryId - The public business ID of the category (e.g., 'RACKETS').
- */
-export const getCategoryById = async (id: number): Promise<Category> => {
-  const response = await apiClient.get<SuccessApiResponse<Category>>(`/categories/${id}`);
-  return response.data.data;
-};
-
-// This one is for public pages, it finds by the STRING business key
-export const getCategoryByBusinessId = async (categoryId: string): Promise<Category> => {
-  const response = await apiClient.get<SuccessApiResponse<Category>>(`/categories/details/${categoryId}`);
-  return response.data.data;
-};
-
-
-/**
- * Creates a new category.
- * Maps to: POST /api/v1/categories
- * @param data - The data for the new category.
- */
-export const createCategory = async (data: CategoryCreateData): Promise<Category> => {
-  const response = await apiClient.post('/categories', data);
-  return response.data.data;
-};
-
-/**
- * Updates an existing category by its primary key ID.
- * Maps to: PUT /api/v1/categories/:id
- * @param id - The numeric primary key of the category to update.
- * @param data - The new data for the category.
- */
-export const updateCategory = async (id: number, data: CategoryUpdateData): Promise<Category> => {
-  const response = await apiClient.put(`/categories/${id}`, data);
-  return response.data.data;
-};
-
-/**
- * Deletes a category by its primary key ID.
- * Maps to: DELETE /api/v1/categories/:id
- * @param id - The numeric primary key of the category to delete.
- */
-export const deleteCategory = async (id: number): Promise<void> => {
-  await apiClient.delete(`/categories/${id}`);
-};
+// Export a singleton instance
+export const categoryService = new CategoryService();

@@ -1,79 +1,107 @@
-// src/services/brandService.ts
-
 import apiClient from './apiClient';
-// --- THE FIX IS HERE (Step 1: Import the generic types) ---
-import { 
-    Brand, 
-    BrandCreateData, 
-    BrandUpdateData, 
-    PaginatedApiResponse, 
-    SuccessApiResponse 
-} from '../types';
+import { BrandRepository } from '@/repositories/BrandRepository';
+import { Brand } from '@/types/brand';
+import { PaginatedApiResponse } from '@/types/common';
+import {
+    CreateBrandDTO,
+    UpdateBrandDTO,
+    BrandFilterParams,
+    BrandStatsDTO,
+    BrandListResponseDTO
+} from '@/types/dtos/brand.dto';
 
-// ===============================================================
-// --- SERVICE FUNCTIONS ---
-// ===============================================================
+class BrandService {
+    private readonly repository: BrandRepository;
 
-/**
- * Fetches a paginated and filterable list of all brands.
- * Maps to: GET /api/v1/brands
- */
-// --- THE FIX IS HERE (Step 2: Update the return type) ---
-// The function now promises to return the generic PaginatedApiResponse of Brand.
-export const getAllBrands = async (
-    params?: { limit?: number; page?: number; name?: string; pagination?: boolean }
-): Promise<PaginatedApiResponse<Brand>> => {
-  
-  // Tell Axios to expect the generic response type.
-  const response = await apiClient.get<SuccessApiResponse<PaginatedApiResponse<Brand>>>('/brands', { params });
-  
-  // Your backend must return the data in a { data: { items: [...] } } structure.
-  return response.data.data;
-};
+    constructor() {
+        this.repository = new BrandRepository(apiClient);
+    }
 
-/**
- * Fetches ALL brands as a simple list (not paginated).
- * Maps to: GET /api/v1/brands?pagination=false
- */
-export const getAllBrandsList = async (): Promise<Brand[]> => {
-    // This endpoint returns a simple array of Brands.
-    const response = await apiClient.get<SuccessApiResponse<Brand[]>>('/brands', { 
-        params: { pagination: 'false' } // Query params are strings
-    });
-    return response.data.data;
-};
+    /**
+     * Get all brands with filtering and pagination
+     */
+    async getBrands(params?: BrandFilterParams): Promise<PaginatedApiResponse<Brand>> {
+        return this.repository.getBrands(params);
+    }
 
-/**
- * [ADMIN] Fetches a single brand by its primary key ID.
- * Maps to: GET /api/v1/brands/:id
- */
-export const getBrandById = async (id: number): Promise<Brand> => {
-    const response = await apiClient.get<SuccessApiResponse<Brand>>(`/brands/${id}`);
-    return response.data.data;
-};
+    /**
+     * Get all brands as a simple list (not paginated)
+     */
+    async getAllBrandsList(): Promise<Brand[]> {
+        const result = await this.repository.getBrands({ limit: 1000, pagination: false });
+        return result.items;
+    }
 
-/**
- * [ADMIN] Creates a new brand.
- * Maps to: POST /api/v1/brands
- */
-export const createBrand = async (data: BrandCreateData): Promise<Brand> => {
-  const response = await apiClient.post<SuccessApiResponse<Brand>>('/brands', data);
-  return response.data.data;
-};
+    /**
+     * Get a brand by ID
+     */
+    async getBrandById(id: number): Promise<Brand> {
+        return this.repository.getById(id);
+    }
 
-/**
- * [ADMIN] Updates an existing brand by its primary key ID.
- * Maps to: PUT /api/v1/brands/:id
- */
-export const updateBrand = async (id: number, data: BrandUpdateData): Promise<Brand> => {
-  const response = await apiClient.put<SuccessApiResponse<Brand>>(`/brands/${id}`, data);
-  return response.data.data;
-};
+    /**
+     * Create a new brand
+     */
+    async createBrand(data: CreateBrandDTO): Promise<Brand> {
+        return this.repository.create(data);
+    }
 
-/**
- * [ADMIN] Deletes a brand by its primary key ID.
- * Maps to: DELETE /api/v1/brands/:id
- */
-export const deleteBrand = async (id: number): Promise<void> => {
-  await apiClient.delete(`/brands/${id}`);
-};
+    /**
+     * Update a brand
+     */
+    async updateBrand(id: number, data: UpdateBrandDTO): Promise<Brand> {
+        return this.repository.update(id, data);
+    }
+
+    /**
+     * Delete a brand
+     */
+    async deleteBrand(id: number): Promise<void> {
+        return this.repository.delete(id);
+    }
+
+    /**
+     * Get brand statistics
+     */
+    async getBrandStats(): Promise<BrandStatsDTO> {
+        return this.repository.getBrandStats();
+    }
+
+    /**
+     * Get brands with product counts
+     */
+    async getBrandsWithProductCount(params?: BrandFilterParams): Promise<BrandListResponseDTO> {
+        return this.repository.getBrandsWithProductCount(params);
+    }
+
+    /**
+     * Toggle brand active status
+     */
+    async toggleBrandStatus(brandId: number, isActive: boolean): Promise<Brand> {
+        return this.repository.toggleBrandStatus(brandId, isActive);
+    }
+
+    /**
+     * Get product count for a brand
+     */
+    async getBrandProductCount(brandId: number): Promise<{ total: number; active: number }> {
+        return this.repository.getBrandProductCount(brandId);
+    }
+
+    /**
+     * Update brand display order
+     */
+    async updateBrandOrder(orderedIds: number[]): Promise<void> {
+        return this.repository.updateBrandOrder(orderedIds);
+    }
+
+    /**
+     * Search brands by name
+     */
+    async searchBrands(query: string, limit?: number): Promise<Brand[]> {
+        return this.repository.searchBrands(query, limit);
+    }
+}
+
+// Export a singleton instance
+export const brandService = new BrandService();
