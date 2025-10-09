@@ -2,14 +2,11 @@
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
-// 1. Import the CORRECT, refactored service functions and types
-import {
-  getAllProducts,
-  getProductsByCategory,
-  getProductsOnSale,
-} from '../services/productService';
-import { getMyFavourites } from '../services/favouriteService'; // Favourites belong to the profile
-import { ProductListItem, PaginatedApiResponse } from '../types';
+// Import service factory
+import { serviceFactory } from '@/factories';
+const productService = serviceFactory.createProductService();
+const favouriteService = serviceFactory.createFavouriteService();
+import { ProductListItem, PaginatedApiResponse } from '@/types';
 
 // 2. Define a clean, focused state. We only need ONE list of products.
 interface ProductState {
@@ -49,17 +46,14 @@ export const fetchProducts = createAsyncThunk<
       switch (query.type) {
         case 'category':
           if (!query.categoryId) throw new Error('Category ID is required.');
-          return await getProductsByCategory(query.categoryId, query.params);
+          return await productService.getProductsByCategory(query.categoryId, query.params);
         case 'sale':
-          return await getProductsOnSale(query.params);
+          return await productService.getProductsOnSale(query.params);
         case 'favourite':
-            // Note: getMyFavourites might have a slightly different response shape
-            // that you'll need to normalize here if it's not paginated.
-            const favResponse = await getMyFavourites(); 
-            return favResponse;
+          return await favouriteService.getMyFavourites(query.params);
         case 'all':
         default:
-          return await getAllProducts(query.params);
+          return await productService.getAllProducts(query.params);
       }
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch products.');

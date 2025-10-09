@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import {
-  handleGetAllProductTypeService,
+  handleGetAllCategoryService,
   handleGetProductName,
 } from "../../services/productService";
 import { handleChangePage } from "../../redux-toolkit/paginationSlice";
@@ -29,7 +29,7 @@ function convertSlugToId(str) {
 function Breadcrumb() {
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const [productTypes, setProductTypes] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [productName, setProductName] = useState("");
   let currentLink = "";
   const crumbs = pathname.split("/");
@@ -40,9 +40,9 @@ function Breadcrumb() {
   useEffect(() => {
     let getAllProductType = async () => {
       try {
-        let res = await handleGetAllProductTypeService("", "", "", false);
+        let res = await handleGetAllCategoryService("", "", "", false);
         if (res && res.errCode === 0) {
-          setProductTypes(res?.data);
+          setCategories(res?.data);
         }
       } catch (error) {
         console.log(error);
@@ -104,7 +104,7 @@ function Breadcrumb() {
       else if (crumb === "favourite") crumb = "Sản phẩm yêu thích";
       else if (crumb === "feed") crumb = "Tin tức";
     }
-    productTypes.forEach((productType) => {
+    categories.forEach((productType) => {
       if (productType.productTypeId === crumb.toUpperCase()) {
         crumb = productType.productTypeName;
       }

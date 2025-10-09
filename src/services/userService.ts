@@ -1,7 +1,7 @@
 import apiClient from '../axios';
 import { UserRepository } from '@/repositories/UserRepository';
 import { User } from '@/types/user';
-import { ServiceResponse, PaginatedApiResponse } from '@/types/common';
+import { PaginatedApiResponse } from '@/types/common';
 import {
     CreateUserDTO,
     UpdateUserDTO,
@@ -149,6 +149,17 @@ class UserService {
     async resetPassword(token: string, newPassword: string): Promise<void> {
         return this.repository.resetPassword(token, newPassword);
     }
+
+    /**
+     * Check if an email address is already registered in the system
+     * @param email The email address to check
+     * @returns Promise<boolean> True if email is registered, false otherwise
+     */
+    async isEmailRegistered(email: string): Promise<boolean> {
+        return this.repository.isEmailRegistered(email);
+    }
+
+    
 }
 
 // Export a singleton instance

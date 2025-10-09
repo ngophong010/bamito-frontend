@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { AuthCredentials, LoginResponse, UserProfile, ProfileResponse } from '../types';
+import { AuthCredentials, LoginResponse, UserProfile, ProfileResponse } from '@/types';
 import { toast } from 'react-toastify';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { login as loginService, getProfile } from "@/services/authService";
+import { serviceFactory } from '@/factories';
+const authService = serviceFactory.createAuthService();
 
 // NOTE: I've replaced your local UserInfo with the more robust UserProfile from /types
 // and made the state more consistent.
@@ -41,7 +42,7 @@ export const loginUser = createAsyncThunk<
       // Step 1: Call the login service. The service handles the API call.
       // The backend's /login endpoint should now handle the 2FA check logic.
       // It should return a flag indicating if an OTP step is needed.
-      const response: LoginResponse = await loginService(credentials);
+      const response: LoginResponse = await authService.login(credentials);
 
       // Let's assume the backend now returns a response like:
       // { status: 'success', data: { user: {...}, otpRequired: true/false } }
@@ -60,7 +61,7 @@ export const loginUser = createAsyncThunk<
         };
       } else {
         // If login is direct, fetch the full profile
-        const profileData = await getProfile();
+        const profileData = await authService.getProfile();
         
         // On success, redirect to the homepage
         toast.success("Đăng nhập thành công!");

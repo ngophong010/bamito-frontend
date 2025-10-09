@@ -59,7 +59,7 @@ function SizeAdmin() {
     },
     { label: "MÃ SIZE", key: "sizeId" },
     { label: "TÊN SIZE", key: "sizeName" },
-    { label: "TÊN LOẠI SẢN PHẨM", key: "productTypeSizeData" },
+    { label: "TÊN LOẠI SẢN PHẨM", key: "categorySizeData" },
     { label: "", key: "", style: { borderTopRightRadius: 15 } },
   ];
 

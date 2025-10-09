@@ -6,8 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import {
-  handleUpdateSizeService,
-  handleCreateSizeService,
+
 } from "@/services/productService";
 import { loadingAdmin } from "@/redux-toolkit/adminSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,7 +33,7 @@ const SizePost = () => {
     if (data) {
       setValue("sizeID", data.sizeId);
       setValue("sizeName", data.sizeName);
-      setValue("productType", data.productTypeSizeData?.productTypeId);
+      setValue("productType", data.categorySizeData?.productTypeId);
     }
   }, [data, setValue]);
 

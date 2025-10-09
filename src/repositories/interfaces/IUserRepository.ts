@@ -69,4 +69,11 @@ export interface IUserRepository extends IBaseRepository<User, CreateUserDTO, Up
      * Reset password using token
      */
     resetPassword(token: string, newPassword: string): Promise<void>;
+
+    /**
+     * Check if an email is already registered
+     * @param email - The email address to check
+     * @returns Promise that resolves to boolean indicating if email is registered
+     */
+    isEmailRegistered(email: string): Promise<boolean>;
 }

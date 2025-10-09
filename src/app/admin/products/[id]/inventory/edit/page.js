@@ -9,13 +9,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { loadingAdmin } from "@/redux-toolkit/adminSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  handleCreateProductSizeService,
-  handleUpdateProductSizeService,
+  handleCreateInventoryService,
+  handleUpdateInventoryService,
 } from "@/services/productService";
 import { regex } from "@/utils";
 import { logOut } from "@/redux-toolkit/userSlice";
 
-const ProductSizePost = () => {
+const InventoryPost = () => {
   const {
     handleSubmit,
     control,
@@ -28,14 +28,14 @@ const ProductSizePost = () => {
   const [productId, setProductId] = useState("");
   const data = useSelector((state) => state.admin?.dataPost?.data);
   const productData = useSelector((state) => state.admin.productData);
-  const sizeProductTypes = useSelector(
-    (state) => state.admin.allProductSizeOfTheProductType
+  const sizeCategories = useSelector(
+    (state) => state.admin.allInventoryOfTheCategory
   );
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (data) {
-      setValue("productName", data.ProductSizeData?.name);
+      setValue("productName", data.InventoryData?.name);
       setValue("sizeId", data.SizeData?.sizeId);
       setValue("quantity", data.quantity);
     }
@@ -48,7 +48,7 @@ const ProductSizePost = () => {
     if (path[4] === "create") {
       try {
         dispatch(loadingAdmin(true));
-        let res = await handleCreateProductSizeService({
+        let res = await handleCreateInventoryService({
           sizeId: submitData.sizeId,
           productId: productId,
           quantity: submitData.quantity,
@@ -58,7 +58,7 @@ const ProductSizePost = () => {
           setValue("sizeId", "");
           setValue("quantity", "");
 
-          router.push(`/admin/product/productsize`);
+          router.push(`/admin/product/inventory`);
         }
       } catch (err) {
         if (err.response.data.errCode === 2) {
@@ -76,7 +76,7 @@ const ProductSizePost = () => {
       try {
         dispatch(loadingAdmin(true));
 
-        let res = await handleUpdateProductSizeService({
+        let res = await handleUpdateInventoryService({
           id: data.id,
           sizeId: submitData.sizeId,
           productId: productId,
@@ -87,7 +87,7 @@ const ProductSizePost = () => {
           setValue("sizeId", "");
           setValue("quantity", "");
 
-          router.push(`/admin/product/productsize`);
+          router.push(`/admin/product/inventory`);
         }
       } catch (err) {
         if (err.response.data.errCode === 2) {
@@ -209,9 +209,9 @@ const ProductSizePost = () => {
                 fontSize: 30,
               }}
             >
-              {sizeProductTypes &&
-                sizeProductTypes.length > 0 &&
-                sizeProductTypes.map((option) => (
+              {sizeCategories &&
+                sizeCategories.length > 0 &&
+                sizeCategories.map((option) => (
                   <MenuItem
                     key={option.sizeId}
                     value={option.sizeId}
@@ -285,4 +285,4 @@ const ProductSizePost = () => {
   );
 };
 
-export default ProductSizePost;
+export default InventoryPost;

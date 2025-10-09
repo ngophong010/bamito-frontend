@@ -1,18 +1,18 @@
-import { handleGetAllProductTypeService, handleGetAllProductService } from "@/services/productService";
+import { handleGetAllCategoryService, handleGetAllProductService } from "@/services/productService";
 import { createSlug } from "@/utils/formatters";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export default async function sitemap() {
-  const productTypes = await handleGetAllProductService("", "", "", false).then(res => res.data || []);
-  // const productTypesURL = productTypes.map((product) => ({
+  const categories = await handleGetAllProductService("", "", "", false).then(res => res.data || []);
+  // const categoriesURL = categories.map((product) => ({
   //   url: `${URL}/${createUrl(
   //     product.productTypeName
   //   )}-${product.productTypeId.toLowerCase()}/sitemap.xml`,
   //   lastModified: new Date(),
   //   priority: 0.5,
   // }));
-  const productEntries = productTypes.map((productType) => ({
+  const productEntries = categories.map((productType) => ({
     url: `${SITE_URL}/${createSlug(productType.productTypeName)}-${productType.productTypeId.toLowerCase()}`,
     lastModified: productType.updatedAt || new Date(),
     priority: 0.8,

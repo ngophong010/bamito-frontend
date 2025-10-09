@@ -16,58 +16,58 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { toast } from "react-toastify";
 import "./Header.scss";
 import { logOut } from "../../redux-toolkit/userSlice";
-import { handleGetAllProductTypeService } from "../../services/productService";
+import { handleGetAllCategoryService } from "../../services/productService";
 import UserMenu from "../../components/UserMenu/UserMenu";
 import Search from "../../components/Search/Search";
 import { handleChangePage } from "../../redux-toolkit/paginationSlice";
 import { USER_MENU } from "../../utils/menu";
 import TippyCart from "../../components/TippyCart/TippyCart";
 import { createSlug } from "@/utils/formatters";
-import ProductTypesMenu from "@/components/ProductTypesMenu/ProductTypesMenu";
+import CategoriesMenu from "@/components/CategoriesMenu/CategoriesMenu";
 import { useCallback } from "react";
 
 const USER_MENU_DELAY = [0, 300];
 const PRODUCT_MENU_DELAY = [0, 500];
 const CART_TIPPY_OFFSET = [-26, 5];
 
-// const ProductTypesMenu = () => {
-//   const [productTypes, setProductTypes] = useState([]);
+// const CategoriesMenu = () => {
+//   const [categories, setCategories] = useState([]);
 //   const dispatch = useDispatch();
 //   const router = useRouter();
-//   let getAllProductType = async () => {
+//   let getAllCategory = async () => {
 //     try {
-//       let res = await handleGetAllProductTypeService();
+//       let res = await handleGetAllCategoryService();
 //       if (res && res.errCode === 0) {
-//         setProductTypes(res?.data);
+//         setCategoriess(res?.data);
 //       }
 //     } catch (err) {
 //       toast.error(err?.response?.data?.message);
 //     }
 //   };
 //   useEffect(() => {
-//     getAllProductType();
+//     getAllCategory();
 //   }, []);
 
-//   const handleChangeProductType = (productTypeId, productTypeName) => {
+//   const handleChangeCategory = (categoryId, categoryName) => {
 //     dispatch(handleChangePage(1));
 //     router.push(
-//       `/${createSlug(productTypeName)}-${productTypeId.toLowerCase()}`
+//       `/${createSlug(categoryName)}-${categoryId.toLowerCase()}`
 //     );
-//     // router.push(`/product/${productTypeId}`);
+//     // router.push(`/product/${categoryId}`);
 //   };
 
 //   return (
 //     <>
-//       {productTypes.map((item, index) => {
+//       {categories.map((item, index) => {
 //         return (
 //           <div
 //             key={index}
 //             className="product-type-wrapper"
 //             onClick={() =>
-//               handleChangeProductType(item.productTypeId, item.productTypeName)
+//               handleChangeCategory(item.categoryId, item.categoryName)
 //             }
 //           >
-//             <h1>{item.productTypeName}</h1>
+//             <h1>{item.categoryName}</h1>
 //           </div>
 //         );
 //       })}
@@ -77,7 +77,7 @@ const CART_TIPPY_OFFSET = [-26, 5];
 
 function Header() {
   const [isTippyOn, setIsTippyOn] = useState(false);
-  const [productTypes, setProductTypes] = useState([]);
+  const [categories, setCategoriess] = useState([]);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -88,22 +88,22 @@ function Header() {
   const productCountInCart = useSelector((state) => state.cart?.totalProduct);
 
   useEffect(() => {
-    const fetchProductTypes = async () => {
+    const fetchCategoriess = async () => {
       try {
-        const res = await handleGetAllProductTypeService();
+        const res = await handleGetAllCategoryService();
         if (res && res.errCode === 0) {
-          setProductTypes(res.data || []);
+          setCategoriess(res.data || []);
         }
       } catch (err) {
         toast.error(err?.response?.data?.message || "Failed to load product types");
       }
     };
-    fetchProductTypes();
+    fetchCategoriess();
   }, []);
 
   const handleLogOut = useCallback(() => dispatch(logOut()), [dispatch]);
 
-  const handleProductTypeClick = useCallback(() => {
+  const handleCategoryClick = useCallback(() => {
     dispatch(handleChangePage(1));
   }, [dispatch]);
 
@@ -139,10 +139,10 @@ function Header() {
         // offset={[0, 3]}
         render={(attrs) => (
           <div className="drop-down-menu" tabIndex="-1" {...attrs}>
-            {/* <ProductTypesMenu /> */}
-            <ProductTypesMenu
-              productTypes={productTypes}
-              onProductTypeClick={handleProductTypeClick}
+            {/* <CategoriessMenu /> */}
+            <CategoriessMenu
+              categories={categories}
+              onCategoryClick={handleCategoryClick}
             />
           </div>
         )}

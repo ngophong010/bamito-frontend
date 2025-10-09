@@ -9,8 +9,8 @@ import { loadingProduct } from "../../redux-toolkit/productSlice";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  handleGetAllProductOfTheProductType,
-  handleGetAllProductTypeService,
+  handleGetAllProductOfTheCategory,
+  handleGetAllCategoryService,
 } from "../../services/productService";
 import Rating from "@mui/material/Rating";
 import { useRouter } from "next/navigation";
@@ -92,10 +92,10 @@ const Introduce = () => {
     }
   };
 
-  let getAllProductTypes = async () => {
+  let getAllCategories = async () => {
     try {
       dispatch(loadingProduct(true));
-      let res = await handleGetAllProductTypeService();
+      let res = await handleGetAllCategoryService();
       if (res && res.errCode === 0) {
         if (res?.data && res?.data?.length > 0) {
           let racket = res?.data.find(
@@ -126,7 +126,7 @@ const Introduce = () => {
   };
 
   useEffect(() => {
-    getAllProductTypes();
+    getAllCategories();
   }, []);
 
   useEffect(() => {

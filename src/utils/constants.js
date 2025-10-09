@@ -14,7 +14,7 @@ export const path = {
   PRODUCT_TYPE_ADMIN: "product-type",
   PRODUCT_BRAND_ADMIN: "product-brand",
   PRODUCT_SIZE_ADMIN: "product-size",
-  PRODUCT_PRODUCTSIZE_ADMIN: "productsize",
+  PRODUCT_INVENTORY_ADMIN: "inventory",
   ORDER_DETAIL: "/:orderStatus/:orderId",
   ORDER_ADMIN: "order",
   ORDER_WAITING_ADMIN: "order-waiting",

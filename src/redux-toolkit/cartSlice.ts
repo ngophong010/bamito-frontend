@@ -1,8 +1,20 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
-import { getCart, addOrUpdateCartItem, removeCartItem } from "../services/cartService";
-import { CartData, CartItem, CartItemUpdateData, CartItemIdentifiers } from "../types";
+import { serviceFactory } from '@/factories';
+const cartService = serviceFactory.createCartService();
+import { CartData, CartItem } from "@/types";
+
+interface CartItemUpdateData {
+  productId: number;
+  quantity: number;
+  size: number;
+}
+
+interface CartItemIdentifiers {
+  productId: number;
+  size: number;
+}
 
 // Note: The logOut action is likely handled by a global API interceptor now,
 // but we can still listen for it here to clear the cart.
@@ -36,9 +48,12 @@ export const fetchCart = createAsyncThunk<
   "cart/fetchCart",
   async (_, { rejectWithValue }) => {
     try {
-      // FIX: Call the new, secure service function with no arguments.
-      const cartData = await getCart();
-      return cartData;
+      // Call the cart service to get cart data
+      const cartData = await cartService.getCart();
+      return {
+        products: cartData.items,
+        totalProduct: cartData.totalItems
+      } as CartData;
     } catch (error: any) {
       // The apiClient interceptor might handle global errors,
       // but we can still return a specific error message for this slice.
@@ -51,7 +66,7 @@ export const addItemToCart = createAsyncThunk(
     "cart/addItem",
     async (itemData: CartItemUpdateData, { dispatch, rejectWithValue }) => {
         try {
-            await addOrUpdateCartItem(itemData);
+            await cartService.updateCartItem(itemData.productId, itemData.quantity, itemData.size);
             // After successfully adding, re-fetch the entire cart to ensure data is in sync.
             dispatch(fetchCart()); 
         } catch (error: any) {
@@ -65,7 +80,7 @@ export const removeItemFromCart = createAsyncThunk(
     "cart/removeItem",
     async (itemIdentifiers: CartItemIdentifiers, { dispatch, rejectWithValue }) => {
         try {
-            await removeCartItem(itemIdentifiers);
+            await cartService.removeCartItem(itemIdentifiers.productId, itemIdentifiers.size);
             toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
             // Also re-fetch the cart to update the state.
             dispatch(fetchCart());

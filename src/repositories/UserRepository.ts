@@ -161,4 +161,15 @@ export class UserRepository implements IUserRepository {
             throw handleAxiosError(error);
         }
     }
+
+    async isEmailRegistered(email: string): Promise<boolean> {
+        try {
+            const response = await this.apiClient.post<{ data: { exists: boolean } }>(`${this.basePath}/check-email`, { email });
+            return response.data.data.exists;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
+    }
+
+    
 }

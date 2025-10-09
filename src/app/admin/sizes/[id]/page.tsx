@@ -3,15 +3,13 @@ import React, { useEffect } from "react";
 import { Button, TextField, MenuItem } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useForm, Controller } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import {
-  handleUpdateSizeService,
-  handleCreateSizeService,
+
 } from "@/services/productService";
 import { loadingAdmin } from "@/redux-toolkit/adminSlice";
-import { useDispatch } from "react-redux";
 import CreateCode from "@/utils/commonUtils";
 import { logOut } from "@/redux-toolkit/userSlice";
 
@@ -35,7 +33,7 @@ const SizePost = () => {
     if (data) {
       setValue("sizeID", data.sizeId);
       setValue("sizeName", data.sizeName);
-      setValue("productType", data.productTypeSizeData?.productTypeId);
+      setValue("productType", data.categorySizeData?.productTypeId);
     }
   }, [data, setValue]);
 

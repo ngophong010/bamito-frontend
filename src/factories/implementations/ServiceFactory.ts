@@ -6,6 +6,10 @@ import { userService } from '@/services/userService';
 import { voucherService } from '@/services/voucherService';
 import { cartService } from '@/services/cartService';
 import { orderService } from '@/services/orderService';
+import * as authService from '@/services/authService';
+import * as favouriteService from '@/services/favouriteService';
+import { sizeService } from '@/services/sizeService';
+import * as inventoryService from '@/services/inventoryService';
 
 /**
  * Service Factory that provides access to singleton service instances.
@@ -49,5 +53,21 @@ export class ServiceFactory implements IServiceFactory {
 
     createOrderService(): typeof orderService {
         return orderService;
+    }
+
+    createAuthService(): typeof authService {
+        return authService;
+    }
+
+    createFavouriteService(): typeof favouriteService {
+        return favouriteService;
+    }
+
+    createSizeService() {
+        return sizeService;
+    }
+
+    createInventoryService() {
+        return inventoryService;
     }
 }
