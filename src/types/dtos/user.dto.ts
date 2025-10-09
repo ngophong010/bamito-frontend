@@ -1,5 +1,3 @@
-import { Role } from '../role';
-
 export interface CreateUserDTO {
     userName: string;
     email: string;
