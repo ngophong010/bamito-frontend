@@ -1,30 +1,43 @@
-"use client";
-import React from "react";
-import GridData from "@/components/GridData/GridData";
+import { Metadata } from 'next';
+import dayjs from 'dayjs';
 
-function ReportAdmin() {
-  const tableColumns = [
-    {
-      label: "STT",
-      key: "",
-      style: { borderTopLeftRadius: 15, paddingLeft: "2rem" },
-    },
-    { label: "TÊN SẢN PHẨM", key: "name", style: { width: 350 } },
-    { label: "KÍCH CỠ", key: "sizeName" },
-    { label: "GIÁ", key: "price" },
-    { label: "GIẢM GIÁ", key: "discount" },
-    { label: "SỐ LƯỢNG", key: "quantity" },
-    { label: "TỔNG TIỀN", key: "totalPrice" },
-    { label: "NGÀY MUA", key: "time", style: { borderTopRightRadius: 15 } },
-  ];
+// 1. Import the correct, refactored service function
+import { getSalesReport } from '@/services/orderService';
+import ReportClient from './ReportClient'; // Import the new Client Component
 
-  return (
-    <GridData
-      tableColumns={tableColumns}
-      headerString="Báo cáo doanh thu"
-      gridType="report-admin"
-    />
-  );
+export const metadata: Metadata = {
+    title: 'Báo cáo Doanh thu',
+};
+
+// 2. Define the shape of the props Next.js will provide
+interface RevenueReportPageProps {
+  searchParams: {
+    page?: string;
+    timeStart?: string; // ISO Date string
+    timeEnd?: string;   // ISO Date string
+  };
 }
 
-export default ReportAdmin;
+export default async function RevenueReportPage({ searchParams }: RevenueReportPageProps) {
+  // --- 3. DATA FETCHING ON THE SERVER ---
+  try {
+    // Provide sensible defaults for the date range if they aren't in the URL
+    const timeStart = searchParams.timeStart || dayjs().startOf('month').toISOString();
+    const timeEnd = searchParams.timeEnd || dayjs().endOf('month').toISOString();
+    const page = searchParams.page ? Number(searchParams.page) : 1;
+
+    // Fetch the sales report data from the API
+    const initialReportData = await getSalesReport({
+      timeStart,
+      timeEnd,
+      page,
+      limit: 15,
+    });
+
+    // 4. Pass the server-fetched data as a prop to the Client Component
+    return <ReportClient initialReportData={initialReportData} />;
+  } catch (error) {
+    console.error("Failed to fetch revenue report:", error);
+    return <div>Error loading report data. Please try again.</div>;
+  }
+}

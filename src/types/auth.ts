@@ -22,3 +22,9 @@ export interface RegisterResponse {
   message: string;
   // It might also return the user object, but for this flow, a message is enough.
 }
+
+export interface ResetPasswordData {
+    token: string;
+    otpCode: string;
+    newPassword: string;
+}

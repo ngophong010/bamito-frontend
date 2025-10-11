@@ -1,76 +1,39 @@
-"use client";
-import React from "react";
-import { handleDeleteSizeService } from "@/services/productService";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAllSizeRedux,
-  fetchAllProductTypeRedux,
-  loadingAdmin,
-} from "@/redux-toolkit/adminSlice";
-import { toast } from "react-toastify";
-import GridData from "@/components/GridData/GridData";
-import { LIMIT } from "@/utils";
-import { handleChangePage } from "@/redux-toolkit/paginationSlice";
-import { logOut } from "@/redux-toolkit/userSlice";
+import { Metadata } from 'next';
 
-function SizeAdmin() {
-  const dispatch = useDispatch();
-  const page = useSelector((state) => state.pagination.page);
-  const totalPage = useSelector((state) => state.admin.allSize?.totalPage);
+// 1. Import the correct, refactored service function
+import { getAllSizes } from '@/services/sizeService';
+import SizeClient from './SizeClient'; // Import the new Client Component
 
-  const handleDeleteSize = async (sizeData, isLast) => {
-    try {
-      dispatch(loadingAdmin(true));
-      let res = await handleDeleteSizeService(sizeData.id);
-      if (res && res.errCode === 0) {
-        await dispatch(
-          fetchAllSizeRedux({
-            limit: LIMIT,
-            page: totalPage === page && isLast ? page - 1 : page,
-          })
-        );
-        await dispatch(
-          fetchAllProductTypeRedux({
-            pagination: false,
-          })
-        );
-        if (totalPage === page && isLast) dispatch(handleChangePage(page - 1));
-        toast.success("Xóa size thành công");
-      }
-    } catch (err) {
-      if (err?.response?.data?.errCode === 2) {
-        toast.error("Size không tồn tại");
-      } else if (err?.response?.data?.errCode === -4) {
-        toast.error("Phiên bản đăng nhập hết hạn");
-        dispatch(logOut());
-      } else {
-        toast.error(err?.response?.data?.message);
-      }
-    } finally {
-      dispatch(loadingAdmin(false));
-    }
+export const metadata: Metadata = {
+    title: 'Quản lý Kích thước',
+};
+
+// 2. Define the shape of the props Next.js will provide
+interface AdminSizesPageProps {
+  searchParams: {
+    page?: string;
+    name?: string; // For searching by size name
   };
-
-  const tableColumns = [
-    {
-      label: "STT",
-      key: "",
-      style: { borderTopLeftRadius: 15, paddingLeft: "2rem" },
-    },
-    { label: "MÃ SIZE", key: "sizeId" },
-    { label: "TÊN SIZE", key: "sizeName" },
-    { label: "TÊN LOẠI SẢN PHẨM", key: "categorySizeData" },
-    { label: "", key: "", style: { borderTopRightRadius: 15 } },
-  ];
-
-  return (
-    <GridData
-      handleDelete={handleDeleteSize}
-      headerString="Quản lý size"
-      tableColumns={tableColumns}
-      gridType="product-size"
-    />
-  );
 }
 
-export default SizeAdmin;
+export default async function AdminSizesPage({ searchParams }: AdminSizesPageProps) {
+  // --- 3. DATA FETCHING ON THE SERVER ---
+  try {
+    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const name = searchParams.name || undefined;
+
+    // Fetch the initial list of sizes based on the URL query params
+    const initialSizeData = await getAllSizes({
+      page,
+      name,
+      limit: 15,
+      pagination: true,
+    });
+
+    // 4. Pass the server-fetched data as a prop to the Client Component
+    return <SizeClient initialSizeData={initialSizeData} />;
+  } catch (error) {
+    console.error("Failed to fetch sizes:", error);
+    return <div>Error loading sizes. Please try again.</div>;
+  }
+}

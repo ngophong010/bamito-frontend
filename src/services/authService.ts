@@ -2,6 +2,7 @@ import apiClient from './apiClient';
 import axios from "../axios";
 import type { ServiceResponse } from "@/types/common";
 import { AuthCredentials, LoginResponse, UserProfile, RegisterResponse, SuccessApiResponse } from '../types';
+import { ResetPasswordData } from '@/types';
 
 // --- TYPE DEFINITIONS for function parameters ---
 interface LoginData {
@@ -116,5 +117,14 @@ export const sendPasswordResetOtp = async (email: string): Promise<ServiceRespon
 
 export const resetPasswordWithOtp = async (data: PasswordResetData): Promise<ServiceResponse> => {
   const response = await axios.put(`/api/v1/auth/password/reset`, data);
+  return response.data;
+};
+
+/**
+ * Completes the password reset process using a secure token, OTP, and new password.
+ * Maps to: POST /api/v1/auth/reset-password
+ */
+export const resetPassword = async (data: ResetPasswordData): Promise<{ message: string }> => {
+  const response = await apiClient.post('/auth/reset-password', data);
   return response.data;
 };

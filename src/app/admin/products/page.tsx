@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAllProductRedux,
   fetchAllBrandRedux,
-  fetchAllProductTypeRedux,
+  fetchAllCategoryRedux,
   loadingAdmin,
 } from "@/redux-toolkit/adminSlice";
 import { handleDeleteProductService } from "@/services/productService";
@@ -36,7 +36,7 @@ function ProductAdmin() {
           })
         );
         await dispatch(
-          fetchAllProductTypeRedux({
+          fetchAllCategoryRedux({
             pagination: false,
           })
         );
@@ -65,7 +65,7 @@ function ProductAdmin() {
     },
     { label: "MÃ SẢN PHẨM", key: "productId" },
     { label: "TÊN SẢN PHẨM", key: "name" },
-    { label: "LOẠI SẢN PHẨM", key: "productTypeData" },
+    { label: "LOẠI SẢN PHẨM", key: "categoryData" },
     { label: "ĐƠN GIÁ", key: "price" },
     { label: "GIẢM GIÁ", key: "discount" },
     { label: "", key: "", style: { borderTopRightRadius: 15 } },

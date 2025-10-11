@@ -8,6 +8,12 @@ import "./page.scss";
 import RevenueChart from "@/components/Admin/Dashboard/RevenueChart";
 // Import the correct, refactored service function
 import { getStatistics, getSalesReport } from "@/services/orderService";
+import { processChartData, mapOrderStatusData } from '@/utils/adminDashboardUtils';
+// ...
+// The helper functions are no longer defined in this file
+const chartData = processChartData(monthlyRevenue.reportItems);
+const allOrderStatus = mapOrderStatusData(statistics.allTotalOrder);
+// ...
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 

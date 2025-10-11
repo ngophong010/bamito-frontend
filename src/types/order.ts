@@ -59,3 +59,12 @@ export interface OrderStats {
         revenue: number;
     }[];
 }
+
+export interface SalesReportItem {
+    productName: string;
+    quantity: number;
+    price: number;
+    order: {
+        createdAt: string;
+    };
+}

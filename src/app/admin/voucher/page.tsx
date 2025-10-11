@@ -1,70 +1,35 @@
-"use client";
-import React from "react";
-import { toast } from "react-toastify";
-import { handleDeleteVoucher } from "@/services/productService";
-import { fetchAllVoucherRedux, loadingAdmin } from "@/redux-toolkit/adminSlice";
-import { useDispatch, useSelector } from "react-redux";
-import GridData from "@/components/GridData/GridData";
-import { LIMIT } from "@/utils";
-import { handleChangePage } from "@/redux-toolkit/paginationSlice";
-import { logOut } from "@/redux-toolkit/userSlice";
+import { Metadata } from 'next';
 
-const VoucherAdmin = () => {
-  const dispatch = useDispatch();
-  const page = useSelector((state) => state.pagination.page);
-  const totalPage = useSelector((state) => state.admin.allVoucher?.totalPage);
+import { getAllVouchers } from '@/services/voucherService';
+import VoucherListClient from './VoucherListClient'; // Import the new Client Component
 
-  const handleDelete = async (voucher, isLast) => {
-    try {
-      dispatch(loadingAdmin(true));
-      let res = await handleDeleteVoucher(voucher.id);
-      if (res && res.errCode === 0) {
-        await dispatch(
-          fetchAllVoucherRedux({
-            limit: LIMIT,
-            page: totalPage === page && isLast ? page - 1 : page,
-            pagination: true,
-          })
-        );
-        if (totalPage === page && isLast) dispatch(handleChangePage(page - 1));
-        toast.success("Xóa voucher thành công");
-      }
-    } catch (err) {
-      if (err?.response?.data?.errCode === 2) {
-        toast.error("Voucher không tồn tại");
-      } else if (err?.response?.data?.errCode === -4) {
-        toast.error("Phiên bản đăng nhập hết hạn");
-        dispatch(logOut());
-      } else {
-        toast.error(err?.response?.data?.message);
-      }
-    } finally {
-      dispatch(loadingAdmin(false));
-    }
-  };
-
-  const tableColumns = [
-    {
-      label: "STT",
-      key: "",
-      style: { borderTopLeftRadius: 15, paddingLeft: "2rem" },
-    },
-    { label: "MÃ VOUCHER", key: "voucherId" },
-    { label: "NGÀY BẮT ĐẦU", key: "timeStart" },
-    { label: "NGÀY KẾT THÚC", key: "timeEnd" },
-    { label: "MỨC GIẢM", key: "voucherPrice" },
-    { label: "SỐ LƯỢNG", key: "quantity" },
-    { label: "", key: "", style: { borderTopRightRadius: 15 } },
-  ];
-
-  return (
-    <GridData
-      headerString="Quản lý voucher"
-      handleDelete={handleDelete}
-      tableColumns={tableColumns}
-      gridType="voucher"
-    />
-  );
+export const metadata: Metadata = {
+    title: 'Quản lý Voucher',
 };
 
-export default VoucherAdmin;
+interface AdminVouchersPageProps {
+  searchParams: {
+    page?: string;
+    name?: string; // For searching by voucher ID
+  };
+}
+
+export default async function AdminVouchersPage({ searchParams }: AdminVouchersPageProps) {
+  try {
+    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const name = searchParams.name || undefined;
+
+    // Fetch the initial list of vouchers on the server
+    const initialVoucherData = await getAllVouchers({
+      page,
+      name,
+      limit: 15,
+      pagination: true,
+    });
+
+    return <VoucherListClient initialVoucherData={initialVoucherData} />;
+  } catch (error) {
+    console.error("Failed to fetch vouchers:", error);
+    return <div>Error loading vouchers. Please try again.</div>;
+  }
+}
