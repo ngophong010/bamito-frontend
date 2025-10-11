@@ -25,3 +25,48 @@
   margin: 0 -16px;
   border-radius: 20px;
 }
+
+.banner-container {
+  width: 100%;
+  height: 500px; // Example height, adjust as needed
+  position: relative;
+
+  .slick-slider, .slick-list, .slick-track {
+    height: 100%;
+  }
+
+  .banner-item {
+    position: relative;
+    width: 100%;
+    height: 500px; // Must match the container height
+
+    .banner-item-img {
+      object-fit: cover; // Ensures the image covers the container without distortion
+    }
+  }
+
+  // Styles for the custom arrows
+  .slick-arrow {
+    display: flex !important; // Override default display
+    align-items: center;
+    justify-content: center;
+    background: white;
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    &.slick-next { right: 25px; }
+    &.slick-prev { left: 25px; }
+
+    &:before {
+      content: '' !important; // Hide the default arrow character
+    }
+
+    svg {
+      font-size: 1.8rem;
+      color: #333;
+    }
+  }
+}

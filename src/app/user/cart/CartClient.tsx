@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { updateCartItemQuantity, removeCartItem } from '@/redux-toolkit/cartSlice';
 import { createOrder } from '@/redux-toolkit/orderSlice'; // A new order thunk
 import { createVnPayUrl } from '@/services/paymentService';
+import Paypal from '@/components/Paypal/Paypal';
+import VoucherSelector from '@/components/VoucherSelector/VoucherSelector';
 
 import { CartData, UserProfile, Voucher, ProfileResponse } from '@/types';
 // ... import UI components
@@ -20,7 +22,7 @@ interface CartClientProps {
 const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: CartClientProps) => {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    
+
     // --- UI STATE MANAGEMENT ---
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
@@ -29,10 +31,12 @@ const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: Car
     const { products, totalCount, status: cartStatus } = useAppSelector(state => state.cart);
     const { profile } = useAppSelector(state => state.user);
 
+    const [isSelectingVoucher, setIsSelectingVoucher] = useState(false);
+
     // --- DERIVED DATA (Calculations) ---
-    const subtotal = useMemo(() => 
+    const subtotal = useMemo(() =>
         products.reduce((acc, item) => acc + item.totalPrice, 0),
-    [products]);
+        [products]);
     const shippingFee = 30000;
     const voucherDiscount = selectedVoucher?.voucherPrice || 0;
     const finalTotal = subtotal + shippingFee - voucherDiscount;
@@ -60,7 +64,7 @@ const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: Car
             voucherId: selectedVoucher?.id,
             cartItems: products.map(p => ({ productId: p.id, sizeId: p.size.id, quantity: p.quantity })),
         };
-        
+
         if (paymentMethod === 'COD' || paymentMethod === 'PAYPAL') {
             // Dispatch a single thunk to handle order creation
             dispatch(createOrder({ data: orderData, router }));
@@ -72,6 +76,27 @@ const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: Car
                 toast.error(error.message || "Tạo thanh toán VNPAY thất bại.");
             }
         }
+    };
+
+    const handleVoucherSelect = (voucher: Voucher) => {
+        setSelectedVoucher(voucher);
+        setIsSelectingVoucher(false); // Close the voucher view after selection
+    };
+
+    // This is the main render logic
+    if (isSelectingVoucher) {
+        return (
+            <VoucherSelector
+                vouchers={activeVouchers}
+                onVoucherSelect={handleVoucherSelect}
+                onBack={() => setIsSelectingVoucher(false)}
+            />
+        );
+    }
+
+    const handlePaypalSuccess = (details: any) => {
+        console.log("Payment successful!", details);
+        toast.success(`Payment by ${details.payer.name.given_name} completed.`);
     };
 
     return (
@@ -97,6 +122,16 @@ const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: Car
                     ))}
                 </div>
                 <div className="cart-order">
+                    <div className="payment">
+                        {paymentMethod === "PAYPAL" && (
+                            <Paypal
+                                // Pass amount as a string with two decimal places
+                                amount={finalTotal.toFixed(2)}
+                                currency="USD" // PayPal requires specific currency codes
+                                onPaymentSuccess={handlePaypalSuccess}
+                            />
+                        )}
+                    </div>
                     {/* ... render user info from 'profile' from Redux store ... */}
                     {/* ... render payment summary using 'subtotal', 'shippingFee', 'voucherDiscount', 'finalTotal' ... */}
                     {/* ... render payment method radio buttons that set 'paymentMethod' ... */}
