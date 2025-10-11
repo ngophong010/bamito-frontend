@@ -80,6 +80,22 @@ export async function generateMetadata(
  * This is the layout component for a single product page.
  */
 export default function ProductDetailLayout({ children }: LayoutProps) {
-  // The layout itself can be simple, just rendering the page content.
-  return <>{children}</>;
+  const breadcrumbItems: BreadcrumbItem[] = [
+    {
+      label: product.category.name,
+      href: `/${createSlug(product.category.name)}-${product.category.id}`,
+    },
+    {
+      label: product.name,
+      href: `/${createSlug(product.category.name)}/${createSlug(product.name)}-${product.productId}`,
+    },
+  ];
+
+  return (
+    <div>
+      {/* The dumb component just receives the prepared data */}
+      <Breadcrumb items={breadcrumbItems} />
+      <ProductDetailClient product={product} />
+    </div>
+  );
 }

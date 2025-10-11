@@ -14,10 +14,12 @@ import { ProfileResponse, UserProfileUpdateData } from '@/types';
 import { useAppDispatch } from '@/redux-toolkit/hooks';
 import { updateAvatar } from '@/redux-toolkit/userSlice';
 import ModalChangePassword from '@/components/ModalChangePassword/ModalChangePassword';
+import { changePassword } from '@/services/profileService'; // Or authService
+import { ChangePasswordData } from '@/types';
 import "./page.scss";
 
 interface ProfileClientProps {
-  initialProfileData: ProfileResponse;
+    initialProfileData: ProfileResponse;
 }
 
 // Define the shape of our form data
@@ -29,10 +31,10 @@ type FormInputs = Omit<UserProfileUpdateData, 'birthday'> & {
 const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    
+
     const [isLoading, setIsLoading] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-    
+
     const {
         control,
         handleSubmit,
@@ -68,7 +70,7 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
             });
 
             const updatedProfile = await updateProfile(formData);
-            
+
             // Update the global avatar in the Redux store if it changed
             if (updatedProfile.avatar) {
                 dispatch(updateAvatar(updatedProfile.avatar));
@@ -80,6 +82,20 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
             toast.error(error.message || "Cập nhật hồ sơ thất bại.");
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    // The parent component defines WHAT happens on submit
+    const handleChangePassword = async (data: ChangePasswordData) => {
+        try {
+            // The service call is now clean and doesn't need a userId
+            await changePassword(data);
+            toast.success("Thay đổi mật khẩu thành công!");
+            setIsPasswordModalOpen(false); // Close the modal on success
+        } catch (error: any) {
+            toast.error(error.message || "Thay đổi mật khẩu thất bại.");
+            // Re-throw the error to let the form know the submission failed
+            throw error;
         }
     };
 
@@ -106,6 +122,12 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
                             {isLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
                         </button>
                     </div>
+
+                    <ModalChangePassword
+                        open={isPasswordModalOpen}
+                        onClose={() => setIsPasswordModalOpen(false)}
+                        onSubmit={handleChangePassword}
+                    />
 
                     <div className="user-info-container">
                         {/* Form fields using Controller */}

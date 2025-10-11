@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Link from "next/link";
 import Image from "next/image";
 
-import RevenueChart from "@/components/Admin/Dashboard/RevenueChart"; // The chart is a client component
+import RevenueChart from "@/components/Chart/Chart";// The chart is a client component
 import { StatisticsResponse } from '@/types';
 import "./page.scss";
 
@@ -31,7 +31,7 @@ const mapOrderStatusData = (statusData: any[]) => {
 
 const DashboardClient = ({ statistics, chartData }: DashboardClientProps) => {
     const allOrderStatus = mapOrderStatusData(statistics.allTotalOrder);
-    const xLabels = Array.from({ length: 12 }, (_, i) => i + 1);
+    const xLabels = Array.from({ length: 12 }, (_, i) => `Tháng ${i + 1}`);
 
     return (
         <div className="admin-overview">
@@ -54,8 +54,11 @@ const DashboardClient = ({ statistics, chartData }: DashboardClientProps) => {
                 {/* ... other statistic items ... */}
             </div>
 
-            {/* --- REVENUE CHART (CLIENT COMPONENT) --- */}
-            <RevenueChart chartData={chartData} xLabels={xLabels} />
+            <div className="chart-container">
+                <h1 className="text">THỐNG KÊ DOANH THU</h1>
+                {/* Use the new, typed component */}
+                <RevenueChart chartData={chartData} xLabels={xLabels} />
+            </div>
 
             {/* --- ORDER STATUS SUMMARY --- */}
             <div className="order-status-container">

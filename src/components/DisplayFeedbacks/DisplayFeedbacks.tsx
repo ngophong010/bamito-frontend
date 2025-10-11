@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { useAppSelector } from "@/redux-toolkit/hooks";
 import { Feedback, FeedbackUpdateData } from "@/types";
 import { deleteFeedback, updateFeedback } from "@/services/feedbackService";
-import EditFeedbackModal from "@/components/EditFeedbackModal/EditFeedbackModal";
+import FeedbackModal, { FeedbackFormData } from '@/components/FeedbackModal/FeedbackModal';
 import "./DisplayFeedbacks.scss";
 
 const formatDate = (date: string) => dayjs(date).format("DD/MM/YYYY HH:mm:ss");
@@ -37,7 +37,6 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedFeedback(null);
   };
 
   // --- ACTION HANDLERS ---
@@ -54,10 +53,10 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
     }
   };
 
-  const handleUpdate = async (data: FeedbackUpdateData) => {
+  const handleUpdate = async (formData: FeedbackFormData) => {
     if (!selectedFeedback) return;
     try {
-      await updateFeedback(selectedFeedback.id, data);
+      await updateFeedback(selectedFeedback.id, formData);
       toast.success("Cập nhật đánh giá thành công!");
       handleCloseModal();
       router.refresh(); // Re-fetch data
@@ -113,7 +112,11 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             onSubmit={handleUpdate}
-            initialData={selectedFeedback}
+            productName={selectedFeedback.product.name} // Assuming product is included
+                    initialData={{ // Pass initial data to pre-fill the form
+                        rating: selectedFeedback.rating,
+                        description: selectedFeedback.description || ''
+                    }}
         />
       )}
     </div>

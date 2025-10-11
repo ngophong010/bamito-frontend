@@ -24,6 +24,19 @@ const FeedbackClient = ({ initialProducts }: { initialProducts: UnreviewedProduc
     setIsModalOpen(false);
   };
 
+  const handleCreate = async (formData: FeedbackFormData) => {
+        if (!selectedProduct) return;
+        
+        await createFeedback(selectedProduct.id, {
+            orderId: selectedProduct.orderId,
+            sizeId: selectedProduct.size.id,
+            ...formData,
+        });
+        toast.success("Gửi đánh giá thành công!");
+        handleCloseModal();
+        router.refresh();
+    };
+
   // --- ACTION HANDLER for submitting feedback ---
   // This function can be passed to the RatingForm modal
   const handleFeedbackSubmit = async (formData: RatingFormData) => {
@@ -74,6 +87,19 @@ const FeedbackClient = ({ initialProducts }: { initialProducts: UnreviewedProduc
           <h1>Bạn không có sản phẩm nào để đánh giá.</h1>
         </div>
       )}
+
+      <div>
+            {/* ... list of unreviewed products ... */}
+            {selectedProduct && (
+                <FeedbackModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onSubmit={handleCreate}
+                    productName={selectedProduct.name}
+                    // NO initialData is passed, so it's in CREATE mode
+                />
+            )}
+        </div>
 
       {/* The Modal is now controlled by this component's state */}
       {selectedProduct && (

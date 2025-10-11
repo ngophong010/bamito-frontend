@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 
+import ConfirmationModal from '@/components/Modal/ConfirmationModal';
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
 import { deleteBrand } from '@/services/brandService';
@@ -13,8 +14,22 @@ interface BrandClientProps {
     initialBrandData: PaginatedApiResponse<Brand>;
 }
 
-const BrandClient = ({ initialBrandData }: BrandClientProps) => {
+const BrandClient = ({ initialBrandData }: { initialBrandData: PaginatedApiResponse<Brand> }) => {
     const router = useRouter();
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const openDeleteModal = (brand: Brand) => {
+        setSelectedBrand(brand);
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setSelectedBrand(null);
+        setIsDeleteModalOpen(false);
+    };
 
     const handleDelete = async (brand: Brand) => {
         if (window.confirm(`Are you sure you want to delete brand "${brand.name}"?`)) {
@@ -25,6 +40,22 @@ const BrandClient = ({ initialBrandData }: BrandClientProps) => {
             } catch (error: any) {
                 toast.error(error.message || "Failed to delete brand.");
             }
+        }
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!selectedBrand) return;
+
+        setIsLoading(true);
+        try {
+            await deleteBrand(selectedBrand.id);
+            toast.success(`Brand "${selectedBrand.name}" has been deleted.`);
+            closeDeleteModal();
+            router.refresh();
+        } catch (error: any) {
+            toast.error(error.message || "Failed to delete brand.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -46,6 +77,18 @@ const BrandClient = ({ initialBrandData }: BrandClientProps) => {
                 onEdit={(brand) => router.push(`/admin/brands/${brand.id}`)}
                 onDelete={handleDelete}
             />
+
+            {selectedBrand && (
+                <ConfirmationModal
+                    isOpen={isDeleteModalOpen}
+                    onClose={closeDeleteModal}
+                    onConfirm={handleDeleteConfirm}
+                    title="Xác nhận Xóa"
+                    message={`Bạn có chắc chắn muốn xóa thương hiệu "${selectedBrand.name}" không? Hành động này không thể hoàn tác.`}
+                    confirmText="Delete"
+                    isLoading={isLoading}
+                />
+            )}
             
             <PaginatedItems
                 currentPage={initialBrandData.currentPage}
