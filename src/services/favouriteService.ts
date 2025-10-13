@@ -1,4 +1,4 @@
-import axios from "../axios";
+import axios from 'axios';
 import apiClient from './apiClient';
 import type { ServiceResponse} from "@/types/common";
 

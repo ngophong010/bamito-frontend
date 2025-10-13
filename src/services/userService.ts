@@ -1,4 +1,4 @@
-import apiClient from '../axios';
+import apiClient from 'axios';
 import { UserRepository } from '@/repositories/UserRepository';
 import { User } from '@/types/user';
 import { PaginatedApiResponse } from '@/types/common';

@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import axios from "../axios";
+import axios from 'axios';
 import type { ServiceResponse } from "@/types/common";
 import { AuthCredentials, LoginResponse, UserProfile, RegisterResponse, SuccessApiResponse } from '../types';
 import { ResetPasswordData } from '@/types';

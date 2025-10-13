@@ -18,6 +18,7 @@ export type {
   VerifyTwoFactorDTO,
   UpdateProfileDTO,
   ChangePasswordDTO,
+  ResendOtpDTO
 } from "./_base.dto";
 
 // Composite session payload used by authService and authRepository

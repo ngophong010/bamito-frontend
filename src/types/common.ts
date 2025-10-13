@@ -12,7 +12,7 @@ export interface BaseEntity {
  * Defines the strict, consistent "contract" for ALL responses
  * coming from our backend API.
  */
-export interface ServiceResponse {
+export interface ServiceResponse<T = unknown> {
   /**
    * A machine-readable code indicating the outcome.
    * 0 = Success.
@@ -32,7 +32,7 @@ export interface ServiceResponse {
    * The type is 'any' here, but we can cast it to a more specific
    * type in our Redux slices (e.g., `res.data as CartData`).
    */
-  data?: any;
+  data?: T;
 }
 
 /**

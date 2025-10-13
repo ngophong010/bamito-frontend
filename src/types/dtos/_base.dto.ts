@@ -110,9 +110,9 @@ export type UpdateDeliveryAddressDTO = Partial<AddressDTO>;
 
 // Authentication / Authorization
 export interface LoginDTO {
-  emailOrUsername: string;
+  identifier: string; // it can be email Or Username
   password: string;
-  remember?: boolean;
+  rememberMe?: boolean;
 }
 
 export interface RegisterDTO {
@@ -135,7 +135,11 @@ export interface AuthTokensDTO {
 
 export interface VerifyEmailDTO { token: string }
 export interface ForgotPasswordDTO { email: string }
-export interface ResetPasswordDTO { token: string; newPassword: string }
+export interface ResetPasswordDTO { 
+  token: string; 
+  otpCode?: string;
+  newPassword: string 
+}
 export interface ChangeEmailDTO { password: string; newEmail: string }
 
 export interface BeginTwoFactorDTO { method: 'totp' | 'sms' | 'email' }
@@ -152,6 +156,14 @@ export interface UpdateProfileDTO {
 export interface ChangePasswordDTO {
   oldPassword: string;
   newPassword: string;
+  confirmPassword?: string;
+}
+
+export interface ResendOtpDTO {
+  identifier: string; // could be email, phone, or usernaem
+  purpose: 'verify_email' | '2fa' | 'reset_password';
+  method?: 'email' | 'sms';
+
 }
 
 // Favourites / Wishlist
