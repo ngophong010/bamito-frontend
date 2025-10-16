@@ -1,8 +1,18 @@
-export interface Size {
-  id: number;
-  sizeId: string;
-  name: string;
-  categoryId: string;
+import { BaseFilterParams, BulkOperationDTO } from './dtos/_base.dto';
+
+export interface Size extends BaseDTO {
+    name: string;
+    description?: string;
+    categoryId: number;
+    order: number;
+    isActive: boolean;
+    productCount?: number;
+    measurements?: {
+        width?: number;
+        height?: number;
+        length?: number;
+        unit: 'cm' | 'inch';
+    };
 }
 
 export interface CreateSizeDTO {

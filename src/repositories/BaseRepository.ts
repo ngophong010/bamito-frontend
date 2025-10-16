@@ -1,40 +1,74 @@
 import { AxiosInstance } from 'axios';
 import { IBaseRepository } from './interfaces/IBaseRepository';
-import { PaginatedApiResponse as PaginatedResponse } from '@/types/common';
+import { PaginatedApiResponse} from '@/types/common';
+import { handleAxiosError } from './errors/RepositoryError';
 
-export abstract class BaseRepository<T, CreateDTO = any, UpdateDTO = any, CreateResponse = T, UpdateResponse = T> 
-    implements IBaseRepository<T, CreateDTO, UpdateDTO, CreateResponse, UpdateResponse> {
+export abstract class BaseRepository<
+T, 
+CreateDTO = any, 
+UpdateDTO = any, 
+CreateResponse = T, 
+UpdateResponse = T
+> implements IBaseRepository<T, CreateDTO, UpdateDTO, CreateResponse, UpdateResponse> {
     constructor(
         protected readonly apiClient: AxiosInstance,
-        protected readonly endpoint: string
+        protected readonly basePath: string
     ) {}
 
-    async getAll(params?: Record<string, any>): Promise<PaginatedResponse<T>> {
-        const response = await this.apiClient.get<PaginatedResponse<T>>(this.endpoint, { params });
-        return response.data;
+    async getAll(params?: Record<string, any>): Promise<PaginatedApiResponse<T>> {
+        try {
+            const response = await this.apiClient.get<{data: PaginatedApiResponse<T>}>(
+                this.basePath, 
+                { params }
+            );
+        return response.data.data;
+    } catch (error) {
+        throw handleAxiosError(error);
+    }
     }
 
     async getById(id: string | number): Promise<T> {
-        const response = await this.apiClient.get<T>(`${this.endpoint}/${id}`);
-        return response.data;
+        try {
+            const response = await this.apiClient.get<{ data: T }>(`${this.basePath}/${id}`);
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
     }
 
     async create(data: CreateDTO): Promise<CreateResponse> {
-        const response = await this.apiClient.post<CreateResponse>(this.endpoint, data);
-        return response.data;
+        try {
+            const response = await this.apiClient.post<{ data: CreateResponse }>(
+                this.basePath,
+                data
+            );
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
     }
 
     async update(id: string | number, data: UpdateDTO): Promise<UpdateResponse> {
-        const response = await this.apiClient.put<UpdateResponse>(`${this.endpoint}/${id}`, data);
-        return response.data;
+        try {
+            const response = await this.apiClient.put<{ data: UpdateResponse }>(
+                `${this.basePath}/${id}`,
+                data
+            );
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
     }
 
     async delete(id: string | number): Promise<void> {
-        await this.apiClient.delete(`${this.endpoint}/${id}`);
+        try {
+            await this.apiClient.delete(`${this.basePath}/${id}`);
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
     }
 
     protected handleError(error: any): never {
-        // We'll implement this in the error handling step
-        throw error;
+        throw new Error('Validation failed: ' + error.message);
     }
 }

@@ -1,66 +1,57 @@
 import apiClient from './apiClient';
+import { InventoryRepository } from '@/repositories/InventoryRepository';
+import { Inventory, InventoryCreateData, InventoryUpdateData } from '@/types/inventory';
+import { PaginatedApiResponse } from '@/types/common';
 
-// ===============================================================
-// --- INTERFACES & TYPES ---
-// ===============================================================
+class InventoryService {
+    private readonly repository: InventoryRepository;
 
-export interface Inventory {
-  id: number;
-  quantity: number;
-  sold: number;
-  size: { sizeId: string; name: string; };
+    constructor() {
+        this.repository = new InventoryRepository(apiClient);
+    }
+
+    /**
+     * Fetches all inventory entries for a specific product.
+     */
+    async getProductInventory(productId: number): Promise<PaginatedApiResponse<Inventory>> {
+        return this.repository.getProductInventory(productId);
+    }
+
+    /**
+     * Creates a new inventory entry for a product.
+     */
+    async createInventoryEntry(productId: number, data: InventoryCreateData): Promise<Inventory> {
+        return this.repository.createInventoryEntry(productId, data);
+    }
+
+    /**
+     * Updates a specific inventory entry.
+     */
+    async updateInventoryEntry(id: number, data: InventoryUpdateData): Promise<Inventory> {
+        return this.repository.updateInventoryEntry(id, data);
+    }
+
+    /**
+     * Deletes a specific inventory entry.
+     */
+    async deleteInventoryEntry(id: number): Promise<void> {
+        return this.repository.delete(id);
+    }
+
+    /**
+     * Updates multiple inventory entries at once.
+     */
+    async bulkUpdateInventory(updates: { id: number; quantity: number }[]): Promise<void> {
+        return this.repository.bulkUpdateInventory(updates);
+    }
+
+    /**
+     * Gets inventory items with stock below the specified threshold.
+     */
+    async getLowStockInventory(threshold: number = 10): Promise<Inventory[]> {
+        return this.repository.getLowStockInventory(threshold);
+    }
 }
 
-interface InventoryApiResponse {
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-  inventory: Inventory[];
-}
-
-export interface InventoryCreateData {
-    sizeId: number;
-    quantity: number;
-}
-
-export type InventoryUpdateData = Partial<Pick<InventoryCreateData, 'quantity'>>;
-
-// ===============================================================
-// --- SERVICE FUNCTIONS ---
-// ===============================================================
-
-/**
- * Fetches all inventory entries for a specific product.
- * Maps to: GET /api/v1/products/:productId/inventory
- * @param productId - The numeric primary key of the product.
- */
-export const getInventoryForProduct = async (productId: number): Promise<InventoryApiResponse> => {
-  const response = await apiClient.get(`/products/${productId}/inventory`);
-  return response.data.data;
-};
-
-/**
- * [ADMIN] Creates a new inventory entry for a product.
- * Maps to: POST /api/v1/products/:productId/inventory
- */
-export const createInventoryEntry = async (productId: number, data: InventoryCreateData): Promise<Inventory> => {
-  const response = await apiClient.post(`/products/${productId}/inventory`, data);
-  return response.data.data;
-};
-
-/**
- * [ADMIN] Updates a specific inventory entry by its own ID.
- * Maps to: PUT /api/v1/inventory/:id
- */
-export const updateInventoryEntry = async (id: number, data: InventoryUpdateData): Promise<Inventory> => {
-  const response = await apiClient.put(`/inventory/${id}`, data);
-  return response.data.data;
-};
-
-/**
- * [ADMIN] Deletes a specific inventory entry by its own ID.
- * Maps to: DELETE /api/v1/inventory/:id
- */
-export const deleteInventoryEntry = async (id: number): Promise<void> => {
-  await apiClient.delete(`/inventory/${id}`);
-};
+// Export a singleton instance
+export const inventoryService = new InventoryService();

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 // 1. Import the correct, refactored service function
-import { subscribeEmail } from '@/services/subscriberService';
+import { subscriberService } from '@/services/subscriberService';
 
 const SubscribeForm = () => {
     const [email, setEmail] = useState('');
@@ -18,8 +18,7 @@ const SubscribeForm = () => {
 
         setIsLoading(true);
         try {
-            // 2. The component now calls a clean, dedicated service function.
-            await subscribeEmail(email);
+            await subscriberService.subscribeEmail(email);
             toast.success("Cảm ơn bạn đã đăng ký nhận tin!");
             setEmail("");
         } catch (error: any) {

@@ -1,13 +1,19 @@
 import { AxiosInstance } from 'axios';
+import { BaseRepository } from './BaseRepository';
 import { Size, PaginatedApiResponse } from '@/types';
 import { ISizeRepository } from './interfaces/ISizeRepository';
 import { SizeFilterParams, CreateSizeDTO, UpdateSizeDTO } from '@/types/dtos/size.dto';
 import { handleAxiosError } from './errors/RepositoryError';
 
-export class SizeRepository implements ISizeRepository {
+export class SizeRepository
+    extends BaseRepository<Size, CreateSizeDTO, UpdateSizeDTO>
+    implements ISizeRepository {
+
     private readonly basePath = '/sizes';
 
-    constructor(private readonly apiClient: AxiosInstance) {}
+    constructor(private readonly apiClient: AxiosInstance) {
+        super(apiClient, '/sizes');
+    }
 
     /**
      * Get all sizes with optional params (page, limit, search, etc.)
@@ -105,5 +111,21 @@ export class SizeRepository implements ISizeRepository {
         } catch (error) {
             throw handleAxiosError(error);
         }
+    }
+
+    async toggleStatus(id: number, isActive: boolean): Promise<Size> {
+        try {
+            const response = await this.apiClient.patch<{ data: Size }>(`${this.basePath}/${id}/toggle-status`, { isActive });
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
+    }
+
+    protected handleError(error: any): never {
+        if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
+        throw error;
     }
 }

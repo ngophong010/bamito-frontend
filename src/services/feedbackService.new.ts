@@ -1,6 +1,14 @@
 import apiClient from './apiClient';
 import { FeedbackRepository } from '@/repositories/FeedbackRepository';
-import { Feedback, FeedbackCreateData } from '@/types/feedback';
+import { Feedback } from '@/types/feedback';
+
+// Types
+interface FeedbackCreateData {
+    orderId: number;
+    sizeId: number;
+    rating: number;
+    description?: string;
+}
 
 type FeedbackUpdateData = Partial<Pick<FeedbackCreateData, 'rating' | 'description'>>;
 

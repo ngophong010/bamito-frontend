@@ -20,4 +20,9 @@ export interface ISizeRepository extends IBaseRepository<Size, CreateSizeDTO, Up
      * Get a single size by numeric ID
      */
     getById(id: number): Promise<Size>;
+
+    /**
+     * Toggle size active status
+     */
+    toggleStatus(id: number, isActive: boolean): Promise<Size>;
 }

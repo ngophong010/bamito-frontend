@@ -22,7 +22,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      * Get all vouchers with filtering and pagination
      */
     async getVouchers(params?: VoucherFilterParams): Promise<PaginatedApiResponse<Voucher>> {
-        const response = await this.apiClient.get<PaginatedApiResponse<Voucher>>(this.endpoint, { params });
+        const response = await this.apiClient.get<PaginatedApiResponse<Voucher>>(this.basePath, { params });
         return response.data;
     }
 
@@ -30,7 +30,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      * Get voucher statistics
      */
     async getVoucherStats(): Promise<VoucherStatsDTO> {
-        const response = await this.apiClient.get<VoucherStatsDTO>(`${this.endpoint}/stats`);
+        const response = await this.apiClient.get<VoucherStatsDTO>(`${this.basePath}/stats`);
         return response.data;
     }
 
@@ -38,7 +38,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      * Get vouchers with usage details
      */
     async getVouchersWithUsage(params?: VoucherFilterParams): Promise<VoucherListResponseDTO> {
-        const response = await this.apiClient.get<VoucherListResponseDTO>(`${this.endpoint}/with-usage`, {
+        const response = await this.apiClient.get<VoucherListResponseDTO>(`${this.basePath}/with-usage`, {
             params
         });
         return response.data;
@@ -49,7 +49,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      */
     async validateVoucher(data: ValidateVoucherDTO): Promise<VoucherValidationDTO> {
         const response = await this.apiClient.post<VoucherValidationDTO>(
-            `${this.endpoint}/validate`,
+            `${this.basePath}/validate`,
             data
         );
         return response.data;
@@ -59,7 +59,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      * Get a voucher by its code
      */
     async getVoucherByCode(code: string): Promise<Voucher> {
-        const response = await this.apiClient.get<Voucher>(`${this.endpoint}/code/${code}`);
+        const response = await this.apiClient.get<Voucher>(`${this.basePath}/code/${code}`);
         return response.data;
     }
 
@@ -68,7 +68,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      */
     async toggleVoucherStatus(voucherId: number, isActive: boolean): Promise<Voucher> {
         const response = await this.apiClient.patch<Voucher>(
-            `${this.endpoint}/${voucherId}/toggle-status`,
+            `${this.basePath}/${voucherId}/toggle-status`,
             { isActive }
         );
         return response.data;
@@ -79,7 +79,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      */
     async getActiveVouchersForProduct(productId: number): Promise<Voucher[]> {
         const response = await this.apiClient.get<Voucher[]>(
-            `${this.endpoint}/product/${productId}`
+            `${this.basePath}/product/${productId}`
         );
         return response.data;
     }
@@ -89,7 +89,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      */
     async getActiveVouchersForCategory(categoryId: number): Promise<Voucher[]> {
         const response = await this.apiClient.get<Voucher[]>(
-            `${this.endpoint}/category/${categoryId}`
+            `${this.basePath}/category/${categoryId}`
         );
         return response.data;
     }
@@ -98,7 +98,7 @@ export class VoucherRepository extends BaseRepository<Voucher> implements IVouch
      * Mark voucher as used
      */
     async markVoucherUsed(voucherId: number, orderId: number): Promise<void> {
-        await this.apiClient.post(`${this.endpoint}/${voucherId}/use`, { orderId });
+        await this.apiClient.post(`${this.basePath}/${voucherId}/use`, { orderId });
     }
 
     // Implement inherited methods from BaseRepository
