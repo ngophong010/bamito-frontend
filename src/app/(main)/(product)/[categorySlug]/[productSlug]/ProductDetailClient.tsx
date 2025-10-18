@@ -12,7 +12,7 @@ import { ProductDetails, Inventory } from "@/types";
 import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
 import { addItemToCart } from "@/redux-toolkit/cartSlice";
 import DisplayFeedbacks from "@/components/DisplayFeedbacks/DisplayFeedbacks";
-import "./page.scss";
+import "./page.module.scss";
 
 // Reusable currency formatter
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });

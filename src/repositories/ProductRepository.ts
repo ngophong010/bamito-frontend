@@ -19,7 +19,7 @@ export class ProductRepository extends BaseRepository<ProductListItem, FormData,
         name?: string;
     }): Promise<PaginatedApiResponse<ProductListItem>> {
         const response = await this.apiClient.get<SuccessApiResponse<PaginatedApiResponse<ProductListItem>>>(
-            this.endpoint,
+            this.basePath,
             { params }
         );
         return response.data.data;
@@ -30,7 +30,7 @@ export class ProductRepository extends BaseRepository<ProductListItem, FormData,
      */
     async getProductDetails(productId: string): Promise<ProductDetails> {
         const response = await this.apiClient.get<SuccessApiResponse<ProductDetails>>(
-            `${this.endpoint}/${productId}`
+            `${this.basePath}/${productId}`
         );
         return response.data.data;
     }
@@ -63,7 +63,7 @@ export class ProductRepository extends BaseRepository<ProductListItem, FormData,
         sort?: string;
     }): Promise<PaginatedApiResponse<ProductListItem>> {
         const response = await this.apiClient.get<SuccessApiResponse<PaginatedApiResponse<ProductListItem>>>(
-            `${this.endpoint}/on-sale`,
+            `${this.basePath}/on-sale`,
             { params }
         );
         return response.data.data;
@@ -75,7 +75,7 @@ export class ProductRepository extends BaseRepository<ProductListItem, FormData,
     async create(data: FormData): Promise<ProductDetails> {
         try {
             const response = await this.apiClient.post<SuccessApiResponse<ProductDetails>>(
-                this.endpoint,
+                this.basePath,
                 data,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -93,7 +93,7 @@ export class ProductRepository extends BaseRepository<ProductListItem, FormData,
     async update(id: number, data: FormData): Promise<ProductDetails> {
         try {
             const response = await this.apiClient.put<SuccessApiResponse<ProductDetails>>(
-                `${this.endpoint}/${id}`,
+                `${this.basePath}/${id}`,
                 data,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },

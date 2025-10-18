@@ -1,0 +1,28 @@
+.header {
+  @apply flex items-center justify-between px-4 py-2 bg-white shadow-md;
+  
+  &__logo {
+    @apply h-10 w-auto;
+  }
+  
+  &__nav {
+    @apply flex-1 mx-8;
+  }
+  
+  &__actions {
+    @apply flex items-center gap-4;
+  }
+  
+  &__cart-button {
+    @apply relative;
+    
+    &-count {
+      @apply absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 
+             flex items-center justify-center text-xs;
+    }
+  }
+  
+  &__user-menu {
+    @apply relative;
+  }
+}

@@ -11,6 +11,26 @@
  * - Enable consistency for service/repository contracts
  */
 
+export interface BaseDTO {
+  id: number;
+  createAt?: string;
+  updatedAt?: string;
+}
+
+export interface BaseFilterParams {
+    page?: number;
+    limit?: number;
+    sort?: string;
+    sortOrder?: 'asc' | 'desc';
+    search?: string;
+}
+
+export interface BaseStatsDTO {
+    total: number;
+    active: number;
+    inactive: number;
+}
+
 // Sorting
 export type SortOrder = 'asc' | 'desc';
 

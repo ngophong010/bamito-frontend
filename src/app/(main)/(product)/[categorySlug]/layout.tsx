@@ -1,7 +1,9 @@
+"use client";
 import { Metadata } from 'next';
 import { ReactNode } from 'react';
+import { Breadcrumb, BreadcrumbItem } from '@/components/Breadcrumb/Breadcrumb';
 
-import { getProductDetails } from '@/services/productService'; // Assuming '@' is aliased to your src folder
+import { productService } from '@/services/productService'; // Assuming '@' is aliased to your src folder
 
 // A simple utility to strip HTML tags. You could move this to a utils file.
 const stripHtml = (html: string | null): string => {
@@ -35,7 +37,7 @@ export async function generateMetadata(
 
   try {
     // FIX: Fetch the full product details using the correct service function.
-    const product = await getProductDetails(productId);
+    const product = await productService.getProductDetails(productId);
 
     // If the product is found, generate rich, specific metadata.
     const pageTitle = `${product.name} | Bamito`;

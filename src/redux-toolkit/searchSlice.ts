@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 // 1. Import the CORRECT, refactored service function and types
-import { getAllProducts } from '../services/productService';
+import { productService } from '../services/productService';
 import { ProductListItem, PaginatedApiResponse } from '../types';
 
 // 2. Define the state for THIS slice only. We'll only store the server data here.
@@ -33,7 +33,7 @@ export const fetchSearchResults = createAsyncThunk<
   async (params, { rejectWithValue }) => {
     try {
       // The thunk just calls the service and RETURNS the data.
-      const data = await getAllProducts(params);
+      const data = await productService.getAllProducts(params);
       return data;
     } catch (error: any) {
       toast.error('Search failed to load.');

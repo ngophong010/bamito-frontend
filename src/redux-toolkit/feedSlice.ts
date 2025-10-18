@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { LIMIT } from "@/utils"; // Assuming LIMIT is your items per page constant
+import { PAGINATION_LIMIT } from "@/utils"; // Assuming PAGINATION_LIMIT is your items per page constant
 
 // ===============================================================
 // --- TYPES & INTERFACES ---
@@ -73,8 +73,8 @@ export const feedSlice = createSlice({
       state.currentPage = page;
       // Calculate the slice of items for the new page
       state.current_page_items = state.all_items.slice(
-        (page - 1) * LIMIT,
-        page * LIMIT
+        (page - 1) * PAGINATION_LIMIT.FEED,
+        page * PAGINATION_LIMIT.FEED
       );
     },
   },
@@ -90,11 +90,11 @@ export const feedSlice = createSlice({
         // When the fetch is complete, store ALL items
         state.all_items = action.payload;
         // Calculate the total pages
-        state.totalPages = Math.ceil(action.payload.length / LIMIT);
+        state.totalPages = Math.ceil(action.payload.length / PAGINATION_LIMIT.FEED);
         // Set the initial current page to 1
         state.currentPage = 1;
         // And populate the items for the first page
-        state.current_page_items = state.all_items.slice(0, LIMIT);
+        state.current_page_items = state.all_items.slice(0, PAGINATION_LIMIT.FEED);
       })
       .addCase(fetchAllFeed.rejected, (state, action) => {
         state.status = 'failed';

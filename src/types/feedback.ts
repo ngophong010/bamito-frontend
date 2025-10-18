@@ -15,3 +15,8 @@ export interface FeedbackCreateData {
   rating: number;
   description?: string;
 }
+
+export interface FeedbackUpdateData {
+  description?: string;
+  rating?: number;
+}

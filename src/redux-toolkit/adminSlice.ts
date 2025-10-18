@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { logOut } from "./userSlice";
-import { LIMIT } from "@/utils";
+import { PAGINATION_LIMIT } from "@/utils/constants";
 
 // Import the service factory
 import { serviceFactory } from '@/factories';
@@ -137,7 +137,7 @@ export const fetchSubscribers = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.SUBSCRIBER;
       const res = await fetch(
         `/api/email?offset=${(page - 1) * limit}&count=${limit}`,
         {
@@ -151,7 +151,7 @@ export const fetchSubscribers = createAsyncThunk<
       }
 
       const result = await res.json();
-      const totalPages = Math.ceil(result.total_items / LIMIT);
+      const totalPages = Math.ceil(result.total_items / PAGINATION_LIMIT.SUBSCRIBER);
 
       const members = await Promise.all(
         result.members.map(async (member: { email_address: string }) => {
@@ -187,7 +187,7 @@ export const fetchUsers = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.USER;
 
       const response = await userService.getUsers({ page, limit });
 
@@ -223,7 +223,7 @@ export const fetchRoles = createAsyncThunk<
       // NOTE: userService.getAllRole does not exist in the current codebase.
       // To keep the app stable, we deliver an empty roles payload.
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.ROLES;
       dispatch(fetchAllRoleSuccess({
         items: [],
         totalItems: 0,
@@ -253,7 +253,7 @@ export const fetchBrands = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.BRANDS;
 
       const res = await brandService.getBrands({ page, limit });
 
@@ -287,7 +287,7 @@ export const fetchCategories = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.CATEGORIES;
 
       const res = await categoryService.getCategories({ page, limit });
       dispatch(fetchAllCategorySuccess({
@@ -319,7 +319,7 @@ export const fetchSizes = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.SIZES;
 
       const res = await sizeService.getAllSize(
         { page, limit }
@@ -355,7 +355,7 @@ export const fetchProducts = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.PRODUCTS;
 
       const res = await productService.getAllProducts(
         { page, limit }
@@ -390,7 +390,7 @@ export const fetchVouchers = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.VOUCHERS;
 
       const res = await voucherService.getAllVouchers(
         { page, limit }
@@ -426,7 +426,7 @@ export const fetchOrders = createAsyncThunk<
   async (params, { dispatch, rejectWithValue }) => {
     try {
       const page = params.page || 1;
-      const limit = params.limit || LIMIT;
+      const limit = params.limit || PAGINATION_LIMIT.ORDERS;
 
       const res = await orderService.getAllOrders(
         { page, limit } as any

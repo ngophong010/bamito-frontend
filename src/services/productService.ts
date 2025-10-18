@@ -81,10 +81,6 @@ class ProductService {
     async deleteProduct(id: number): Promise<void> {
         return this.repository.delete(id);
     }
-
-    async getAllProductsList(): Promise<>{
-        return this.repository.getAllProductsList();
-    }
 }
 
 // Export a singleton instance
