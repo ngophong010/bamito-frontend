@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'; // A component to generate breadcrumbs
 import ProductFilterSidebar from '@/components/ProductFilterSidebar/ProductFilterSidebar'; // A shared sidebar

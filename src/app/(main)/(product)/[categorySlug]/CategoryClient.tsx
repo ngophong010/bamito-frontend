@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 // ... import all your UI components (Grid, Slider, Link, etc.)
 import { ProductListItem, Brand, PaginatedApiResponse } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
-import { addFavourite, removeFavourite } from "@/services/favouriteService";
+import { favouriteService } from "@/services/favouriteService";
 import { useAppDispatch, useAppSelector } from '@/redux-toolkit/hooks';
 
 interface CategoryClientProps {
@@ -92,9 +92,9 @@ export default function CategoryClient({ initialProductData, allBrands, category
         // Dispatch async actions directly from the service.
         try {
             if (isFavourited) {
-                await removeFavourite(productId);
+                await favouriteService.removeFavourite(productId);
             } else {
-                await addFavourite(productId);
+                await favouriteService.addFavourite(productId);
             }
             // On success, update the Redux state for favourites
             // A better way would be a dedicated `fetchFavourites` thunk

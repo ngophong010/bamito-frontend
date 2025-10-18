@@ -4,6 +4,7 @@ import { ProductFilterOptions } from '../repositories/interfaces/IProductReposit
 
 import { ProductListItem, ProductDetails } from '@/types/product';
 import { PaginatedApiResponse } from '@/types/common';
+import { Category } from '@/types/category';
 
 class ProductService {
     private repository: ProductRepository;
@@ -80,6 +81,18 @@ class ProductService {
      */
     async deleteProduct(id: number): Promise<void> {
         return this.repository.delete(id);
+    }
+
+    /**
+     * Get category details by ID
+     * @param categoryId - The category's ID
+     */
+    async getCategory(categoryId: string): Promise<Category> {
+        const response = await apiClient.get(`/categories/${categoryId}`);
+        if (response.data.errCode === 0) {
+            return response.data.data;
+        }
+        throw new Error(response.data.message || 'Failed to fetch category');
     }
 }
 

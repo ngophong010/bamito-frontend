@@ -74,7 +74,7 @@ const ProductDetailClient = ({ product }: ProductDetailClientProps) => {
     // NO userId is passed. The service and backend handle it.
     dispatch(addItemToCart({
       productId: product.id,
-      sizeId: selectedSizeId,
+      size: selectedSizeId,
       quantity,
     })).unwrap() // .unwrap() allows us to use .then() and .catch() on the thunk
       .then(() => {

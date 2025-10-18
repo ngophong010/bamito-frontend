@@ -1,103 +1,80 @@
 "use client";
-import { Metadata } from 'next';
+
 import { ReactNode } from 'react';
 import { Breadcrumb, BreadcrumbItem } from '@/components/Breadcrumb/Breadcrumb';
+import { createSlug } from '@/utils/slug';
+import { useParams, usePathname } from 'next/navigation';
+import { productService } from '@/services/productService';
+import { useEffect, useState } from 'react';
 
-import { productService } from '@/services/productService'; // Assuming '@' is aliased to your src folder
-
-// A simple utility to strip HTML tags. You could move this to a utils file.
-const stripHtml = (html: string | null): string => {
-  if (!html) return '';
-  return html.replace(/<[^>]*>?/gm, '');
-};
-
-// Define the shape of the props that Next.js passes to this function
-interface ProductLayoutParams {
-  params: {
-    productTypeId: string; // The category slug, e.g., 'vot-cau-long'
-    productId: string;     // The product's public ID, e.g., 'PROD-ABC123'
-  };
-}
-
-// Define the type for the layout's children prop
 interface LayoutProps {
   children: ReactNode;
 }
 
 /**
- * Dynamically generates metadata for a specific product page.
- * This is a Server Component and runs only on the server.
+ * This is the layout component for the product category page.
+ * It provides the breadcrumb navigation for all product-related pages.
  */
-export async function generateMetadata(
-  { params }: ProductLayoutParams
-): Promise<Metadata> {
-  
-  // FIX: Use the 'productId' from the route parameters. This is the source of truth.
-  const { productId } = params;
+export default function ProductLayout({ children }: LayoutProps) {
+  const params = useParams();
+  const pathname = usePathname();
+  const [breadcrumbItems, setBreadcrumbItems] = useState<BreadcrumbItem[]>([]);
 
-  try {
-    // FIX: Fetch the full product details using the correct service function.
-    const product = await productService.getProductDetails(productId);
+  useEffect(() => {
+    const initializeBreadcrumb = async () => {
+      // Get the category slug and product slug from the URL parameters
+      const categorySlug = params?.categorySlug as string;
+      const productSlug = params?.productSlug as string | undefined;
+      
+      if (categorySlug) {
+        try {
+          // Extract category ID from the slug (format: name-id)
+          const categorySlugParts = categorySlug.split('-');
+          const categoryId = categorySlugParts[categorySlugParts.length - 1];
 
-    // If the product is found, generate rich, specific metadata.
-    const pageTitle = `${product.name} | Bamito`;
-    // 1. Convert the HTML description to plain text.
-    const plainTextDescription = stripHtml(product.descriptionHTML);
-    
-    // 2. Use the new 'plainTextDescription' variable to create the final description.
-    const description = plainTextDescription
-      ? plainTextDescription.substring(0, 155).trim() + '...' // Use the clean text
-      : `Buy the ${product.name} at Bamito Shop.`; // Fallback if description is empty
+          if (categoryId) {
+            // Fetch category details
+            const categoryData = await productService.getCategory(categoryId);
+            
+            // Create breadcrumb items
+            const items: BreadcrumbItem[] = [
+              {
+                label: categoryData.name,
+                href: `/${categorySlug}`,
+              }
+            ];
 
-    return {
-      title: pageTitle,
-      description: description,
-      openGraph: {
-        title: pageTitle,
-        description: description,
-        images: [{ url: product.image || "/default-og-image.png" }],
-        type: 'website',
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: pageTitle,
-        description: description,
-        images: [product.image || "/default-og-image.png"],
+            // If we have a product slug, add the product to breadcrumb
+            if (productSlug) {
+              const productSlugParts = String(productSlug).split('-');
+              const productId = productSlugParts[productSlugParts.length - 1];
+              
+              if (productId) {
+                const product = await productService.getProductDetails(productId);
+                items.push({
+                  label: product.name,
+                  href: `/${categorySlug}/${productSlug}`,
+                });
+              }
+            }
+
+            setBreadcrumbItems(items);
+          }
+        } catch (error) {
+          console.error('Failed to fetch category/product details:', error);
+          // You might want to handle this error more gracefully,
+          // e.g., showing a fallback UI or redirecting to an error page
+        }
       }
     };
 
-  } catch (error) {
-    console.error(`Failed to generate metadata for product ${productId}:`, error);
-    
-    // FIX: Provide clear, sensible fallback metadata if the API call fails.
-    // This prevents your page from having an empty <title> tag.
-    return {
-      title: 'Product Not Found | Bamito',
-      description: 'The product you are looking for could not be found.',
-    };
-  }
-}
-
-/**
- * This is the layout component for a single product page.
- */
-export default function ProductDetailLayout({ children }: LayoutProps) {
-  const breadcrumbItems: BreadcrumbItem[] = [
-    {
-      label: product.category.name,
-      href: `/${createSlug(product.category.name)}-${product.category.id}`,
-    },
-    {
-      label: product.name,
-      href: `/${createSlug(product.category.name)}/${createSlug(product.name)}-${product.productId}`,
-    },
-  ];
+    initializeBreadcrumb();
+  }, [params?.categorySlug, params?.productSlug]);
 
   return (
-    <div>
-      {/* The dumb component just receives the prepared data */}
+    <div className="product-layout">
       <Breadcrumb items={breadcrumbItems} />
-      <ProductDetailClient product={product} />
+      {children}
     </div>
   );
 }

@@ -15,7 +15,7 @@ interface BreadcrumbProps {
   items: BreadcrumbItem[];
 }
 
-const Breadcrumb = ({ items }: BreadcrumbProps) => {
+export const Breadcrumb = ({ items }: BreadcrumbProps) => {
   // Add the "Home" link to the beginning of every breadcrumb trail
   const breadcrumbItems: BreadcrumbItem[] = [
     { label: 'Trang chủ', href: '/' },
