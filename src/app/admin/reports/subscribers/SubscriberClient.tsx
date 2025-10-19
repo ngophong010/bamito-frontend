@@ -8,7 +8,7 @@ import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
 import { PaginatedApiResponse, Subscriber } from '@/types';
 // Import the new, clean service functions
-import { deleteSubscriber, sendCampaign, exportSubscribersAsCsv } from '@/services/subscriberService';
+import { subscriberService } from '@/services/subscriberService';
 import './page.scss';
 
 interface SubscriberClientProps {
@@ -24,7 +24,7 @@ const SubscriberClient = ({ initialSubscriberData }: SubscriberClientProps) => {
         if (window.confirm(`Bạn có chắc muốn xóa email "${subscriber.email_address}"?`)) {
             try {
                 setIsLoading(true);
-                await deleteSubscriber(subscriber.email_address);
+                await subscriberService.deleteSubscriber(subscriber.email_address);
                 toast.success("Xóa email thành công!");
                 router.refresh(); // Re-fetch Server Component data
             } catch (error: any) {

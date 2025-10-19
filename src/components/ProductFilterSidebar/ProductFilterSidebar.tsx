@@ -4,8 +4,8 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Slider from '@mui/material/Slider';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Brand } from '@/types';
-import { getAllBrandsList } from '@/services/brandService';
-import './ProductFilterSidebar.scss';
+import { brandService } from '@/services/brandService';
+// import './ProductFilterSidebar.scss';
 // Reusable currency formatter
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 const ProductFilterSidebar = () => {
@@ -38,7 +38,7 @@ const ProductFilterSidebar = () => {
         const fetchBrands = async () => {
             try {
                 setIsLoading(true);
-                const brands = await getAllBrandsList();
+                const brands = await brandService.getAllBrandsList();
                 setAllBrands(brands);
             } catch (error) {
                 console.error("Failed to fetch brands for filter sidebar:", error);

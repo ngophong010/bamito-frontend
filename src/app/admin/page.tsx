@@ -7,7 +7,7 @@ import "./page.scss";
 // Import the new Client Component for the chart
 import RevenueChart from "@/components/Admin/Dashboard/RevenueChart";
 // Import the correct, refactored service function
-import { getStatistics, getSalesReport } from "@/services/orderService";
+import { orderService } from "@/services/orderService";
 import { processChartData, mapOrderStatusData } from '@/utils/adminDashboardUtils';
 // ...
 // The helper functions are no longer defined in this file
@@ -66,8 +66,8 @@ export default async function AdminDashboardPage() {
   try {
     // Fetch the main statistics and the detailed revenue report in parallel
     [statistics, monthlyRevenue] = await Promise.all([
-        getStatistics(),
-        getSalesReport({ 
+        orderService.getStatistics(),
+        orderService.getSalesReport({ 
             timeStart: new Date(new Date().getFullYear(), 0, 1).toISOString(),
             timeEnd: new Date(new Date().getFullYear(), 11, 31).toISOString(),
             // No limit/page to get all data for the year for the chart

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,10 +11,11 @@ import { faSpinner, faCircleXmark, faMagnifyingGlass } from "@fortawesome/free-s
 import { useDebounce } from "@/hooks/useDebounce"; // Assuming a custom debounce hook
 import { AppDispatch, RootState } from "@/redux-toolkit/store";
 import { fetchSearchResults, clearSearchResults } from "@/redux-toolkit/searchSlice";
-import { createSlug } from "@/utils/formatters"; // Assuming a slug utility
-import { searchPopular } from "@/utils/constants"; // Move constants to a dedicated file
+import { createSlug } from "@/utils/slug"; // Assuming a slug utility
 import { ProductListItem } from "@/types";
 import "./Search.scss";
+import { getPopularSearches } from "@/services/searchService";
+import { set } from "react-hook-form";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
@@ -31,6 +32,20 @@ interface SearchResultsDropdownProps {
 const SearchResultsDropdown = ({ searchResults, isLoading, searchText, onClose }: SearchResultsDropdownProps) => {
   const router = useRouter();
 
+  const [popularSearches, setPopularSearches] = useState<string[]>([]);
+  const [isFetchingPopular, setIsFetchingPopular] = useState(true);
+
+  useEffect(() => {
+    const fetchPopular = async () => {
+      setIsFetchingPopular(true);
+      const terms = await getPopularSearches();
+      setPopularSearches(terms);
+      setIsFetchingPopular(false);
+    };
+    
+    fetchPopular();
+}, []);
+
   const handleNavigateToSearchPage = () => {
     onClose();
     router.push(`/search?q=${encodeURIComponent(searchText)}`);
@@ -46,11 +61,15 @@ const SearchResultsDropdown = ({ searchResults, isLoading, searchText, onClose }
         <div className="search-popular-title">TÌM KIẾM PHỔ BIẾN</div>
         <hr className="search-separator" />
         <div className="search-popular-list">
-          {searchPopular.map((item) => (
-            <Link href={`/search?q=${encodeURIComponent(item)}`} key={item} className="search-popular-item" onClick={onClose}>
-              {item}
-            </Link>
-          ))}
+          {isFetchingPopular ? (
+            <div className="popular-search-loading">Loading...</div>
+          ) : (
+            popularSearches.map((item) => (
+              <Link href={`/search?q=${encodeURIComponent(item)}`} key={item} className="search-popular-item" onClick={onClose}>
+                {item}
+              </Link>
+            ))
+          )}
         </div>
       </div>
 

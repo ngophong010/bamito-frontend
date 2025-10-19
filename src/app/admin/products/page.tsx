@@ -8,7 +8,7 @@ import {
   fetchAllCategoryRedux,
   loadingAdmin,
 } from "@/redux-toolkit/adminSlice";
-import { handleDeleteProductService } from "@/services/productService";
+import { productService } from "@/services/productService";
 import GridData from "@/components/GridData/GridData";
 import { LIMIT } from "@/utils";
 import { handleChangePage } from "@/redux-toolkit/paginationSlice";
@@ -22,7 +22,7 @@ function ProductAdmin() {
   const handleDeleteProduct = async (product, isLast) => {
     try {
       dispatch(loadingAdmin(true));
-      let res = await handleDeleteProductService(product.id);
+      const res = await productService.deleteProduct(product.id);
       if (res && res.errCode === 0) {
         await dispatch(
           fetchAllProductRedux({

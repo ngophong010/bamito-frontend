@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { createInventoryEntry } from '@/services/inventoryService';
+import { inventoryService } from '@/services/inventoryService';
 import { ProductDetails, Size, InventoryCreateData } from '@/types';
 import InventoryForm from '@/components/Admin/InventoryForm/InventoryForm';
 
@@ -13,7 +13,7 @@ const CreateInventoryClient = ({ product, availableSizes }: { product: ProductDe
     const handleCreate = async (data: Omit<InventoryCreateData, 'productId'>) => {
         setIsLoading(true);
         try {
-            await createInventoryEntry(product.id, data);
+            await inventoryService.createInventoryEntry(product.id, data);
             toast.success("Tồn kho đã được thêm!");
             router.push(`/admin/products/${product.id}/inventory`);
             router.refresh();

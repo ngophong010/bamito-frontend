@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { createSize } from '@/services/sizeService';
+import { sizeService } from '@/services/sizeService';
 import { Category, SizeCreateData } from '@/types';
 import SizeForm from '@/components/Admin/SizeForm/SizeForm';
 const CreateSizeClient = ({ categories }: { categories: Category[] }) => {
@@ -12,7 +12,7 @@ const [isLoading, setIsLoading] = useState(false);
 const handleCreate = async (data: SizeCreateData) => {
     setIsLoading(true);
     try {
-        await createSize(data);
+        await sizeService.createSize(data);
         toast.success("Thêm kích thước thành công!");
         router.push('/admin/sizes');
         router.refresh();

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { updateVoucher } from '@/services/voucherService';
+import { voucherService } from '@/services/voucherService';
 import { Voucher } from '@/types';
 import VoucherForm from '@/components/Admin/VoucherForm/VoucherForm';
 
@@ -13,7 +13,7 @@ const EditVoucherClient = ({ voucher }: { voucher: Voucher }) => {
     const handleUpdate = async (data: FormData) => {
         setIsLoading(true);
         try {
-            await updateVoucher(voucher.id, data);
+            await voucherService.updateVoucher(voucher.id, data);
             toast.success("Cập nhật voucher thành công!");
             router.push('/admin/vouchers');
             router.refresh();

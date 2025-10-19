@@ -18,7 +18,7 @@ type FormInputs = Omit<InventoryCreateData, 'productId'>;
 const InventoryForm = ({ onFormSubmit, isLoading, initialData, availableSizes, productName }: InventoryFormProps) => {
     const { handleSubmit, control, formState: { errors } } = useForm<FormInputs>({
         defaultValues: {
-            sizeId: initialData?.size.id || undefined,
+            sizeId: initialData?.id || undefined,
             quantity: initialData?.quantity || 0,
         }
     });

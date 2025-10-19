@@ -9,9 +9,9 @@ import { toast } from 'react-toastify';
 
 import { useAppSelector, useAppDispatch } from '@/redux-toolkit/hooks';
 import { setFavourites } from '@/redux-toolkit/userSlice';
-import { addFavourite, removeFavourite, getMyFavouriteIds } from '@/services/favouriteService';
+import { favouriteService } from '@/services/favouriteService';
 import { ProductListItem } from '@/types';
-import { createSlug } from '@/utils/formatters';
+import { createSlug } from '@/utils/slug';
 
 const ProductCard = ({ product }: { product: ProductListItem }) => {
     const dispatch = useAppDispatch();
@@ -28,12 +28,12 @@ const ProductCard = ({ product }: { product: ProductListItem }) => {
         }
         try {
             if (isFavourited) {
-                await removeFavourite(product.id);
+                await favouriteService.removeFavourite(product.id);
             } else {
-                await addFavourite(product.id);
+                await favouriteService.addFavourite(product.id);
             }
             // Re-fetch the source of truth and update Redux
-            const updatedIds = await getMyFavouriteIds();
+            const updatedIds = await favouriteService.getFavouriteIds();
             dispatch(setFavourites(updatedIds));
         } catch (error) {
             toast.error("Đã xảy ra lỗi.");

@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { updateProduct } from '@/services/productService';
+import { productService } from '@/services/productService';
 import { Brand, Category, ProductDetails } from '@/types';
 import ProductForm from '@/components/Admin/ProductForm/ProductForm';
 
@@ -16,7 +16,7 @@ const EditProductClient = ({ product, brands, categories }: { product: ProductDe
     const handleUpdate = async (data: FormData) => {
         setIsLoading(true);
         try {
-            await updateProduct(product.id, data);
+            await productService.updateProduct(product.id, data);
             toast.success("Cập nhật sản phẩm thành công!");
             router.push('/admin/products');
             router.refresh();

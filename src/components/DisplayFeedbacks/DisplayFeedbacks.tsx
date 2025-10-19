@@ -8,9 +8,9 @@ import dayjs from "dayjs";
 
 // 1. Import correct types, services, and hooks
 import { useAppSelector } from "@/redux-toolkit/hooks";
-import { Feedback, FeedbackUpdateData } from "@/types";
-import { deleteFeedback, updateFeedback } from "@/services/feedbackService";
-import FeedbackModal, { FeedbackFormData } from '@/components/FeedbackModal/FeedbackModal';
+import { Feedback } from "@/types";
+import { feedbackService } from "@/services/feedbackService";
+import EditFeedbackModal, { FeedbackFormData } from '@/components/FeedbackModal/FeedbackModal';
 import "./DisplayFeedbacks.scss";
 
 const formatDate = (date: string) => dayjs(date).format("DD/MM/YYYY HH:mm:ss");
@@ -43,7 +43,7 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
   const handleDelete = async (feedbackId: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) {
       try {
-        await deleteFeedback(feedbackId);
+        await feedbackService.deleteFeedback(feedbackId);
         toast.success("Xóa đánh giá thành công!");
         // 3. Use router.refresh() to re-fetch server data
         router.refresh();
@@ -56,7 +56,7 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
   const handleUpdate = async (formData: FeedbackFormData) => {
     if (!selectedFeedback) return;
     try {
-      await updateFeedback(selectedFeedback.id, formData);
+      await feedbackService.updateFeedback(selectedFeedback.id, formData);
       toast.success("Cập nhật đánh giá thành công!");
       handleCloseModal();
       router.refresh(); // Re-fetch data

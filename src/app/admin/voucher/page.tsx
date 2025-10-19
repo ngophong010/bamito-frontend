@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getAllVouchers } from '@/services/voucherService';
+import { voucherService } from '@/services/voucherService';
 import VoucherListClient from './VoucherListClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
@@ -20,9 +20,8 @@ export default async function AdminVouchersPage({ searchParams }: AdminVouchersP
     const name = searchParams.name || undefined;
 
     // Fetch the initial list of vouchers on the server
-    const initialVoucherData = await getAllVouchers({
+    const initialVoucherData = await voucherService.getAllVouchers({
       page,
-      name,
       limit: 15,
       pagination: true,
     });

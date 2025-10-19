@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 // 1. Import the correct, refactored service function
-import { getUnreviewedProducts } from '@/services/feedbackService';
+import { feedbackService } from '@/services/feedbackService';
 import FeedbackClient from './FeedbackClient'; // Import the new Client Component
 import { redirect } from 'next/navigation';
 
@@ -15,7 +15,7 @@ export default async function FeedbackPage() {
   try {
     // The getUnreviewedProducts service should be secure and automatically
     // use the user's session from the backend.
-    const initialUnreviewedProducts = await getUnreviewedProducts();
+    const initialUnreviewedProducts = await feedbackService.getUnreviewedProducts();
 
     // 3. Pass the server-fetched data as a prop to the Client Component
     return <FeedbackClient initialProducts={initialUnreviewedProducts} />;

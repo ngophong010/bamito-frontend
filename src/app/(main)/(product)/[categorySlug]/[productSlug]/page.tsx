@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
 // Import our new, clean, and typed service function
-import { getProductDetails } from '@/services/productService';
-import { getAllFeedbackForProduct } from '@/services/feedbackService';
+import { productService } from '@/services/productService';
+import { feedbackService } from '@/services/feedbackService';
 // Import the Client Component that will handle all interactivity
 import ProductDetailClient from './ProductDetailClient';
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   try {
     // Fetch data ONCE. This data can be reused by the page component.
-    const product = await getProductDetails(productId);
+    const product = await productService.getProductDetails(productId);
 
     const title = `${product.name} | BAMITO Shop`;
     const description = (product.descriptionHTML ? stripHtml(product.descriptionHTML) : product.name).substring(0, 160);
@@ -66,8 +66,8 @@ export default async function ProductDetailPage({ params }: { params: { productS
     // Fetch the data ONCE on the server. Next.js automatically de-duplicates this fetch
     // with the one in generateMetadata, so it only runs once.
     const [productData, feedbackData] = await Promise.all([
-      getProductDetails(productId),
-      getAllFeedbackForProduct(Number(productId)) // Assuming your service takes a numeric ID
+      productService.getProductDetails(productId),
+      feedbackService.getProductFeedback(Number(productId)) // Assuming your service takes a numeric ID
     ]);
     // Pass the server-fetched data as a prop to the Client Component.
     return <ProductDetailClient product={productData} initialFeedbacks={feedbackData} />;

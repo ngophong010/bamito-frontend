@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 // 1. Import your "dumb" reusable components and correct types/services
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { deleteSize } from '@/services/sizeService';
+import { sizeService } from '@/services/sizeService';
 import { PaginatedApiResponse, Size } from '@/types';
 
 interface SizeClientProps {
@@ -21,7 +21,7 @@ const SizeClient = ({ initialSizeData }: SizeClientProps) => {
     const handleDelete = async (size: Size) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa kích thước "${size.name}"?`)) {
             try {
-                await deleteSize(size.id);
+                await sizeService.deleteSize(size.id);
                 toast.success("Xóa kích thước thành công!");
                 // 2. Use router.refresh() to re-fetch the server component's data
                 router.refresh(); 

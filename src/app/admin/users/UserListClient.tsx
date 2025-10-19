@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { deleteUser } from '@/services/userService';
+import { userService } from '@/services/userService';
 import { PaginatedApiResponse, User } from '@/types';
 
 interface UserListClientProps {
@@ -19,7 +19,7 @@ const UserListClient = ({ initialUserData }: UserListClientProps) => {
     const handleDelete = async (user: User) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa người dùng "${user.userName}"?`)) {
             try {
-                await deleteUser(user.id);
+                await userService.deleteUser(user.id);
                 toast.success("Xóa người dùng thành công!");
                 router.refresh(); // Re-fetch Server Component data
             } catch (error: any) {

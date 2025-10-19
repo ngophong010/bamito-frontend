@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
-import { getAllBrands } from '../services/brandService';
+import { brandService } from '../services/brandService';
 import { Brand, PaginatedApiResponse } from '../types';
 
 // 3. Define the state for THIS slice only
@@ -33,7 +33,7 @@ export const fetchBrands = createAsyncThunk<
     try {
       // 5. The thunk just calls the service and RETURNS the data.
       // No more thunkAPI.dispatch!
-      const data = await getAllBrands(params);
+      const data = await brandService.getBrands(params);
       return data;
     } catch (error: any) {
       return error.response?.data?.message || 'Failed to fetch brands.';

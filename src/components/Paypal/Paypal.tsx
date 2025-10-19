@@ -4,8 +4,6 @@ import {
   PayPalButtons,
   usePayPalScriptReducer,
   ReactPayPalScriptOptions,
-  OnApproveData,
-  OnApproveActions,
 } from "@paypal/react-paypal-js";
 import { toast } from 'react-toastify';
 import { FC, useEffect } from "react";

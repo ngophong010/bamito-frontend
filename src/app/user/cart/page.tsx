@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 // 1. Import the correct, refactored service functions
-import { getCart } from '@/services/cartService';
+import { cartService } from '@/services/cartService';
 import { getProfile } from '@/services/authService'; // To get addresses
-import { getActiveVouchers } from '@/services/voucherService';
+import { voucherService } from '@/services/voucherService';
 import CartClient from './CartClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
@@ -15,9 +15,9 @@ export default async function CartPage() {
   // Fetch all necessary data in parallel for the initial page load.
   try {
     const [cartData, profileData, activeVouchers] = await Promise.all([
-        getCart(),
+        cartService.getCart(),
         getProfile(),
-        getActiveVouchers(),
+        voucherService.getActiveVouchers(),
     ]);
     
     // 3. Pass the server-fetched data as props to the Client Component

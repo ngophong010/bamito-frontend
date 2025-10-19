@@ -1,11 +1,9 @@
 "use client";
 
-import { ReactNode } from 'react';
 import { Breadcrumb, BreadcrumbItem } from '@/components/Breadcrumb/Breadcrumb';
-import { createSlug } from '@/utils/slug';
 import { useParams, usePathname } from 'next/navigation';
 import { productService } from '@/services/productService';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface LayoutProps {
   children: ReactNode;

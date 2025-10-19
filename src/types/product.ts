@@ -1,6 +1,7 @@
 import { Brand } from './brand';
 import { Category } from './category';
 import { Inventory } from './inventory';
+import { ProductCreateData, PRODUCT_VALIDATION_RULES } from './product-create';
 
 // The shape of a Product when fetched in a list
 export interface ProductListItem {
@@ -16,10 +17,12 @@ export interface ProductListItem {
 }
 
 // The shape of a Product when fetching full details
-export interface ProductDetails extends Omit<ProductListItem, 'rating'> { // 1. Omit the old 'rating'
+export interface ProductDetails extends Omit<ProductListItem, 'rating'> {
     descriptionHTML: string | null;
     inventory: Inventory[];
-    // 2. Add the more specific properties for the detail view
     averageRating: number;
     feedbackCount: number;
 }
+
+export type { ProductCreateData };
+export { PRODUCT_VALIDATION_RULES };

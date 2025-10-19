@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { mailchimp } from '@/lib/mailchimp';
 import { getUserSession } from '@/lib/auth/session';
-import { ROLES } from '@/config/roles';
+import { ROLES } from '@/config/role';
 
 /**
  * [ADMIN] Sends a specific draft campaign.

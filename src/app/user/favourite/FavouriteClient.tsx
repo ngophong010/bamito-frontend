@@ -12,9 +12,9 @@ import { setFavourites } from '@/redux-toolkit/userSlice';
 
 // 1. Import your "dumb" reusable components and correct types/services
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { removeFavourite, getMyFavouriteIds } from '@/services/favouriteService';
+import { favouriteService } from '@/services/favouriteService';
 import { PaginatedApiResponse, ProductListItem } from '@/types';
-import { createSlug } from '@/utils/formatters';
+import { createSlug } from '@/utils/slug';
 import './page.scss';
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
@@ -33,11 +33,11 @@ const FavouriteClient = ({ initialFavouriteData }: FavouriteClientProps) => {
     const handleUnlike = async (product: ProductListItem) => {
         // No need for window.confirm as the action is easily reversible.
         try {
-            await removeFavourite(product.id);
+            await favouriteService.removeFavourite(product.id);
             toast.success(`Đã xóa "${product.name}" khỏi danh sách yêu thích.`);
             
             // Re-fetch the global list of favourite IDs to update the userSlice
-            const updatedFavouriteIds = await getMyFavouriteIds();
+            const updatedFavouriteIds = await favouriteService.getFavouriteIds();
             dispatch(setFavourites(updatedFavouriteIds));
 
             // Use router.refresh() to re-fetch the server component's data and update the list

@@ -1,4 +1,4 @@
-import { getAllBrands } from '@/services/brandService';
+import { brandService } from '@/services/brandService';
 import BrandClient from './BrandClient';
 import { Metadata } from 'next';
 
@@ -16,7 +16,7 @@ export default async function AdminBrandsPage({ searchParams }: AdminBrandsPageP
     const name = searchParams.name || undefined;
 
     try {
-        const initialBrandData = await getAllBrands({ page, name, limit: 10, pagination: true });
+        const initialBrandData = await brandService.getBrands({ page, name, limit: 10, pagination: true });
         
         // Pass the server-fetched data as a prop
         return <BrandClient initialBrandData={initialBrandData} />;

@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 // 1. Import your "dumb" reusable components and correct types/services
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { deleteInventoryEntry } from '@/services/inventoryService';
+import { inventoryService } from '@/services/inventoryService';
 import { PaginatedApiResponse, Inventory, ProductDetails } from '@/types';
 
 interface InventoryClientProps {
@@ -21,7 +21,7 @@ const InventoryClient = ({ product, initialInventoryData }: InventoryClientProps
     const handleDelete = async (inventoryItem: Inventory) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa tồn kho cho size "${inventoryItem.size.name}"?`)) {
             try {
-                await deleteInventoryEntry(inventoryItem.id);
+                await inventoryService.deleteInventoryEntry(inventoryItem.id);
                 toast.success("Xóa tồn kho thành công!");
                 // 2. Use router.refresh() to re-fetch the server component's data
                 router.refresh(); 

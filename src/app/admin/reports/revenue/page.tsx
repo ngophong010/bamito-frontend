@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import dayjs from 'dayjs';
 
 // 1. Import the correct, refactored service function
-import { getSalesReport } from '@/services/orderService';
+import { orderService } from '@/services/orderService';
 import ReportClient from './ReportClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default async function RevenueReportPage({ searchParams }: RevenueReportP
     const page = searchParams.page ? Number(searchParams.page) : 1;
 
     // Fetch the sales report data from the API
-    const initialReportData = await getSalesReport({
+    const initialReportData = await orderService.getSalesReport({
       timeStart,
       timeEnd,
       page,

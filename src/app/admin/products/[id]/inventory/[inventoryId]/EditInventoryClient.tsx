@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { updateInventoryEntry } from '@/services/inventoryService';
+import { inventoryService } from '@/services/inventoryService';
 import { ProductDetails, Size, Inventory, InventoryUpdateData } from '@/types';
 import InventoryForm from '@/components/Admin/InventoryForm/InventoryForm';
 
@@ -13,7 +13,7 @@ const EditInventoryClient = ({ product, inventoryItem, availableSizes }: { produ
     const handleUpdate = async (data: InventoryUpdateData) => {
         setIsLoading(true);
         try {
-            await updateInventoryEntry(inventoryItem.id, data);
+            await inventoryService.updateInventoryEntry(inventoryItem.id, data);
             toast.success("Cập nhật tồn kho thành công!");
             router.push(`/admin/products/${product.id}/inventory`);
             router.refresh();

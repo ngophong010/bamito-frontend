@@ -16,6 +16,7 @@ export interface User {
 export interface UserProfile extends Omit<User, 'roleId' | 'status'> {}
 
 export interface ProfileResponse {
-    user: UserProfile;
-    favourites: number[];
+  user: UserProfile;
+  favourites?: number[];
+  orderCounts?: number;
 }

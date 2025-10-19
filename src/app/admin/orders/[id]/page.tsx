@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
-import { getOrderDetails } from '@services/orderService';
+import { orderService } from '@services/orderService';
 import OrderDetailClient from "./OrderDetailClient";
 
 interface AdminOrderDetailPagesProps {
@@ -12,7 +12,7 @@ interface AdminOrderDetailPagesProps {
 
 export async function generateMetadata({ params }: AdminOrderDetailPagesProps): Promise<Metadata> {
     try {
-        const order = await getOrderDetails(Number(params.id));
+        const order = await orderService.getOrderDetails(Number(params.id));
         return {
             title: `Chi tiết Đơn hàn #${order.orderId}`,
         };
@@ -32,7 +32,7 @@ export default async function AdminOrderDetailPage({params}: AdminOrderDetailPag
     }
 
     try {
-        const orderData = await getOrderDetails(orderId);
+        const orderData = await orderService.getOrderDetails(orderId);
 
         return <OrderDetailClient order={orderData} />;
     } catch (error) {

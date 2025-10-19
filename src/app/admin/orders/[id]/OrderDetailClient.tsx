@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { Grid, Box } from '@mui/material';
 
-import { updateUserStatus, deleteOrder } from '@services/orderService';
+import { orderService } from '@services/orderService';
 import { OrderDtails } from '@/types';
 import '../page.scss';
 
@@ -23,7 +23,7 @@ const OrderDetailClient = ({order}: OrderDetailClientProps) => {
     const handleUpdateStatus = async (newStatus: number, successMessage: string) => {
         setIsLoading(true);
         try {
-            await updateOrderStatus(order.id, newStatus);
+            await orderService.updateOrderStatus(order.id, newStatus);
             toast.success(successMessage);
             router.refresh();
         } catch (error: any) {
@@ -37,7 +37,7 @@ const OrderDetailClient = ({order}: OrderDetailClientProps) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
             setIsLoading(true);
             try {
-                await deleteOrder(order.id);
+                await orderService.deleteOrder(order.id);
                 toast.success("Xóa đơn hàng thành công.");
                 router.push("/admin/orders");
             } catch (error: any) {

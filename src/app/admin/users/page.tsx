@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getAllUsers } from '@/services/userService';
+import { userService } from '@/services/userService';
 import UserListClient from './UserListClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
@@ -20,9 +20,8 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
     const name = searchParams.name || undefined;
 
     // Fetch the initial list of users on the server
-    const initialUserData = await getAllUsers({
+    const initialUserData = await userService.getUsers({
       page,
-      name,
       limit: 15,
     });
 

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 // 1. Import the correct, refactored service function
-import { getAllSizes } from '@/services/sizeService';
+import { sizeService } from '@/services/sizeService';
 import SizeClient from './SizeClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
@@ -23,11 +23,10 @@ export default async function AdminSizesPage({ searchParams }: AdminSizesPagePro
     const name = searchParams.name || undefined;
 
     // Fetch the initial list of sizes based on the URL query params
-    const initialSizeData = await getAllSizes({
+    const initialSizeData = await sizeService.getAllSizes({
       page,
       name,
       limit: 15,
-      pagination: true,
     });
 
     // 4. Pass the server-fetched data as a prop to the Client Component

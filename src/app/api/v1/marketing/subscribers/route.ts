@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import crypto from 'crypto'; // Use Node.js built-in crypto module
 import { mailchimp } from '@/lib/mailchimp';
 import { getUserSession } from '@/lib/auth/session';
-import { ROLES } from '@/config/roles';
+import { ROLES } from '@/config/role';
 
 // Helper function for MD5 hashing
 const createMd5Hash = (str: string) => {

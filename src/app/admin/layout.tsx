@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { PropsWithChildren } from 'react';
 import AdminLayout from "@/layout/adminLayout/AdminLayout"; // Your main UI shell for the admin
 import { getUserSession } from '@/lib/auth/session'; // The new server-side helper
-import { ROLES } from '@/config/roles'; // Import your role constants
+import { ROLES } from '@/config/role'; // Import your role constants
 import "./admin.scss";
 
 // Metadata specific to the admin section

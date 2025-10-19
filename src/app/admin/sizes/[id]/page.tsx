@@ -1,5 +1,5 @@
-import { getSizeById } from '@/services/sizeService'; // Create this service
-import { getAllCategoriesList } from '@/services/categoryService';
+import { sizeService } from '@/services/sizeService'; // Create this service
+import { categoryService } from '@/services/categoryService';
 import EditSizeClient from './EditSizeClient';
 
 export default async function EditSizePage({ params }: { params: { id: string } }) {
@@ -7,8 +7,8 @@ export default async function EditSizePage({ params }: { params: { id: string } 
 
     // Fetch all necessary data in parallel
     const [size, categories] = await Promise.all([
-        getSizeById(id),
-        getAllCategoriesList(),
+        sizeService.getSizeById(id),
+        categoryService.getCategories(),
     ]);
 
     return <EditSizeClient size={size} categories={categories} />;

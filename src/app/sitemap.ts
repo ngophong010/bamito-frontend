@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next';
 
 // 1. Import your new, clean service functions
-import { getAllCategoriesList } from '@/services/categoryService';
-import { getAllProductsList } from '@/services/productService'; // You'll create this
-import { createSlug } from '@/utils/formatters';
+import { categoryService } from '@/services/categoryService';
+import { productService } from '@/services/productService'; // You'll create this
+import { createSlug } from '@/utils/slug';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // --- 2. Dynamic Category Pages ---
     // Fetch all categories to generate their URLs.
-    const categories = await getAllCategoriesList();
+    const categories = await categoryService.getCategories();
     const categoryEntries = categories.map((category) => ({
       url: `${SITE_URL}/${createSlug(category.name)}-${category.categoryId}`, // Assuming this is your URL structure
       lastModified: new Date(), // Or a real 'updatedAt' field if you have one
@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // --- 3. Dynamic Product Pages (CRITICAL) ---
     // Fetch all products to generate their URLs.
     // Create a new service 'getAllProductsList' that fetches all products without pagination.
-    const products = await getAllProductsList(); 
+    const products = await productService.getAllProducts(); 
     const productEntries = products.map((product) => ({
       url: `${SITE_URL}/${createSlug(product.category.name)}/${createSlug(product.name)}-${product.productId}`,
       lastModified: product.updatedAt || new Date(),

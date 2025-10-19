@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { createProduct } from '@/services/productService';
+import { productService } from '@/services/productService';
 import { Brand, Category } from '@/types';
 import ProductForm from '@/components/Admin/ProductForm/ProductForm';
 
@@ -13,7 +13,7 @@ const CreateProductClient = ({ brands, categories }: { brands: Brand[], categori
     const handleCreate = async (data: FormData) => {
         setIsLoading(true);
         try {
-            await createProduct(data);
+            await productService.createProduct(data);
             toast.success("Thêm sản phẩm thành công!");
             router.push('/admin/products');
             router.refresh();

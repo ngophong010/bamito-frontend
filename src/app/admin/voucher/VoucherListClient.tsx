@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { deleteVoucher } from '@/services/voucherService';
+import { voucherService } from '@/services/voucherService';
 import { PaginatedApiResponse, Voucher } from '@/types';
 
 interface VoucherListClientProps {
@@ -22,7 +22,7 @@ const VoucherListClient = ({ initialVoucherData }: VoucherListClientProps) => {
     const handleDelete = async (voucher: Voucher) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa voucher "${voucher.voucherId}"?`)) {
             try {
-                await deleteVoucher(voucher.id);
+                await voucherService.deleteVoucher(voucher.id);
                 toast.success("Xóa voucher thành công!");
                 router.refresh(); // Re-fetch Server Component data
             } catch (error: any) {

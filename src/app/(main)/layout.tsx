@@ -1,22 +1,34 @@
 import UserLayout from "@/layout/userLayout/UserLayout";
 import { PropsWithChildren } from 'react';
-// 1. Import the service to fetch categories
 import { categoryService } from '@/services/categoryService';
+import { Category } from '@/types/category';
 
-// This is now an async Server Component
-export default async function MainLayout({ children }: PropsWithChildren) {
-  // 2. Fetch the data on the server
-  let categories = [];
+interface MainLayoutProps extends PropsWithChildren {}
+
+/**
+ * Main layout component that wraps the main content of the application.
+ * Fetches categories on the server side and passes them down to the UserLayout.
+ */
+export default async function MainLayout({ children }: MainLayoutProps) {
+  let categories: Category[] = [];
+  
   try {
-    categories = await categoryService.getAllCategoriesList();
+    // Fetch categories with a reasonable limit for navigation
+    const response = await categoryService.getCategories({
+      limit: 100, // Adjust this number based on your needs
+      page: 1,
+      // Add any other filter params if needed
+    });
+    
+    // Extract the items array from the paginated response
+    categories = response.items;
   } catch (error) {
+    // Log the error but don't throw - we want the app to work even without categories
     console.error("Failed to fetch categories for header:", error);
-    // Continue rendering even if categories fail to load
+    // You might want to add error reporting here
   }
 
   return (
-    // 3. Pass the server-fetched data down to the UserLayout.
-    // The UserLayout will then pass it to the Header.
     <UserLayout categories={categories}>
       {children}
     </UserLayout>

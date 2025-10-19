@@ -34,11 +34,7 @@ export interface ResetPasswordData {
     newPassword: string;
 }
 
-export interface ProfileResponse {
-  user: UserProfile;
-  favourites?: number[];
-  orderCounts?: number;
-}
+
 
 export interface ResendOtpResponse {
   message: string;

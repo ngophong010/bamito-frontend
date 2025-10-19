@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { mailchimp } from '@/lib/mailchimp'; // Assuming you create a central mailchimp config
 import { getUserSession } from '@/lib/auth/session'; // Our server-side auth helper
-import { ROLES } from '@/config/roles';
+import { ROLES } from '@/config/role';
 
 // ===============================================================
 // --- GET /api/v1/marketing/campaigns ---

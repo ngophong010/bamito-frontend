@@ -3,8 +3,8 @@ import Introduce from "@/components/Introduce/Introduce";
 import { Metadata } from 'next';
 
 // 1. Import all the necessary service functions
-import { getProductsByCategory } from '@/services/productService';
-import { getAllCategoriesList } from '@/services/categoryService';
+import { productService } from '@/services/productService';
+import { categoryService } from '@/services/categoryService';
 
 // ... (your metadata object)
 
@@ -12,16 +12,16 @@ export default async function HomePage() {
   // --- DATA FETCHING ON THE SERVER ---
   try {
     // We need the IDs for our main categories. Fetching them dynamically is best.
-    const allCategories = await getAllCategoriesList();
+    const allCategories = await categoryService.getCategories();
     const racketCategory = allCategories.find(c => c.categoryId === 'RACKETS');
     const shoeCategory = allCategories.find(c => c.categoryId === 'SHOES');
     const shirtCategory = allCategories.find(c => c.categoryId === 'APPAREL_SHIRTS');
 
     // Fetch the top 4 products for each category IN PARALLEL
     const [racketData, shoeData, shirtData] = await Promise.all([
-      racketCategory ? getProductsByCategory(racketCategory.id, { limit: 4 }) : Promise.resolve(null),
-      shoeCategory ? getProductsByCategory(shoeCategory.id, { limit: 4 }) : Promise.resolve(null),
-      shirtCategory ? getProductsByCategory(shirtCategory.id, { limit: 4 }) : Promise.resolve(null),
+      racketCategory ? productService.getProductsByCategory(racketCategory.id, { limit: 4 }) : Promise.resolve(null),
+      shoeCategory ? productService.getProductsByCategory(shoeCategory.id, { limit: 4 }) : Promise.resolve(null),
+      shirtCategory ? productService.getProductsByCategory(shirtCategory.id, { limit: 4 }) : Promise.resolve(null),
     ]);
 
     const featuredData = [
