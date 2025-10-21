@@ -1,5 +1,5 @@
 import { userService } from '@/services/userService';
-import { getAllRoles } from '@/services/roleService';
+import { roleService } from '@/services/roleService';
 import EditUserClient from './EditUserClient';
 
 export default async function EditUserPage({ params }: { params: { id: string } }) {
@@ -9,7 +9,7 @@ export default async function EditUserPage({ params }: { params: { id: string } 
         // Fetch the user to edit AND the list of roles in parallel
         const [user, roles] = await Promise.all([
             userService.getUserById(id),
-            getAllRoles(),
+            roleService.getAllRoles(),
         ]);
         return <EditUserClient user={user} roles={roles} />;
     } catch (error) {

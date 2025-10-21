@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
-import { orderService } from '@services/orderService';
+import { orderService } from '@/services/orderService';
 import OrderDetailClient from "./OrderDetailClient";
 
 interface AdminOrderDetailPagesProps {

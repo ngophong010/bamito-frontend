@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
 // 1. Import your components, types, and new services
 import RatingForm, { RatingFormData } from "@/components/RatingForm/RatingForm";
+import FeedbackModal from "@/components/FeedbackModal/FeedbackModal";
 import { UnreviewedProduct } from "@/types"; // Create this specific type
-import { createFeedback } from '@/services/feedbackService';
+import { feedbackService } from '@/services/feedbackService';
 import "./page.scss";
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
@@ -27,7 +28,7 @@ const FeedbackClient = ({ initialProducts }: { initialProducts: UnreviewedProduc
   const handleCreate = async (formData: FeedbackFormData) => {
         if (!selectedProduct) return;
         
-        await createFeedback(selectedProduct.id, {
+        await feedbackService.createFeedback(selectedProduct.id, {
             orderId: selectedProduct.orderId,
             sizeId: selectedProduct.size.id,
             ...formData,
@@ -43,7 +44,7 @@ const FeedbackClient = ({ initialProducts }: { initialProducts: UnreviewedProduc
     if (!selectedProduct) return;
 
     try {
-      await createFeedback(selectedProduct.id, {
+      await feedbackService.createFeedback(selectedProduct.id, {
         orderId: selectedProduct.orderId,
         sizeId: selectedProduct.size.id,
         ...formData,

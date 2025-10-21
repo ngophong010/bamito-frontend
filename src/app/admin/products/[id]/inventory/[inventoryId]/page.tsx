@@ -3,18 +3,24 @@ import { sizeService } from '@/services/sizeService';
 import { inventoryService } from '@/services/inventoryService'; // You'll create this
 import EditInventoryClient from './EditInventoryClient';
 
-export default async function EditInventoryPage({ params }: { params: { id: string, inventoryId: string } }) {
-    const productId = Number(params.id);
+export default async function EditInventoryPage({ params }: Readonly<{ params: { id: string, inventoryId: string } }>) {
     const inventoryId = Number(params.inventoryId);
 
-    // Fetch all necessary data in parallel
-    const [product, inventoryItem] = await Promise.all([
-        productService.getProductDetails(productId),
-        inventoryService.getInventoryById(inventoryId)
-    ]);
+    // Fetch the product details first to get the category
+    const product = await productService.getProductDetails(params.id);
     
-    // You still need the list of sizes for the dropdown, even though it's disabled.
-    const availableSizes = await sizeService.getSizesForCategory(product.category.id);
+    // Then fetch inventory and sizes in parallel
+    const [inventoryResponse, availableSizes] = await Promise.all([
+        inventoryService.getProductInventory(Number(params.id)),
+        sizeService.getSizesForCategory(Number(product.category.categoryId))
+    ]);
+
+    // Find the specific inventory item from the paginated response
+    const inventoryItem = inventoryResponse.items.find(item => item.id === inventoryId);
+    
+    if (!inventoryItem) {
+        throw new Error(`Inventory item with ID ${inventoryId} not found`);
+    }
 
     return (
         <EditInventoryClient 

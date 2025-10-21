@@ -9,18 +9,28 @@ import dayjs from "dayjs";
 // 1. Import correct types, services, and hooks
 import { useAppSelector } from "@/redux-toolkit/hooks";
 import { Feedback } from "@/types";
+import { UserProfile } from "@/types/user";
 import { feedbackService } from "@/services/feedbackService";
 import EditFeedbackModal, { FeedbackFormData } from '@/components/FeedbackModal/FeedbackModal';
 import "./DisplayFeedbacks.scss";
 
 const formatDate = (date: string) => dayjs(date).format("DD/MM/YYYY HH:mm:ss");
 
-// 2. Define the props the component now receives
-interface DisplayFeedbacksProps {
-  initialFeedbacks: Feedback[];
+// Extended Feedback type that includes product information
+interface DisplayFeedback extends Feedback {
+  user: Pick<UserProfile, 'userName' | 'avatar' | 'id'>;
+  product: {
+    id: number;
+    name: string;
+  };
 }
 
-const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
+interface DisplayFeedbacksProps {
+  initialFeedbacks: DisplayFeedback[];
+  productId: number; // Used for context and future features
+}
+
+const DisplayFeedbacks = ({ initialFeedbacks, productId }: DisplayFeedbacksProps) => {
   const router = useRouter();
   
   // Get the current user's ID from Redux to identify their own reviews
@@ -28,9 +38,9 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
 
   // --- LOCAL UI STATE for the modal ---
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
+  const [selectedFeedback, setSelectedFeedback] = useState<DisplayFeedback | null>(null);
 
-  const handleOpenEditModal = (feedback: Feedback) => {
+  const handleOpenEditModal = (feedback: DisplayFeedback) => {
     setSelectedFeedback(feedback);
     setIsModalOpen(true);
   };
@@ -41,12 +51,11 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
 
   // --- ACTION HANDLERS ---
   const handleDelete = async (feedbackId: number) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) {
+    if (globalThis.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) {
       try {
         await feedbackService.deleteFeedback(feedbackId);
         toast.success("Xóa đánh giá thành công!");
-        // 3. Use router.refresh() to re-fetch server data
-        router.refresh();
+        router.refresh(); // Re-fetch server data
       } catch (error: any) {
         toast.error(error.message || "Xóa đánh giá thất bại.");
       }
@@ -56,12 +65,15 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
   const handleUpdate = async (formData: FeedbackFormData) => {
     if (!selectedFeedback) return;
     try {
-      await feedbackService.updateFeedback(selectedFeedback.id, formData);
+      await feedbackService.updateFeedback(selectedFeedback.id, {
+        rating: formData.rating,
+        description: formData.description
+      });
       toast.success("Cập nhật đánh giá thành công!");
       handleCloseModal();
       router.refresh(); // Re-fetch data
     } catch (error: any) {
-        toast.error(error.message || "Cập nhật thất bại.");
+      toast.error(error.message || "Cập nhật thất bại.");
     }
   };
 
@@ -109,14 +121,14 @@ const DisplayFeedbacks = ({ initialFeedbacks }: DisplayFeedbacksProps) => {
       {/* The Modal is now controlled by this component */}
       {selectedFeedback && (
         <EditFeedbackModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            onSubmit={handleUpdate}
-            productName={selectedFeedback.product.name} // Assuming product is included
-                    initialData={{ // Pass initial data to pre-fill the form
-                        rating: selectedFeedback.rating,
-                        description: selectedFeedback.description || ''
-                    }}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleUpdate}
+          productName={selectedFeedback.product.name}
+          initialData={{
+            rating: selectedFeedback.rating,
+            description: selectedFeedback.description || ''
+          }}
         />
       )}
     </div>

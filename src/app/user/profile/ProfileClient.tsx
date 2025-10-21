@@ -9,12 +9,12 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 
 // 1. Import correct services, types, and hooks
-import { updateProfile } from '@/services/profileService';
+import { profileService } from '@/services/profileService';
 import { ProfileResponse, UserProfileUpdateData } from '@/types';
 import { useAppDispatch } from '@/redux-toolkit/hooks';
 import { updateAvatar } from '@/redux-toolkit/userSlice';
 import ModalChangePassword from '@/components/ModalChangePassword/ModalChangePassword';
-import { changePassword } from '@/services/profileService'; // Or authService
+
 import { ChangePasswordData } from '@/types';
 import "./page.scss";
 
@@ -69,7 +69,7 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
                 }
             });
 
-            const updatedProfile = await updateProfile(formData);
+            const updatedProfile = await profileService.updateProfile(formData);
 
             // Update the global avatar in the Redux store if it changed
             if (updatedProfile.avatar) {
@@ -89,7 +89,7 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
     const handleChangePassword = async (data: ChangePasswordData) => {
         try {
             // The service call is now clean and doesn't need a userId
-            await changePassword(data);
+            await profileService.changePassword(data);
             toast.success("Thay đổi mật khẩu thành công!");
             setIsPasswordModalOpen(false); // Close the modal on success
         } catch (error: any) {

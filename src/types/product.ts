@@ -24,5 +24,5 @@ export interface ProductDetails extends Omit<ProductListItem, 'rating'> {
     feedbackCount: number;
 }
 
-export type { ProductCreateData };
-export { PRODUCT_VALIDATION_RULES };
+export type { ProductCreateData } from './product-create';
+export { PRODUCT_VALIDATION_RULES } from './product-create';

@@ -41,7 +41,7 @@ export default async function AdminInventoryPage({ params, searchParams }: Admin
     // Fetch the product details and its inventory in parallel
     const [product, initialInventoryData] = await Promise.all([
         productService.getProductDetails(productId),
-        inventoryService.getProductInventory(productId, { page, limit: 10 })
+        inventoryService.getProductInventory(Number(productId))
     ]);
 
     // 4. Pass the server-fetched data as props to the Client Component

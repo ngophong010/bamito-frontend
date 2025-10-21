@@ -9,8 +9,9 @@ import { feedbackService } from '@/services/feedbackService';
 import ProductDetailClient from './ProductDetailClient';
 
 interface ProductPageProps {
-  params: {
-    productSlug: string; // The full slug, e.g., 'yonex-astrox-99-prod123'
+  readonly params: {
+    readonly productSlug: string; // The full slug, e.g., 'yonex-astrox-99-prod123'
+    readonly categorySlug: string;
   };
 }
 
@@ -48,14 +49,13 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-// Dummy helper function, move to utils
-const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
-
+// Utility function to strip HTML tags
+const stripHtml = (html: string) => html.replaceAll(/<[^>]*>?/gm, '');
 
 // ===============================================================
 // 2. THE PAGE COMPONENT (Also Runs on the Server)
 // ===============================================================
-export default async function ProductDetailPage({ params }: { params: { productSlug: string } }) {
+export default async function ProductDetailPage({ params }: ProductPageProps) {
   const productId = params.productSlug.split('-').pop();
 
   if (!productId) {
@@ -74,6 +74,7 @@ export default async function ProductDetailPage({ params }: { params: { productS
 
   } catch (error) {
     // If the product fetch fails (e.g., product doesn't exist), render the 404 page.
+    console.error(`Failed to fetch product ${productId}:`, error);
     notFound();
   }
 }

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { createUser } from '@/services/userService';
+import { userService } from '@/services/userService';
 import { Role, UserCreateData } from '@/types';
 import UserForm from '@/components/Admin/UserForm/UserForm';
 

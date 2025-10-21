@@ -15,7 +15,7 @@ interface LayoutProps {
  */
 export default function ProductLayout({ children }: LayoutProps) {
   const params = useParams();
-  const pathname = usePathname();
+  // Removing unused variable
   const [breadcrumbItems, setBreadcrumbItems] = useState<BreadcrumbItem[]>([]);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function ProductLayout({ children }: LayoutProps) {
         try {
           // Extract category ID from the slug (format: name-id)
           const categorySlugParts = categorySlug.split('-');
-          const categoryId = categorySlugParts[categorySlugParts.length - 1];
+          const categoryId = categorySlugParts.at(-1);
 
           if (categoryId) {
             // Fetch category details

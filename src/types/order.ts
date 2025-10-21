@@ -21,18 +21,30 @@ export interface OrderItem {
     sizeName: string;
 }
 
-// The core Order interface that extends BaseEntity
-export interface Order extends BaseEntity {
-    id: number;
+// Lightweight version for list views
+export interface OrderSummary extends BaseEntity {
     orderId: string;
     totalPrice: number;
     payment: string;
     status: OrderStatus;
     createdAt: string;
-    deliveryAddress: string;
     user: Pick<UserProfile, 'userName' | 'phoneNumber'>;
+    itemCount: number; // Total number of items in the order
+}
+
+// Detailed version for single order view
+export interface OrderDetails extends Omit<OrderSummary, 'itemCount'> {
+    deliveryAddress: string;
     voucher: Pick<Voucher, 'voucherId' | 'voucherPrice'> | null;
     items: OrderItem[];
+    note?: string;
+    trackingNumber?: string;
+    estimatedDeliveryDate?: string;
+    statusHistory?: {
+        status: OrderStatus;
+        timestamp: string;
+        note?: string;
+    }[];
 }
 
 // Data needed to create an order
@@ -45,6 +57,15 @@ export interface OrderCreateData {
         sizeId: number;
         quantity: number;
     }[];
+}
+
+// Data for updating an order
+export interface OrderUpdateData {
+    status?: OrderStatus;
+    deliveryAddress?: string;
+    note?: string;
+    trackingNumber?: string;
+    estimatedDeliveryDate?: string;
 }
 
 // Order statistics interface
@@ -68,3 +89,6 @@ export interface SalesReportItem {
         createdAt: string;
     };
 }
+
+// Re-export the legacy Order type for backward compatibility
+export type Order = OrderDetails;

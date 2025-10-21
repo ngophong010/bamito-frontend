@@ -1,12 +1,11 @@
 import { PaginatedApiResponse } from '@/types';
 import { SubscriberRepository } from '@/repositories/SubscriberRepository';
-import { 
-    SubscriberDTO, 
-    SubscriberFilterParams, 
-    SubscriberStatsDTO 
-} from '@/types/dtos/subscriber.dto';
+import { Subscriber, SubscriberStats } from '@/types/models/subscriber';
 
 import apiClient from './apiClient';
+import { handleApiError } from '@/utils/errorHandler';
+import { SubscriberMapper } from '@/mappers/subscriberMapper';
+import { logger } from '@/utils/logger';
 
 interface ISubscriberService {
     getSubscribers(page?: number): Promise<PaginatedApiResponse<Subscriber>>;
@@ -19,30 +18,18 @@ interface ISubscriberService {
     bulkUpdateStatus(emails: string[], isActive: boolean): Promise<void>;
 }
 
-export interface Subscriber {
-    id: number;
-    email_address: string;
-    bamito_status: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface SubscriberStats {
-    totalSubscribers: number;
-    activeSubscribers: number;
-    inactiveSubscribers: number;
-    subscribersThisMonth: number;
-}
-
 /**
  * Service class for managing subscribers
  * Implements the Repository pattern and provides error handling
  */
 class SubscriberService implements ISubscriberService {
     private readonly repository: SubscriberRepository;
+    private readonly mapper: SubscriberMapper;
 
     constructor() {
         this.repository = new SubscriberRepository(apiClient);
+        this.mapper = new SubscriberMapper();
+        logger.info('SubscriberService initialized');
     }
 
     /**
@@ -52,12 +39,14 @@ class SubscriberService implements ISubscriberService {
      */
     public async getSubscribers(page: number = 1): Promise<PaginatedApiResponse<Subscriber>> {
         try {
+            logger.debug(`Fetching subscribers page ${page}`);
             const response = await this.repository.getSubscribers({ page });
             return {
                 ...response,
-                items: subscriberMapper.toDomainList(response.items)
+                items: this.mapper.toDomainList(response.items)
             };
         } catch (error) {
+            logger.error('Failed to fetch subscribers', error as Error);
             throw handleApiError(error, 'Error fetching subscribers');
         }
     }
@@ -68,8 +57,10 @@ class SubscriberService implements ISubscriberService {
      */
     public async deleteSubscriber(email: string): Promise<void> {
         try {
+            logger.info(`Deleting subscriber: ${email}`);
             await this.repository.unsubscribe(email);
         } catch (error) {
+            logger.error(`Failed to delete subscriber: ${email}`, error as Error);
             throw handleApiError(error, 'Error deleting subscriber');
         }
     }
@@ -80,8 +71,10 @@ class SubscriberService implements ISubscriberService {
      */
     public async exportSubscribersAsCsv(): Promise<Blob> {
         try {
+            logger.info('Exporting subscribers to CSV');
             return await this.repository.exportToCSV();
         } catch (error) {
+            logger.error('Failed to export subscribers', error as Error);
             throw handleApiError(error, 'Error exporting subscribers');
         }
     }
@@ -92,8 +85,10 @@ class SubscriberService implements ISubscriberService {
      */
     public async sendCampaign(data: { subject: string; content: string }): Promise<void> {
         try {
+            logger.info(`Sending campaign: ${data.subject}`);
             await this.repository.sendCampaign(data);
         } catch (error) {
+            logger.error(`Failed to send campaign: ${data.subject}`, error as Error);
             throw handleApiError(error, 'Error sending campaign');
         }
     }
@@ -104,8 +99,10 @@ class SubscriberService implements ISubscriberService {
      */
     public async subscribe(email: string): Promise<void> {
         try {
+            logger.info(`New subscription request: ${email}`);
             await this.repository.subscribe(email);
         } catch (error) {
+            logger.error(`Failed to subscribe: ${email}`, error as Error);
             throw handleApiError(error, 'Error subscribing email');
         }
     }
@@ -116,8 +113,10 @@ class SubscriberService implements ISubscriberService {
      */
     public async unsubscribe(email: string): Promise<void> {
         try {
+            logger.info(`Unsubscribe request: ${email}`);
             await this.repository.unsubscribe(email);
         } catch (error) {
+            logger.error(`Failed to unsubscribe: ${email}`, error as Error);
             throw handleApiError(error, 'Error unsubscribing email');
         }
     }
@@ -128,9 +127,11 @@ class SubscriberService implements ISubscriberService {
      */
     public async getStats(): Promise<SubscriberStats> {
         try {
+            logger.debug('Fetching subscriber statistics');
             const stats = await this.repository.getStats();
-            return subscriberMapper.statsToDomain(stats);
+            return this.mapper.statsToDomain(stats);
         } catch (error) {
+            logger.error('Failed to fetch subscriber statistics', error as Error);
             throw handleApiError(error, 'Error fetching subscriber statistics');
         }
     }
@@ -142,8 +143,10 @@ class SubscriberService implements ISubscriberService {
      */
     public async bulkUpdateStatus(emails: string[], isActive: boolean): Promise<void> {
         try {
+            logger.info(`Bulk updating ${emails.length} subscribers to ${isActive ? 'active' : 'inactive'}`);
             await this.repository.bulkUpdateStatus(emails, isActive);
         } catch (error) {
+            logger.error('Failed to bulk update subscriber status', error as Error);
             throw handleApiError(error, 'Error updating subscriber status');
         }
     }

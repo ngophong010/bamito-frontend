@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { updateUser } from '@/services/userService';
+import { userService } from '@/services/userService';
 import { Role, User, UserUpdateData } from '@/types';
 import UserForm from '@/components/Admin/UserForm/UserForm';
 
@@ -17,7 +17,7 @@ const EditUserClient = ({ user, roles }: { user: User, roles: Role[] }) => {
             delete data.password;
         }
         try {
-            await updateUser(user.id, data);
+            await userService.updateUser(user.id, data);
             toast.success("Cập nhật người dùng thành công!");
             router.push('/admin/users');
             router.refresh();

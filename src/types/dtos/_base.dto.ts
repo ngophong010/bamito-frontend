@@ -13,8 +13,8 @@
 
 export interface BaseDTO {
   id: number;
-  createAt?: string;
-  updatedAt?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BaseFilterParams {

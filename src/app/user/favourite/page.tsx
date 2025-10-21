@@ -6,7 +6,10 @@ import FavouriteClient from './FavouriteClient'; // Import the new Client Compon
 
 export const metadata: Metadata = {
     title: 'Sản phẩm Yêu thích',
-    robots: { noindex: true, nofollow: true }, // Personal pages should not be indexed
+    robots: { 
+    index: false,
+    follow: false,
+     }, // Personal pages should not be indexed
 };
 
 // 2. Define the shape of the props Next.js will provide

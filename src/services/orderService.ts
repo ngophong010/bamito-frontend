@@ -1,6 +1,8 @@
 import apiClient from './apiClient';
 import { OrderRepository } from '@/repositories/OrderRepository';
+import { StatisticsRepository } from '@/repositories/StatisticsRepository';
 import { Order, OrderStatus, OrderStats } from '@/types/order';
+import { StatisticsResponse, SalesReportResponse, SalesReportParams } from '@/types/statistics';
 import { PaginatedApiResponse } from '@/types/common';
 import { 
     CreateOrderDTO, 
@@ -9,18 +11,13 @@ import {
     OrderFilterParams 
 } from '@/types/dtos/order.dto';
 
-interface StatisticsResponse {
-    totalIncome: number;
-    totalOrder: number;
-    totalProduct: number;
-    allTotalOrder: { label: string; quantity: number }[];
-}
-
 class OrderService {
     private readonly repository: OrderRepository;
+    private readonly statisticsRepository: StatisticsRepository;
 
     constructor() {
         this.repository = new OrderRepository(apiClient);
+        this.statisticsRepository = new StatisticsRepository(apiClient);
     }
 
     /**
@@ -90,10 +87,18 @@ class OrderService {
     }
 
     /**
-     * Get sales report
+     * Get overall statistics for the admin dashboard
      */
-    async getSalesReport(params: OrderFilterParams): Promise<PaginatedApiResponse<Order>> {
-        return this.repository.getOrders(params);
+    async getStatistics(): Promise<StatisticsResponse> {
+        return this.statisticsRepository.getStatistics();
+    }
+
+    /**
+     * Get detailed sales report
+     * @param params Filtering and pagination parameters
+     */
+    async getSalesReport(params: SalesReportParams): Promise<SalesReportResponse> {
+        return this.statisticsRepository.getSalesReport(params);
     }
 }
 

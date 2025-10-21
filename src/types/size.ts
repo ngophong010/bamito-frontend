@@ -1,7 +1,9 @@
-import { BaseFilterParams, BulkOperationDTO } from './dtos/_base.dto';
+import { BaseDTO, BaseFilterParams, BulkOperationDTO } from './dtos/_base.dto';
 
 export interface Size extends BaseDTO {
-    name: string;
+  id: number;
+  sizeId: string;  
+  name: string;
     description?: string;
     categoryId: number;
     order: number;

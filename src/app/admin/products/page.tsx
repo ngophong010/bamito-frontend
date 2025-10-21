@@ -1,56 +1,69 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
 import {
-  fetchAllProductRedux,
-  fetchAllBrandRedux,
-  fetchAllCategoryRedux,
+  fetchProducts as fetchAllProductRedux,
+  fetchBrands as fetchAllBrandRedux,
+  fetchCategories as fetchAllCategoryRedux,
   loadingAdmin,
 } from "@/redux-toolkit/adminSlice";
 import { productService } from "@/services/productService";
 import GridData from "@/components/GridData/GridData";
-import { LIMIT } from "@/utils";
-import { handleChangePage } from "@/redux-toolkit/paginationSlice";
+import { PAGINATION_LIMIT } from "@/utils/constants";
 import { logOut } from "@/redux-toolkit/userSlice";
+import { ApiError } from "@/repositories/errors";
+import { RootState } from "@/redux-toolkit/store";
+import { ProductListItem as Product } from "@/types/product";
 
 function ProductAdmin() {
-  const dispatch = useDispatch();
-  const page = useSelector((state) => state.pagination.page);
-  const totalPage = useSelector((state) => state.admin.allProduct?.totalPage);
+  const dispatch = useAppDispatch();
+  const { 
+    items: products = [], 
+    currentPage: page = 1,
+  } = useAppSelector((state: RootState) => state.admin.allProduct ?? {});
 
-  const handleDeleteProduct = async (product, isLast) => {
+  useEffect(() => {
+    // Initial data fetch
+    dispatch(fetchAllProductRedux({ 
+      limit: PAGINATION_LIMIT.PRODUCTS, 
+      page: 1 
+    }));
+  }, [dispatch]);
+
+  const handleDelete = async (product: Product) => {
     try {
       dispatch(loadingAdmin(true));
-      const res = await productService.deleteProduct(product.id);
-      if (res && res.errCode === 0) {
-        await dispatch(
-          fetchAllProductRedux({
-            limit: LIMIT,
-            page: totalPage === page && isLast ? page - 1 : page,
-          })
-        );
-        await dispatch(
-          fetchAllBrandRedux({
-            pagination: false,
-          })
-        );
-        await dispatch(
-          fetchAllCategoryRedux({
-            pagination: false,
-          })
-        );
-        if (totalPage === page && isLast) dispatch(handleChangePage(page - 1));
-        toast.success("Xóa sản phẩm thành công");
-      }
+
+      await productService.deleteProduct(product.id);
+      
+      // Fetch updated data
+      const isLastItem = products.length === 1 && page > 1;
+      const newPage = isLastItem ? page - 1 : page;
+
+      await Promise.all([
+        dispatch(fetchAllProductRedux({
+          limit: PAGINATION_LIMIT.PRODUCTS,
+          page: newPage,
+        })),
+        dispatch(fetchAllBrandRedux({
+          limit: PAGINATION_LIMIT.BRANDS
+        })),
+        dispatch(fetchAllCategoryRedux({
+          limit: PAGINATION_LIMIT.CATEGORIES
+        }))
+      ]);
+
+      toast.success("Xóa sản phẩm thành công");
     } catch (err) {
-      if (err?.response?.data?.errCode === 2) {
+      const error = err as ApiError;
+      if (error.code === 'PRODUCT_NOT_FOUND') {
         toast.error("Sản phẩm không tồn tại");
-      } else if (err?.response?.data?.errCode === -4) {
+      } else if (error.code === 'SESSION_EXPIRED') {
         toast.error("Phiên bản đăng nhập hết hạn");
         dispatch(logOut());
       } else {
-        toast.error(err?.response?.data?.message);
+        toast.error(error.message || "Có lỗi xảy ra");
       }
     } finally {
       dispatch(loadingAdmin(false));
@@ -60,23 +73,49 @@ function ProductAdmin() {
   const tableColumns = [
     {
       label: "STT",
-      key: "",
-      style: { borderTopLeftRadius: 15, paddingLeft: "2rem" },
+      render: (_: Product, index: number) => index + 1,
     },
-    { label: "MÃ SẢN PHẨM", key: "productId" },
-    { label: "TÊN SẢN PHẨM", key: "name" },
-    { label: "LOẠI SẢN PHẨM", key: "categoryData" },
-    { label: "ĐƠN GIÁ", key: "price" },
-    { label: "GIẢM GIÁ", key: "discount" },
-    { label: "", key: "", style: { borderTopRightRadius: 15 } },
+    { 
+      label: "MÃ SẢN PHẨM", 
+      render: (item: Product) => item.productId 
+    },
+    { 
+      label: "TÊN SẢN PHẨM", 
+      render: (item: Product) => item.name 
+    },
+    { 
+      label: "LOẠI SẢN PHẨM", 
+      render: (item: Product) => item.category.name
+    },
+    { 
+      label: "THƯƠNG HIỆU",
+      render: (item: Product) => item.brand.name
+    },
+    { 
+      label: "XẾP HẠNG",
+      render: (item: Product) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span>{item.rating.toFixed(1)}</span>
+          <span style={{ fontSize: '14px', marginLeft: '4px' }}>★</span>
+        </div>
+      )
+    },
+    { 
+      label: "ĐƠN GIÁ", 
+      render: (item: Product) => item.price.toLocaleString('vi-VN') + ' ₫'
+    },
+    { 
+      label: "GIẢM GIÁ", 
+      render: (item: Product) => item.discount + '%'
+    }
   ];
 
   return (
     <GridData
-      tableColumns={tableColumns}
-      handleDelete={handleDeleteProduct}
       headerString="Quản lý sản phẩm"
-      gridType="product"
+      tableColumns={tableColumns}
+      tableData={products}
+      onDelete={handleDelete}
     />
   );
 }

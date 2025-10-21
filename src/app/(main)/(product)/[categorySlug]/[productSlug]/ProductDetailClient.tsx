@@ -7,7 +7,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { toast } from "react-toastify";
 
 // 1. Import types from the central /types directory
-import { ProductDetails, Inventory } from "@/types";
+import { ProductDetails, Inventory, Feedback } from "@/types";
 // 2. Import the correct, typed Redux hooks and actions
 import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
 import { addItemToCart } from "@/redux-toolkit/cartSlice";
@@ -18,10 +18,11 @@ import "./page.module.scss";
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
 interface ProductDetailClientProps {
-  product: ProductDetails;
+  readonly product: ProductDetails;
+  readonly initialFeedbacks: Array<Feedback>;
 }
 
-const ProductDetailClient = ({ product }: ProductDetailClientProps) => {
+const ProductDetailClient = ({ product, initialFeedbacks }: ProductDetailClientProps) => {
   const dispatch = useAppDispatch();
 
   // --- LOCAL UI STATE ---
@@ -167,7 +168,7 @@ const ProductDetailClient = ({ product }: ProductDetailClientProps) => {
       <div className="description_review_wrapper">
         {/* ... Tab logic ... */}
         <div dangerouslySetInnerHTML={{ __html: product.descriptionHTML || '' }} />
-        <DisplayFeedbacks productId={product.id} />
+        <DisplayFeedbacks productId={product.id} initialFeedbacks={initialFeedbacks} />
       </div>
     </div>
   );

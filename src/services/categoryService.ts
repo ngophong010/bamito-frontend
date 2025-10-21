@@ -25,6 +25,21 @@ class CategoryService {
     }
 
     /**
+     * Get all categories as a simple, non-paginated list.
+     * Ideal for populating dropdowns and select inputs in the UI.
+     */
+    async getAllCategoriesList(): Promise<Category[]> {
+        // Call the main paginated method, but override the params
+        // to ensure we get all items in a single request.
+        const response = await this.repository.getCategories({
+            limit: 1000, // A high limit to fetch all items
+        });
+        
+        // Return ONLY the array of items, which is what the UI needs.
+        return response.items;
+    }
+
+    /**
      * Get a category by ID
      */
     async getCategoryById(id: number): Promise<Category> {

@@ -1,19 +1,14 @@
-import React from "react";
-import Grid from "@mui/material/Grid";
-import Link from "next/link";
-import Image from "next/image";
-import "./page.scss";
 
-// Import the new Client Component for the chart
-import RevenueChart from "@/components/Admin/Dashboard/RevenueChart";
-// Import the correct, refactored service function
-import { orderService } from "@/services/orderService";
-import { processChartData, mapOrderStatusData } from '@/utils/adminDashboardUtils';
-// ...
-// The helper functions are no longer defined in this file
-const chartData = processChartData(monthlyRevenue.reportItems);
-const allOrderStatus = mapOrderStatusData(statistics.allTotalOrder);
-// ...
+import { Grid, Alert, AlertTitle, Box } from '@mui/material';
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+
+import { orderService } from '@/services/orderService';
+import { DashboardStatistics, ChartTimeRange } from '@/types/dashboard';
+
+import StatisticCard from '@/components/Admin/Dashboard/StatisticCard';
+import RevenueChart from '@/components/Admin/Dashboard/RevenueChart';
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
@@ -68,8 +63,8 @@ export default async function AdminDashboardPage() {
     [statistics, monthlyRevenue] = await Promise.all([
         orderService.getStatistics(),
         orderService.getSalesReport({ 
-            timeStart: new Date(new Date().getFullYear(), 0, 1).toISOString(),
-            timeEnd: new Date(new Date().getFullYear(), 11, 31).toISOString(),
+            fromDate: new Date(new Date().getFullYear(), 0, 1).toISOString(),
+            toDate: new Date(new Date().getFullYear(), 11, 31).toISOString(),
             // No limit/page to get all data for the year for the chart
         })
     ]);

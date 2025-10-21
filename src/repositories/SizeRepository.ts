@@ -9,9 +9,7 @@ export class SizeRepository
     extends BaseRepository<Size, CreateSizeDTO, UpdateSizeDTO>
     implements ISizeRepository {
 
-    private readonly basePath = '/sizes';
-
-    constructor(private readonly apiClient: AxiosInstance) {
+    constructor(apiClient: AxiosInstance) {
         super(apiClient, '/sizes');
     }
 
