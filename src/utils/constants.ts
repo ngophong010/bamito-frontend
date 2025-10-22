@@ -17,3 +17,6 @@ export const PAGINATION_LIMIT = {
     VOUCHERS: 10,
     FEED: 10,
 };
+
+// Legacy export for backward compatibility
+export const LIMIT = PAGINATION_LIMIT.ADMIN;

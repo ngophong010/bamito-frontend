@@ -27,22 +27,22 @@ export class FavouriteRepository extends BaseRepository<Favourite> {
     /**
      * Add a product to favourites
      */
-    async addFavourite(productId: number): Promise<void> {
+    async addFavourite(productId: string | number): Promise<void> {
         await this.apiClient.post(`/${this.basePath}`, { productId });
     }
 
     /**
      * Remove a product from favourites
      */
-    async removeFavourite(productId: number): Promise<void> {
+    async removeFavourite(productId: string | number): Promise<void> {
         await this.apiClient.delete(`/${this.basePath}/${productId}`);
     }
 
     /**
      * Check if a product is favourited
      */
-    async isFavourited(productId: number): Promise<boolean> {
+    async isFavourited(productId: string | number): Promise<boolean> {
         const favouriteIds = await this.getFavouriteIds();
-        return favouriteIds.includes(productId);
+        return favouriteIds.includes(Number(productId));
     }
 }

@@ -27,7 +27,7 @@ interface AdminState {
     inventories: PaginatedApiResponse<any>;
     categorySizes: any[];
     vouchers: PaginatedApiResponse<any>;
-    orders: PaginatedApiResponse<any>;
+    orders: PaginatedApiResponse<import('@/types/order').OrderSummary>;
     productOrders: PaginatedApiResponse<any>;
   };
   ui: {
@@ -52,7 +52,7 @@ interface AdminState {
   allInventory: any;
   allInventoryOfTheCategory: any;
   allVoucher: any;
-  allOrder: any;
+  allOrder: PaginatedApiResponse<import('@/types/order').OrderSummary> | any;
   allProductOrder: any;
 
   productData: any;
@@ -428,8 +428,8 @@ export const fetchOrders = createAsyncThunk<
       const page = params.page || 1;
       const limit = params.limit || PAGINATION_LIMIT.ORDERS;
 
-      const res = await orderService.getAllOrders(
-        { page, limit } as any
+      const res = await orderService.getOrderSummaries(
+        { page, limit }
       );
       dispatch(fetchAllOrderSuccess({
         items: res.items,
@@ -593,7 +593,7 @@ export const adminSlice = createSlice({
       state.entities.vouchers = { ...emptyPage };
     },
 
-    fetchAllOrderSuccess: (state, action: PayloadAction<PaginatedApiResponse<any>>) => {
+    fetchAllOrderSuccess: (state, action: PayloadAction<PaginatedApiResponse<import('@/types/order').OrderSummary>>) => {
       state.allOrder = action.payload;
       state.entities.orders = action.payload;
     },

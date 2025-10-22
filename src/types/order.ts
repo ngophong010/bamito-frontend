@@ -1,6 +1,6 @@
 import { UserProfile } from './user';
 import { Voucher } from './voucher';
-import { BaseEntity } from './common';
+import { BaseEntity, PaginatedApiResponse } from './common';
 
 export enum OrderStatus {
     PENDING = 1,
@@ -19,6 +19,9 @@ export interface OrderItem {
     productName: string;
     productImage: string | null;
     sizeName: string;
+    order: {
+        createdAt: Date;
+    };
 }
 
 // Lightweight version for list views
@@ -89,6 +92,8 @@ export interface SalesReportItem {
         createdAt: string;
     };
 }
+
+
 
 // Re-export the legacy Order type for backward compatibility
 export type Order = OrderDetails;

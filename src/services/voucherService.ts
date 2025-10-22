@@ -51,7 +51,7 @@ class VoucherService {
     /**
      * Create a new voucher
      */
-    async createVoucher(data: CreateVoucherDTO): Promise<Voucher> {
+    async createVoucher(data: CreateVoucherDTO | FormData): Promise<Voucher> {
         // Handle FormData if image is included
         if (data instanceof FormData) {
             const response = await apiClient.post('/vouchers', data, {
@@ -59,13 +59,13 @@ class VoucherService {
             });
             return response.data.data;
         }
-        return this.repository.create(data);
+        return this.repository.create(data as CreateVoucherDTO);
     }
 
     /**
      * Update a voucher
      */
-    async updateVoucher(id: number, data: UpdateVoucherDTO): Promise<Voucher> {
+    async updateVoucher(id: number, data: UpdateVoucherDTO | FormData): Promise<Voucher> {
         // Handle FormData if image is included
         if (data instanceof FormData) {
             const response = await apiClient.put(`/vouchers/${id}`, data, {
@@ -73,7 +73,7 @@ class VoucherService {
             });
             return response.data.data;
         }
-        return this.repository.update(id, data);
+        return this.repository.update(id, data as UpdateVoucherDTO);
     }
 
     /**

@@ -20,3 +20,20 @@ export interface FeedbackUpdateData {
   description?: string;
   rating?: number;
 }
+
+export interface FeedbackFormData {
+  rating: number;
+  description: string;
+}
+
+export interface UnreviewedProduct {
+  id: number;
+  orderId: number;
+  name: string;
+  image: string | null;
+  price: number;
+  size: {
+    id: number;
+    name: string;
+  };
+}

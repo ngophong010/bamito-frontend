@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { SalesReportItem, OrderStatusSummary } from '@/types'; // Assuming you create these types
+import { SalesReportItem, OrderSummary } from '@/types'; // Assuming you create these types
 
 export const processChartData = (reportItems: SalesReportItem[]): number[] => {
     const monthlyData = Array(12).fill(0);
@@ -14,6 +14,6 @@ export const processChartData = (reportItems: SalesReportItem[]): number[] => {
     return monthlyData;
 };
 
-export const mapOrderStatusData = (statusData: OrderStatusSummary[]) => {
+export const mapOrderStatusData = (statusData: OrderSummary[]) => {
     // ... (same logic as before)
 };

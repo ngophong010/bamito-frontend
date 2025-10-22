@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
-import { verifyAccessToken } from '@/utils/jwt'; // Your server-side JWT utility
-import { User } from '@/types'; // Or a more specific session type
+import { jwtManager } from './jwt';
+import { User } from '@/types';
 
 interface UserSession {
     id: number;
@@ -21,9 +21,12 @@ export const getUserSession = async (): Promise<UserSession | null> => {
     }
 
     try {
-        const decoded = verifyAccessToken(token); // This should throw an error if invalid
+        const decoded = jwtManager.decodeToken(token);
+        if (!decoded || jwtManager.isTokenExpired(token)) {
+            return null;
+        }
         // In a real system, you might also quickly check if the user still exists in the DB
-        return { id: decoded.id, role: decoded.role };
+        return { id: decoded.userId, role: decoded.roleId };
     } catch (error) {
         console.error("Session verification failed:", error);
         return null;

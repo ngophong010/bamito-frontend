@@ -18,4 +18,9 @@ export const regex = {
     EMAIL: EMAIL_REGEX,
     USERNAME: USERNAME_REGEX,
     PHONE_NUMBER: PHONE_NUMBER_REGEX,
+    PRICE: /^[0-9]+(\.[0-9]{1,2})?$/,
+    DISCOUNT: /^(0|[1-9][0-9]?)$/,
 };
+
+// Legacy export for backward compatibility
+export const VALIDATION_REGEX = regex;

@@ -7,7 +7,9 @@ import Tippy from "@tippyjs/react/headless";
 
 // 1. Import your typed hooks and actions
 import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
-import { logOut } from "@/redux-toolkit/userSlice"; // Assuming this is an async thunk
+import { logOut } from "@/redux-toolkit/userSlice";
+import { MenuItem } from "@/config/menu";
+import { User, LogOut } from "lucide-react";
 
 import UserMenu from "@/components/UserMenu/UserMenu";
 import "./adminHeader.scss";
@@ -22,13 +24,31 @@ const AdminHeader = () => {
 
   // 3. Encapsulate the logout logic in a useCallback for performance
   const handleLogOut = useCallback(() => {
-    // Dispatch the async thunk. The thunk itself can handle the redirect logic.
-    dispatch(logOut())
-      .unwrap() // Use unwrap to handle promise completion
-      .then(() => {
-        router.push('/login'); // Redirect after the logout process is complete
-      });
+    // Dispatch the regular action
+    dispatch(logOut());
+    router.push('/login'); // Redirect after logout
   }, [dispatch, router]);
+
+  // 4. Define menu items for admin
+  const menuItems: MenuItem[] = [
+    {
+      text: "Hồ sơ",
+      icon: User,
+      to: "/user/profile"
+    },
+    {
+      text: "Đăng xuất",
+      icon: LogOut,
+      action: "LOGOUT"
+    }
+  ];
+
+  // 5. Handle menu item clicks
+  const handleMenuItemClick = useCallback((item: MenuItem) => {
+    if (item.action === "LOGOUT") {
+      handleLogOut();
+    }
+  }, [handleLogOut]);
 
   // Handle the case where the profile might not be loaded yet
   if (!profile) {
@@ -61,11 +81,10 @@ const AdminHeader = () => {
         placement="bottom-end"
         delay={[0, 300]}
         render={(attrs) => (
-          // The UserMenu component also needs to be refactored to accept the new props
           <UserMenu
             attrs={attrs}
-            handleLogOut={handleLogOut}
-            roleId={profile.role.roleId} // Pass the roleId directly from the profile
+            menuItems={menuItems}
+            onItemClick={handleMenuItemClick}
           />
         )}
       >

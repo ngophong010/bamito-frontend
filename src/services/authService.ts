@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { ServiceResponse } from "@/types/common";
 import { AuthCredentials, LoginResponse, UserProfile, RegisterResponse, SuccessApiResponse } from '../types';
 import { ResetPasswordData } from '@/types';
+import { jwtManager, TokenPair } from '@/lib/auth';
 
 // --- TYPE DEFINITIONS for function parameters ---
 interface LoginData {
@@ -33,9 +34,18 @@ export interface ProfileResponse {
 // ===============================================================
 
 export const login = async (credentials: AuthCredentials): Promise<LoginResponse> => {
-  // Tell Axios to expect this specific response shape
   const response = await apiClient.post<SuccessApiResponse<LoginResponse>>('/auth/login', credentials);
-  return response.data.data;
+  const loginData = response.data.data;
+  
+  // Store tokens if login successful and no OTP required
+  if (loginData.accessToken && !loginData.otpRequired) {
+    jwtManager.setTokens({
+      accessToken: loginData.accessToken,
+      refreshToken: loginData.refreshToken
+    });
+  }
+  
+  return loginData;
 };
 
 /**
@@ -51,8 +61,16 @@ export const register = async (data: RegisterData): Promise<RegisterResponse> =>
 };
 
 export const logout = async (): Promise<ServiceResponse> => {
-  const response = await axios.post(`/api/v1/auth/logout`);
-  return response.data;
+  try {
+    await apiClient.post('/auth/logout');
+  } catch (error) {
+    // Continue with logout even if API call fails
+    console.warn('Logout API call failed:', error);
+  } finally {
+    // Always clear tokens on logout
+    jwtManager.clearTokens();
+  }
+  return { errCode: 0, message: 'Logged out successfully' };
 };
 
 /**
@@ -62,12 +80,22 @@ export const logout = async (): Promise<ServiceResponse> => {
  * @param otpCode - The code entered by the user.
  * @returns The full user profile data on success (completes the login).
  */
-export const verifyOtp = async (email: string, otpCode: string): Promise<UserProfile> => {
-  const response = await apiClient.post<SuccessApiResponse<UserProfile>>('/auth/verify-otp', {
+export const verifyOtp = async (email: string, otpCode: string): Promise<LoginResponse> => {
+  const response = await apiClient.post<SuccessApiResponse<LoginResponse>>('/auth/verify-otp', {
     email,
     otpCode
   });
-  return response.data.data;
+  const loginData = response.data.data;
+  
+  // Store tokens after successful OTP verification
+  if (loginData.accessToken) {
+    jwtManager.setTokens({
+      accessToken: loginData.accessToken,
+      refreshToken: loginData.refreshToken
+    });
+  }
+  
+  return loginData;
 };
 
 /**
@@ -128,3 +156,53 @@ export const resetPassword = async (data: ResetPasswordData): Promise<{ message:
   const response = await apiClient.post('/auth/reset-password', data);
   return response.data;
 };
+
+// Create AuthService class to match repository pattern
+class AuthService {
+  async login(credentials: AuthCredentials): Promise<LoginResponse> {
+    return login(credentials);
+  }
+
+  async register(data: RegisterData): Promise<RegisterResponse> {
+    return register(data);
+  }
+
+  async logout(): Promise<ServiceResponse> {
+    return logout();
+  }
+
+  async verifyOtp(email: string, otpCode: string): Promise<LoginResponse> {
+    return verifyOtp(email, otpCode);
+  }
+
+  async resendOtp(email: string): Promise<{ message: string }> {
+    return resendOtp(email);
+  }
+
+  async refreshToken(): Promise<ServiceResponse> {
+    return refreshToken();
+  }
+
+  async getProfile(): Promise<ProfileResponse> {
+    return getProfile();
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return forgotPassword(email);
+  }
+
+  async sendPasswordResetOtp(email: string): Promise<ServiceResponse> {
+    return sendPasswordResetOtp(email);
+  }
+
+  async resetPasswordWithOtp(data: PasswordResetData): Promise<ServiceResponse> {
+    return resetPasswordWithOtp(data);
+  }
+
+  async resetPassword(data: ResetPasswordData): Promise<{ message: string }> {
+    return resetPassword(data);
+  }
+}
+
+// Export singleton instance
+export const authService = new AuthService();

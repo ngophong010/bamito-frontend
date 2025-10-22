@@ -11,11 +11,12 @@ export interface CreateUserDTO {
 export interface UpdateUserDTO {
     userName?: string;
     email?: string;
+    password?: string;
     phoneNumber?: string;
     birthday?: string;
     avatar?: string;
     status?: number;
-    roleId?: number;
+    roleId?: string;
 }
 
 export interface UpdatePasswordDTO {
