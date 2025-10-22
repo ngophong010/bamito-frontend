@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Category, CategoryCreateData } from '@/types';
-import { createSlug } from '@/utils/formatters'; // Assuming you have a slug utility
+import { createSlug } from '@/utils/slug'; // Assuming you have a slug utility
 
 interface CategoryFormProps {
     onFormSubmit: (data: any) => Promise<void>;

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 // 1. Import your components, types, and new services
 import RatingForm, { RatingFormData } from "@/components/RatingForm/RatingForm";
 import FeedbackModal from "@/components/FeedbackModal/FeedbackModal";
-import { UnreviewedProduct } from "@/types"; // Create this specific type
+import { UnreviewedProduct, FeedbackFormData } from "@/types";
 import { feedbackService } from '@/services/feedbackService';
 import "./page.scss";
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });

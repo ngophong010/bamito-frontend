@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 
 // 1. Import the correct, refactored service function
 import { orderService } from '@/services/orderService';
+import { OrderStatus } from '@/types/order';
 import OrderListClient from './OrderListClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
@@ -21,10 +22,10 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
     const page = searchParams.page ? Number(searchParams.page) : 1;
-    const status = searchParams.status ? Number(searchParams.status) : undefined; // Pass undefined if not present
+    const status = searchParams.status ? [Number(searchParams.status) as OrderStatus] : undefined;
 
     // Fetch the initial list of orders based on the URL query params
-    const initialOrderData = await orderService.getAllOrders({
+    const initialOrderData = await orderService.getOrderSummaries({
       page,
       status,
       limit: 15, // Set a default limit for the admin list

@@ -51,25 +51,25 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
     });
 
     const avatarFile = watch('avatarFile');
-    const previewAvatar = avatarFile?.[0] ? URL.createObjectURL(avatarFile[0]) : initialProfileData.user.avatar;
+    const previewAvatar = avatarFile && avatarFile.length > 0 ? URL.createObjectURL(avatarFile[0]) : initialProfileData.user.avatar;
 
     const onSubmit: SubmitHandler<FormInputs> = async (data) => {
         setIsLoading(true);
         try {
-            const formData = new FormData();
+            const updateData: UserProfileUpdateData = {
+                userName: data.userName,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                birthday: data.birthday ? data.birthday.toISOString() : undefined,
+            };
 
-            // Only append fields that have changed
-            Object.entries(data).forEach(([key, value]) => {
-                if (key === 'avatarFile' && value?.[0]) {
-                    formData.append('avatar', value[0]);
-                } else if (key === 'birthday' && value) {
-                    formData.append(key, (value as dayjs.Dayjs).toISOString());
-                } else if (value !== null && value !== undefined && key !== 'avatarFile') {
-                    formData.append(key, String(value));
-                }
-            });
+            // Handle avatar file separately if present
+            let avatarFile: File | undefined;
+            if (data.avatarFile && data.avatarFile.length > 0) {
+                avatarFile = data.avatarFile[0];
+            }
 
-            const updatedProfile = await profileService.updateProfile(formData);
+            const updatedProfile = await profileService.updateProfile(updateData, avatarFile);
 
             // Update the global avatar in the Redux store if it changed
             if (updatedProfile.avatar) {
@@ -123,12 +123,6 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
                         </button>
                     </div>
 
-                    <ModalChangePassword
-                        open={isPasswordModalOpen}
-                        onClose={() => setIsPasswordModalOpen(false)}
-                        onSubmit={handleChangePassword}
-                    />
-
                     <div className="user-info-container">
                         {/* Form fields using Controller */}
                         <Controller name="userName" control={control} rules={{ required: "Vui lòng nhập tên" }} render={({ field }) => (
@@ -142,7 +136,12 @@ const ProfileClient = ({ initialProfileData }: ProfileClientProps) => {
                     </div>
                 </form>
             </div>
-            <ModalChangePassword open={isPasswordModalOpen} setIsOpen={setIsPasswordModalOpen} />
+            
+            <ModalChangePassword
+                open={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+                onSubmit={handleChangePassword}
+            />
         </div>
     );
 };

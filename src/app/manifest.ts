@@ -12,13 +12,13 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/images/logo-192.png", // Assumes you have this file in /public/images/
         sizes: "192x192",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "maskable",
       },
       {
         src: "/images/logo-512.png", // You should have a separate, larger icon file
         sizes: "512x512",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "maskable",
       },
     ],
     theme_color: "#1A94FF",
