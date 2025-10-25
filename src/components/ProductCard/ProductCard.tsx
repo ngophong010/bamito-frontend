@@ -7,8 +7,8 @@ import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 import { toast } from 'react-toastify';
 
-import { useAppSelector, useAppDispatch } from '@/redux-toolkit/hooks';
-import { setFavourites } from '@/redux-toolkit/userSlice';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { setFavourites } from '@/redux/features/user/userSlice';
 import { favouriteService } from '@/services/favouriteService';
 import { ProductListItem } from '@/types';
 import { createSlug } from '@/utils/slug';

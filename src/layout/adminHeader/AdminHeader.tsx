@@ -6,8 +6,8 @@ import Image from "next/image";
 import Tippy from "@tippyjs/react/headless";
 
 // 1. Import your typed hooks and actions
-import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
-import { logOut } from "@/redux-toolkit/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { logOut } from "@/redux/features/user/userSlice";
 import { MenuItem } from "@/config/menu";
 import { User, LogOut } from "lucide-react";
 

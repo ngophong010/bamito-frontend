@@ -1,19 +1,19 @@
 "use client";
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   fetchProducts as fetchAllProductRedux,
   fetchBrands as fetchAllBrandRedux,
   fetchCategories as fetchAllCategoryRedux,
   loadingAdmin,
-} from "@/redux-toolkit/adminSlice";
+} from "@/redux/adminSlice";
 import { productService } from "@/services/productService";
 import GridData from "@/components/GridData/GridData";
 import { PAGINATION_LIMIT } from "@/utils/constants";
-import { logOut } from "@/redux-toolkit/userSlice";
+import { logOut } from "@/redux/features/user/userSlice";
 import { ApiError } from "@/repositories/errors";
-import { RootState } from "@/redux-toolkit/store";
+import { RootState } from "@/redux/store";
 import { ProductListItem as Product } from "@/types/product";
 
 function ProductAdmin() {

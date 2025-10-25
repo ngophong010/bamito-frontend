@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
-import { logOut } from "./userSlice";
+import { logOut } from "../user/userSlice";
 import { PAGINATION_LIMIT } from "@/utils/constants";
 
 // Import the service factory

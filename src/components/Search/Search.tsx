@@ -9,8 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner, faCircleXmark, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import { useDebounce } from "@/hooks/useDebounce"; // Assuming a custom debounce hook
-import { AppDispatch, RootState } from "@/redux-toolkit/store";
-import { fetchSearchResults, clearSearchResults } from "@/redux-toolkit/searchSlice";
+import { AppDispatch, RootState } from "@/redux/store";
+import { fetchSearchResults, clearSearchResults } from "@/redux/searchSlice";
 import { createSlug } from "@/utils/slug"; // Assuming a slug utility
 import { ProductListItem } from "@/types";
 import "./Search.scss";

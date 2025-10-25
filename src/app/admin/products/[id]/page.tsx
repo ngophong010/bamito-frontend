@@ -11,7 +11,7 @@ import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { toast } from "react-toastify";
 import { usePathname, useRouter } from "next/navigation";
-import { loadingAdmin } from "@/redux-toolkit/adminSlice";
+import { loadingAdmin } from "@/redux/adminSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   handleCreateProductService,
@@ -20,7 +20,7 @@ import {
 import { regex } from "@/utils";
 import { useDebounce } from "@/utils/commonUtils";
 import Image from "next/image";
-import { logOut } from "@/redux-toolkit/userSlice";
+import { logOut } from "@/redux/features/user/userSlice";
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 

@@ -7,8 +7,8 @@ import Rating from "@mui/material/Rating";
 import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
-import { setFavourites } from "@/redux-toolkit/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setFavourites } from "@/redux/features/user/userSlice";
 
 import { ProductListItem, PaginatedApiResponse } from "@/types";
 import { addFavourite, removeFavourite, getMyFavouriteIds } from "@/services/favouriteService";

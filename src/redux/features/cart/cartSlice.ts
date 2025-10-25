@@ -18,7 +18,7 @@ interface CartItemIdentifiers {
 
 // Note: The logOut action is likely handled by a global API interceptor now,
 // but we can still listen for it here to clear the cart.
-import { logOut } from "./userSlice";
+import { logOut } from "../user/userSlice";
 
 // Define the shape of the cart slice's state
 interface CartState {

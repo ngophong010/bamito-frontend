@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import { ProductListItem, Brand, PaginatedApiResponse } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 import { favouriteService } from "@/services/favouriteService";
-import { useAppDispatch, useAppSelector } from '@/redux-toolkit/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 
 interface CategoryClientProps {
     initialProductData: PaginatedApiResponse<ProductListItem>;

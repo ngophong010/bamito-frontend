@@ -11,8 +11,8 @@ import Image from 'next/image';
 // 1. Import correct services, types, and hooks
 import { profileService } from '@/services/profileService';
 import { ProfileResponse, UserProfileUpdateData } from '@/types';
-import { useAppDispatch } from '@/redux-toolkit/hooks';
-import { updateAvatar } from '@/redux-toolkit/userSlice';
+import { useAppDispatch } from '@/redux/hooks';
+import { updateAvatar } from '@/redux/features/user/userSlice';
 import ModalChangePassword from '@/components/ModalChangePassword/ModalChangePassword';
 
 import { ChangePasswordData } from '@/types';

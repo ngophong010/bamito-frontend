@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 // 1. Import the CORRECT, refactored service function and types
-import { getMyOrders } from '../services/profileOrderService';
-import { OrderSummary, PaginatedApiResponse } from '../types';
+import { getMyOrders } from '../../../services/profileOrderService';
+import { OrderSummary, PaginatedApiResponse } from '../../../types';
 
 // Import the logOut action to handle cross-slice state changes
-import { logOut } from './userSlice';
+import { logOut } from '../user/userSlice';
 
 // 2. Define the state for THIS slice only
 interface ProfileOrderState {

@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux-toolkit/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import OtpInput from 'react-otp-input';
 import { toast } from 'react-toastify';
 
 import { verifyOtp, resendOtp } from '@/services/authService'; // Assuming you create these services
-import { setLoginSuccess } from '@/redux-toolkit/userSlice';
-import { clearOtpState } from '@/redux-toolkit/otpSlice';
+import { setLoginSuccess } from '@/redux/features/user/userSlice';
+import { clearOtpState } from '@/redux/features/auth/otpSlice';
 import './page.scss';
 
 const OtpPage = () => {
