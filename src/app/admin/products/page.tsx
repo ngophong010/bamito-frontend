@@ -10,7 +10,7 @@ import {
 } from "@/redux/adminSlice";
 import { productService } from "@/services/productService";
 import GridData from "@/components/GridData/GridData";
-import { PAGINATION_LIMIT } from "@/utils/constants";
+import { PAGINATION_LIMIT } from "@/lib/utils/constants";
 import { logOut } from "@/lib/redux/features/user/userSlice";
 import { ApiError } from "@/repositories/errors";
 import { RootState } from "@/lib/redux/store";

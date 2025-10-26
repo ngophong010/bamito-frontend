@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Category } from '@/types'; // Import the central Category type
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 import './CategoriesMenu.scss';
 
 // 1. Define the props interface for strong typing

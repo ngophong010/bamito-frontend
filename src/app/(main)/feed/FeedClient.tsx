@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { formatISODate } from "@/utils/formatters"; // Assuming you create this
+import { formatISODate } from "@/lib/utils/formatters"; // Assuming you create this
 import PaginatedItems from "@/components/Pagination/Pagination";
 import { FeedItem } from "@/types"; // Assuming you create this type
-import { LIMIT } from "@/utils/constants"; // e.g., export const LIMIT = 10;
+import { LIMIT } from "@/lib/utils/constants"; // e.g., export const LIMIT = 10;
 import "./feed.scss";
 
 interface FeedClientProps {

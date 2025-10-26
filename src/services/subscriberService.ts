@@ -3,9 +3,9 @@ import { SubscriberRepository } from '@/repositories/SubscriberRepository';
 import { Subscriber, SubscriberStats } from '@/types/models/subscriber';
 
 import apiClient from './apiClient';
-import { handleApiError } from '@/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { SubscriberMapper } from '@/mappers/subscriberMapper';
-import { logger } from '@/utils/logger';
+import { logger } from '@/lib/utils/logger';
 
 interface ISubscriberService {
     getSubscribers(page?: number): Promise<PaginatedApiResponse<Subscriber>>;

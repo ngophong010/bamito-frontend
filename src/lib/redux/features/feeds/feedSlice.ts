@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { PAGINATION_LIMIT } from "@/utils"; // Assuming PAGINATION_LIMIT is your items per page constant
+import { PAGINATION_LIMIT } from "@/lib/utils"; // Assuming PAGINATION_LIMIT is your items per page constant
 
 // ===============================================================
 // --- TYPES & INTERFACES ---

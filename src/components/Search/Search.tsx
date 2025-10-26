@@ -11,7 +11,7 @@ import { faSpinner, faCircleXmark, faMagnifyingGlass } from "@fortawesome/free-s
 import { useDebounce } from "@/hooks/useDebounce"; // Assuming a custom debounce hook
 import { AppDispatch, RootState } from "@/lib/redux/store";
 import { fetchSearchResults, clearSearchResults } from "@/redux/searchSlice";
-import { createSlug } from "@/utils/slug"; // Assuming a slug utility
+import { createSlug } from "@/lib/utils/slug"; // Assuming a slug utility
 import { ProductListItem } from "@/types";
 import "./Search.scss";
 import { getPopularSearches } from "@/services/searchService";

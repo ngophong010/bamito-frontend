@@ -6,9 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { sendPasswordResetOtp } from "@/redux/authSlice"; // Import the new thunk
+import { sendPasswordResetOtp } from "@/lib/redux/features/auth/authSlice"; // Import the new thunk
 import Loading from "@/components/Loading/Loading";
-import { regex } from "@/utils/regex";
+import { regex } from "@/lib/utils/regex";
 import "./page.scss";
 
 // Define the shape of our form data

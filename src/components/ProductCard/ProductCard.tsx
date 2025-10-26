@@ -11,7 +11,7 @@ import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
 import { setFavourites } from '@/lib/redux/features/user/userSlice';
 import { favouriteService } from '@/services/favouriteService';
 import { ProductListItem } from '@/types';
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 
 const ProductCard = ({ product }: { product: ProductListItem }) => {
     const dispatch = useAppDispatch();

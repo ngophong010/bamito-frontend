@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 // 1. Import your new, clean service functions
 import { categoryService } from '@/services/categoryService';
 import { productService } from '@/services/productService'; // You'll create this
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 

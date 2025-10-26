@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AppDispatch, RootState } from "@/lib/redux/store"; // Import your store types
 import { fetchCart } from "@/lib/redux/features/cart/cartSlice";
-import { createSlug } from "@/utils/slug";
+import { createSlug } from "@/lib/utils/slug";
 import "./TippyCart.scss";
 
 // Reusable currency formatter

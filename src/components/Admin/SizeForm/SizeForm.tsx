@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { TextField, Button, MenuItem } from '@mui/material';
 import { Size, Category, SizeCreateData } from '@/types';
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 
 interface SizeFormProps {
     onFormSubmit: (data: any) => void;

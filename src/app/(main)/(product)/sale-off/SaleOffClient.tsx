@@ -13,8 +13,8 @@ import { setFavourites } from "@/lib/redux/features/user/userSlice";
 import { ProductListItem, PaginatedApiResponse } from "@/types";
 import { addFavourite, removeFavourite, getMyFavouriteIds } from "@/services/favouriteService";
 import PaginatedItems from "@/components/Pagination/Pagination";
-import { createSlug } from "@/utils/slug";
-import "./page.scss";
+import { createSlug } from "@/lib/utils/slug";
+import "./page.module.scss";
 
 // Reusable currency formatter
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });

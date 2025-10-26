@@ -3,7 +3,7 @@ import React from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { TextField, Button, MenuItem } from '@mui/material';
 import { User, Role, UserCreateData } from '@/types'; // Assuming UserCreateData is defined
-import { regex } from '@/utils/regex';
+import { regex } from '@/lib/utils/regex';
 
 interface UserFormProps {
     onFormSubmit: (data: any) => void;

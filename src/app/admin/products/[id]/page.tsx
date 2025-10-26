@@ -17,8 +17,8 @@ import {
   handleCreateProductService,
   handleUpdateProductService,
 } from "@/services/productService";
-import { regex } from "@/utils";
-import { useDebounce } from "@/utils/commonUtils";
+import { regex } from "@/lib/utils";
+import { useDebounce } from "@/lib/utils/commonUtils";
 import Image from "next/image";
 import { logOut } from "@/lib/redux/features/user/userSlice";
 
