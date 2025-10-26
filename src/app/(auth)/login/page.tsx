@@ -7,8 +7,8 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { AuthCredentials } from "@/types";
-import { loginUser } from "@/redux/features/user/userSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { loginUser } from "@/lib/redux/features/user/userSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import Loading from "@/components/Loading/Loading";
 // ... (import icons, etc.)
 import "./page.scss";

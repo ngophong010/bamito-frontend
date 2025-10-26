@@ -20,7 +20,7 @@ import {
 import { regex } from "@/utils";
 import { useDebounce } from "@/utils/commonUtils";
 import Image from "next/image";
-import { logOut } from "@/redux/features/user/userSlice";
+import { logOut } from "@/lib/redux/features/user/userSlice";
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 

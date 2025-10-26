@@ -11,7 +11,7 @@ const authService = serviceFactory.createAuthService();
 interface UserState {
   isLoggedIn: boolean;
   profile: UserProfile | null;
-  favouriteProductIds: number[];
+  favouriteProductIds?: number[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }

@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { categoryService } from '../services/categoryService';
-import { Category, PaginatedApiResponse } from '../types';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { categoryService } from '../../../../services/categoryService';
+import { Category } from '../../../../types';
 interface CategoryState {
     items: Category[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';

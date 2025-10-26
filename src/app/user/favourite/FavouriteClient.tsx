@@ -7,8 +7,8 @@ import { Grid } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import { toast } from 'react-toastify';
-import { useAppDispatch } from '@/redux/hooks';
-import { setFavourites } from '@/redux/features/user/userSlice';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { setFavourites } from '@/lib/redux/features/user/userSlice';
 
 // 1. Import your "dumb" reusable components and correct types/services
 import PaginatedItems from '@/components/Pagination/Pagination';

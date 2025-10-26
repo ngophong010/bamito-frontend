@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
-import { AppDispatch, RootState } from "@/redux/store"; // Import your store types
-import { fetchCart } from "@/redux/features/cart/cartSlice";
+import { AppDispatch, RootState } from "@/lib/redux/store"; // Import your store types
+import { fetchCart } from "@/lib/redux/features/cart/cartSlice";
 import { createSlug } from "@/utils/slug";
 import "./TippyCart.scss";
 

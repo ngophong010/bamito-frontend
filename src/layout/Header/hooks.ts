@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { logOut } from '@/redux/features/user/userSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { logOut } from '@/lib/redux/features/user/userSlice';
 import { MenuItem, USER_MENU } from '@/config/menu';
 import { UserProfileState } from './types';
 

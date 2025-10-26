@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { registerUser } from "@/redux/authSlice"; // Import the new thunk
 import { RegisterData, Role } from "@/types";
 import Loading from "@/components/Loading/Loading";

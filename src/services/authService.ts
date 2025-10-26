@@ -1,7 +1,7 @@
 import apiClient from './apiClient';
 import axios from 'axios';
 import type { ServiceResponse } from "@/types/common";
-import { AuthCredentials, LoginResponse, UserProfile, RegisterResponse, SuccessApiResponse } from '../types';
+import { AuthCredentials, LoginResponse, UserProfile, RegisterResponse, RegisterData, SuccessApiResponse } from '../types';
 import { ResetPasswordData } from '@/types';
 import { jwtManager, TokenPair } from '@/lib/auth';
 
@@ -11,12 +11,7 @@ interface LoginData {
   password?: string; // Password might be omitted for social logins in the future
 }
 
-interface RegisterData {
-  email: string;
-  userName: string;
-  password?: string;
-  roleId: number; // e.g., 2 for Customer
-}
+
 
 interface PasswordResetData {
   email: string;
@@ -54,9 +49,13 @@ export const login = async (credentials: AuthCredentials): Promise<LoginResponse
  * @returns A promise that resolves to an object containing a success message.
  */
 export const register = async (data: RegisterData): Promise<RegisterResponse> => {
-    // Tell Axios to expect this specific response shape
-    const response = await apiClient.post<SuccessApiResponse<RegisterResponse>>('/auth/register', data);
-    // Extract and return ONLY the data payload
+    // Production business logic: Default to customer role if not specified
+    const registrationData = {
+        ...data,
+        roleId: data.roleId || 2 // Default to customer role (R2)
+    };
+    
+    const response = await apiClient.post<SuccessApiResponse<RegisterResponse>>('/auth/register', registrationData);
     return response.data.data;
 };
 

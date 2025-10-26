@@ -1,5 +1,5 @@
 "use client";
-import StoreProvider from "./redux/StoreProvider";
+import StoreProvider from "./lib/redux/StoreProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import type { PropsWithChildren } from "react";

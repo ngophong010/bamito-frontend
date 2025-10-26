@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { toast } from 'react-toastify';
 // 1. Import your new, clean Redux thunks and services
-import { updateCartItemQuantity, removeCartItem } from '@/redux/features/cart/cartSlice';
+import { updateCartItemQuantity, removeCartItem } from '@/lib/redux/features/cart/cartSlice';
 import { createOrder } from '@/redux-toolkit/orderSlice'; // A new order thunk
 import { createVnPayUrl } from '@/services/paymentService';
 import Paypal from '@/components/Paypal/Paypal';

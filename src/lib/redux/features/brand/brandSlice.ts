@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
-import { brandService } from '../services/brandService';
-import { Brand, PaginatedApiResponse } from '../types';
+import { brandService } from '../../../../services/brandService';
+import { Brand, PaginatedApiResponse } from '../../../../types';
 
 // 3. Define the state for THIS slice only
 interface BrandState {

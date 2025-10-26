@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useAppSelector } from '@/redux/hooks';
-import { RootState } from '@/redux/store';
+import { useAppSelector } from '@/lib/redux/hooks';
+import { RootState } from '@/lib/redux/store';
 
 // Custom hook for observing specific state changes
 export const useStateObserver = <T>(

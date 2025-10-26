@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import crypto from 'crypto'; // Use Node.js built-in crypto module
-import { mailchimp } from '@/lib/mailchimp';
+import { mailchimp } from '@/lib/clients/mailchimp';
 import { getUserSession } from '@/lib/auth/session';
 import { ROLES } from '@/config/role';
 

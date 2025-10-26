@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 // 1. Import the CORRECT, refactored service function and types
-import { productService } from '../services/productService';
-import { ProductListItem, PaginatedApiResponse } from '../types';
+import { productService } from '../../../../services/productService';
+import { ProductListItem, PaginatedApiResponse } from '../../../../types';
 
 // 2. Define the state for THIS slice only. We'll only store the server data here.
 interface SearchState {

@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
-import { register as registerService, forgotPassword as forgotPasswordService } from '../services/authService';
-import { RegisterData, RegisterResponse } from '../types';
+import { register as registerService, forgotPassword as forgotPasswordService } from '../../../../services/authService';
+import { RegisterData, RegisterResponse } from '../../../../types';
 import { startOtpVerification } from './otpSlice';
 
 interface AuthState {
