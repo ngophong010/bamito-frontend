@@ -1,5 +1,5 @@
 import { Size } from './size';
-import { BaseFilterParams, BaseStatsDTO } from './dtos/_base.dto';
+import { BaseFilterParams } from './dtos/_base.dto';
 
 export interface Inventory {
     id: number;

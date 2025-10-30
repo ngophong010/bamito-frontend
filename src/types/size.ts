@@ -1,4 +1,4 @@
-import { BaseDTO, BaseFilterParams, BulkOperationDTO } from './dtos/_base.dto';
+import { BaseDTO } from './dtos/_base.dto';
 
 export interface Size extends BaseDTO {
   id: number;

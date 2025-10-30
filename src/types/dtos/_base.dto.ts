@@ -183,7 +183,6 @@ export interface ResendOtpDTO {
   identifier: string; // could be email, phone, or usernaem
   purpose: 'verify_email' | '2fa' | 'reset_password';
   method?: 'email' | 'sms';
-
 }
 
 // Favourites / Wishlist

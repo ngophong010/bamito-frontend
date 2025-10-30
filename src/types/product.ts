@@ -1,7 +1,6 @@
 import { Brand } from './brand';
 import { Category } from './category';
 import { Inventory } from './inventory';
-import { ProductCreateData, PRODUCT_VALIDATION_RULES } from './product-create';
 
 // The shape of a Product when fetched in a list
 export interface ProductListItem {

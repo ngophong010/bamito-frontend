@@ -1,5 +1,3 @@
-// src/types/cart.ts
-
 /**
  * @fileoverview Defines all TypeScript interfaces and types related to the Cart resource.
  */
@@ -24,9 +22,6 @@ export interface CartData {
   products: CartItem[];
   totalProduct: number;
 }
-
-
-// --- FIX: ADD THE MISSING TYPES FOR API **INPUT** ---
 
 /**
  * The shape of the data required when sending a POST request to add or update a cart item.
