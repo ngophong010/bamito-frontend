@@ -1,18 +1,21 @@
 import dayjs from 'dayjs';
+import "dayjs/locale/vi";
+
+dayjs.locale("vi");
 
 export const currencyFormatter = new Intl.NumberFormat("vi-VN", {
   style: "currency",
   currency: "VND",
 });
 
-export const formatISODate = (isoString: string | Date): string => {
-  const date = new Date(isoString);
-  const daysOfWeek = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-  const dayOfWeek = daysOfWeek[date.getDay()];
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return dayjs(isoString).format("dddd, DD-MM-YYYY");
+export const formatISODate = (input: string | Date): string => {
+  const date = dayjs(input);
+
+  if (!date.isValid()) {
+    throw new Error("Invalid date input for formatISODate");
+  }
+
+  return date.format("dddd, DD-MM-YYYY");
 };
 
 export const getRemainingTimeMessage = (endTime: string | Date): string => {

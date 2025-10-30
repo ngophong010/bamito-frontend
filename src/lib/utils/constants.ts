@@ -1,5 +1,3 @@
-import { ROLES } from "@/config/role";
-
 /**
  * Application-wide constants.
  */
