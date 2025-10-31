@@ -23,7 +23,7 @@ const Register = () => {
   const router = useRouter();
 
   // Get the loading status from the new authSlice
-  const { status } = useAppSelector((state) => state.auth);
+  const registrationStatus = useAppSelector((state) => state.auth.registration.status);
 
   const {
     register,
@@ -32,25 +32,17 @@ const Register = () => {
     formState: { errors },
   } = useForm<RegisterFormInputs>();
 
-  // The onSubmit handler is now just one line!
   const onSubmit: SubmitHandler<RegisterFormInputs> = (data) => {
-    // The client should not send the role. The backend should handle this.
-    // However, to match your previous logic, we'll add it here.
-    // In a true production app, the backend would assign the role.
-    const registrationData: RegisterData = {
-        email: data.email,
-        userName: data.userName,
-        password: data.password,
-        roleId: USER_ROLE_ID, // Use the correct numeric ID
-    };
-
-    // Dispatch the single async thunk. It handles API calls, toasts, and navigation.
-    dispatch(registerUser({ data: registrationData, router }));
+    dispatch(registerUser({
+      userName: data.userName,
+      email: data.email,
+      password: data.password,
+    }));
   };
 
   return (
     // Use the global loading state from the Redux slice
-    <Loading loading={status === 'loading'}>
+    <Loading loading={registrationStatus === 'loading'}>
       <div className="register-container">
         {/* --- Your JSX for the form remains the same --- */}
         <div className="register-content">
@@ -73,8 +65,8 @@ const Register = () => {
                 {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
 
                 <div className="wrapper-button-register">
-                    <button type="submit" className="button-register" disabled={status === 'loading'}>
-                        {status === 'loading' ? 'Đang xử lý...' : 'Đăng ký'}
+                    <button type="submit" className="button-register" disabled={registrationStatus === 'loading'}>
+                        {registrationStatus === 'loading' ? 'Đang xử lý...' : 'Đăng ký'}
                     </button>
                 </div>
             </form>

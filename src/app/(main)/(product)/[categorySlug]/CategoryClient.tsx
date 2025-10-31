@@ -55,7 +55,7 @@ export default function CategoryClient({ initialProductData, allBrands, category
     ]);
 
     // Get favourite IDs from Redux to determine the "liked" status
-    const favouriteProductIds = useAppSelector(state => state.user.favouriteProductIds);
+    const favouriteProductIds = useAppSelector(state => state.user.favourites);
 
     // Debounce filter inputs to avoid excessive URL changes
     const debouncedBrands = useDebounce(checkedBrands, 500);
@@ -137,7 +137,7 @@ export default function CategoryClient({ initialProductData, allBrands, category
                 {/* Product List Rendering */}
                 <Grid container spacing={5}>
                     {productsWithFavouriteStatus.map(item => (
-                        <Grid item xs={4} key={item.id}>
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
                             {/* ... your Link and Product Card UI ... */}
                             <button onClick={() => handleLikeToggle(item.id, item.isFavourited)}>
                                 {item.isFavourited ? <FavoriteTwoToneIcon /> : <FavoriteBorderTwoToneIcon />}

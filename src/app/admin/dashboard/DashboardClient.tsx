@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import RevenueChart from "@/components/Chart/Chart";// The chart is a client component
-import { StatisticsResponse } from '@/types';
+import { StatisticsResponse } from '@/types/statistics';
 import "./page.scss";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
@@ -66,11 +66,11 @@ const DashboardClient = ({ statistics, chartData }: DashboardClientProps) => {
                 <Grid className="order-status-grid-container" container>
                     {allOrderStatus.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Grid className="order-status-item" item xs={6}>
+                            <Grid className="order-status-item" size={{ xs: 6 }}>
                                 <Image height={50} width={55} src={item.img} alt={item.label} />
                                 <p>{item.label}</p>
                             </Grid>
-                            <Grid className="order-status-item" item xs={6}>
+                            <Grid className="order-status-item" size={{ xs: 6 }}>
                                 <p>{item.quantity}</p>
                                 <Link className="detail" href={item.to}>Xem chi tiết</Link>
                             </Grid>

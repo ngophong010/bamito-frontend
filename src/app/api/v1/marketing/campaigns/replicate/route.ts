@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         }
 
         // 3. Make the API call
-        const replicatedCampaign = await mailchimp.campaigns.replicate(templateId);
+        const replicatedCampaign = await (mailchimp.campaigns as any).replicate(templateId);
 
         // 4. Return the ID of the NEWLY created draft campaign
         return NextResponse.json(

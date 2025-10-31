@@ -69,8 +69,7 @@ const CategoryForm = ({ onFormSubmit, isLoading, initialData }: CategoryFormProp
                         error={!!errors.categoryId} 
                         helperText={errors.categoryId?.message} 
                         fullWidth 
-                        margin="normal" 
-                        InputProps={{ readOnly: !!initialData }} // Make it read-only when editing
+                        margin="normal"
                     />
                 )}
             />

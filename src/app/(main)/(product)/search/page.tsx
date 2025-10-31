@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 // Import the correct, refactored service functions
-import { getAllProducts } from '@/services/productService';
+import { productService } from '@/services/productService';
 import SearchClient from './SearchClient'; // Import the new Client Component
 import { Metadata } from 'next';
 // Define the shape of the props Next.js will provide
@@ -35,7 +35,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }
   try {
     // Fetch the search results from the API
-    const productData = await getAllProducts({
+    const productData = await productService.getAllProducts({
       name: searchTerm,
       page,
       limit: 12,

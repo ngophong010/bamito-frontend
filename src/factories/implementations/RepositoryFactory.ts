@@ -10,7 +10,7 @@ import { OrderRepository } from '@/repositories/OrderRepository';
 
 export class RepositoryFactory implements IRepositoryFactory {
     private static instance: RepositoryFactory;
-    private configManager: FactoryConfigManager;
+    private readonly configManager: FactoryConfigManager;
 
     private constructor() {
         this.configManager = FactoryConfigManager.getInstance();

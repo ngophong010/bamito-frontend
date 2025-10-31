@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import OtpInput from 'react-otp-input';
 import { toast } from 'react-toastify';
 
-import { verifyOtp, resendOtp } from '@/services/authService'; // Assuming you create these services
+import { authService } from '@/services/authService'; // Assuming you create these services
 import { setLoginSuccess } from '@/lib/redux/features/user/userSlice';
 import { clearOtpState } from '@/lib/redux/features/auth/otpSlice';
 import './page.scss';
@@ -43,18 +43,17 @@ const OtpPage = () => {
 
         setIsLoading(true);
         try {
-            // The verifyOtp service should return the full user profile on success
-            const profileData = await verifyOtp(verificationContext, otp);
+            const loginData = await authService.verifyOtp(verificationContext, otp);
+            const profileData = await authService.getProfile();
             
-            // On success, complete the login
-            dispatch(setLoginSuccess(profileData));
-            dispatch(clearOtpState()); // Clean up the temporary OTP state
+            dispatch(setLoginSuccess({ profile: profileData.user, favourites: profileData.favourites }));
+            dispatch(clearOtpState());
             toast.success("Xác thực thành công! Đang đăng nhập...");
-            router.push('/'); // Redirect to homepage
+            router.push('/');
             
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Mã OTP không hợp lệ hoặc đã hết hạn.");
-            setOtp(''); // Clear the input on failure
+            setOtp('');
         } finally {
             setIsLoading(false);
         }
@@ -64,7 +63,7 @@ const OtpPage = () => {
         if (resendCooldown > 0 || !verificationContext) return;
 
         try {
-            await resendOtp(verificationContext); // This API call should be rate-limited on the backend
+            await authService.resendOtp(verificationContext); // This API call should be rate-limited on the backend
             toast.success("Đã gửi lại mã OTP.");
             setResendCooldown(60); // Reset the cooldown timer
         } catch (error: any) {

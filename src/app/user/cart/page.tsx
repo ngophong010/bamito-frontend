@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 // 1. Import the correct, refactored service functions
 import { cartService } from '@/services/cartService';
-import { getProfile } from '@/services/authService'; // To get addresses
+import { authService } from '@/services/authService'; // To get addresses
 import { voucherService } from '@/services/voucherService';
 import CartClient from './CartClient'; // Import the new Client Component
 
@@ -16,7 +16,7 @@ export default async function CartPage() {
   try {
     const [cartSummary, profileData, activeVouchers] = await Promise.all([
         cartService.getCart(),
-        getProfile(),
+        authService.getProfile(),
         voucherService.getActiveVouchers(),
     ]);
     

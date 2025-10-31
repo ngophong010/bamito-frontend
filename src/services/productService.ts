@@ -25,7 +25,6 @@ class ProductService {
         return this.repository.getAll(params);
     }
 
-    
     /**
      * Fetches the full details for a single product by its public-facing string ID.
      */
@@ -47,7 +46,6 @@ class ProductService {
     ): Promise<PaginatedApiResponse<ProductListItem>> {
         return this.repository.getByCategory(categoryId, params);
     }
-
 
     /**
      * [ADMIN] Creates a new product with an image upload.

@@ -10,7 +10,6 @@ import { AuthCredentials } from "@/types";
 import { loginUser } from "@/lib/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import Loading from "@/components/Loading/Loading";
-// ... (import icons, etc.)
 import "./page.scss";
 
 const Login = () => {
@@ -19,19 +18,20 @@ const Login = () => {
   const router = useRouter();
 
   // Get the loading status from the Redux store
-  const { status } = useAppSelector((state) => state.user);
+  const loginStatus = useAppSelector((state) => state.user?.login?.status || 'idle');
 
   const { register, handleSubmit, formState: { errors } } = useForm<AuthCredentials>();
 
-  // The onSubmit handler is now just one line!
   const onSubmit: SubmitHandler<AuthCredentials> = (data) => {
-    // Dispatch the single async thunk. It handles everything else.
-    dispatch(loginUser({ credentials: data, router }));
+    dispatch(loginUser({
+      identifier: data.email,
+      password: data.password,
+    }));
   };
 
   return (
     // Use the global loading state from the Redux slice
-    <Loading loading={status === 'loading'}>
+    <Loading loading={loginStatus === 'loading'}>
       <div className="login-container">
         {/* --- Your JSX for the form remains largely the same --- */}
         {/* It's now a pure presentation component. */}
@@ -41,8 +41,8 @@ const Login = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     {/* ... (your input fields with register("email", ...), etc.) */}
                     <div className="login-auth-buttons">
-                        <button type="submit" className="login-button" disabled={status === 'loading'}>
-                            {status === 'loading' ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                        <button type="submit" className="login-button" disabled={loginStatus === 'loading'}>
+                            {loginStatus === 'loading' ? 'Đang đăng nhập...' : 'Đăng nhập'}
                         </button>
                         {/* ... */}
                     </div>

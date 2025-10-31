@@ -2,12 +2,8 @@
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import {
-  fetchProducts as fetchAllProductRedux,
-  fetchBrands as fetchAllBrandRedux,
-  fetchCategories as fetchAllCategoryRedux,
-  loadingAdmin,
-} from "@/redux/adminSlice";
+import { fetchProducts as fetchAllProductRedux } from "../../../lib/redux/features/admin/products/productAdminSlice";
+import { setLoading } from "../../../lib/redux/features/admin/shared/adminUISlice";
 import { productService } from "@/services/productService";
 import GridData from "@/components/GridData/GridData";
 import { PAGINATION_LIMIT } from "@/lib/utils/constants";
@@ -21,7 +17,7 @@ function ProductAdmin() {
   const { 
     items: products = [], 
     currentPage: page = 1,
-  } = useAppSelector((state: RootState) => state.admin.allProduct ?? {});
+  } = useAppSelector((state: RootState) => state.adminProducts);
 
   useEffect(() => {
     // Initial data fetch
@@ -33,7 +29,7 @@ function ProductAdmin() {
 
   const handleDelete = async (product: Product) => {
     try {
-      dispatch(loadingAdmin(true));
+      dispatch(setLoading({ key: 'deleteProduct', loading: true }));
 
       await productService.deleteProduct(product.id);
       
@@ -41,18 +37,10 @@ function ProductAdmin() {
       const isLastItem = products.length === 1 && page > 1;
       const newPage = isLastItem ? page - 1 : page;
 
-      await Promise.all([
-        dispatch(fetchAllProductRedux({
-          limit: PAGINATION_LIMIT.PRODUCTS,
-          page: newPage,
-        })),
-        dispatch(fetchAllBrandRedux({
-          limit: PAGINATION_LIMIT.BRANDS
-        })),
-        dispatch(fetchAllCategoryRedux({
-          limit: PAGINATION_LIMIT.CATEGORIES
-        }))
-      ]);
+      await dispatch(fetchAllProductRedux({
+        limit: PAGINATION_LIMIT.PRODUCTS,
+        page: newPage,
+      }));
 
       toast.success("Xóa sản phẩm thành công");
     } catch (err) {
@@ -66,7 +54,7 @@ function ProductAdmin() {
         toast.error(error.message || "Có lỗi xảy ra");
       }
     } finally {
-      dispatch(loadingAdmin(false));
+      dispatch(setLoading({ key: 'deleteProduct', loading: false }));
     }
   };
 

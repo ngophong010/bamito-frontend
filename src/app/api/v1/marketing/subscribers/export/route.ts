@@ -18,10 +18,10 @@ export async function GET() {
         // For a large list, you'd need to paginate through the results here.
         const response = await mailchimp.lists.getListMembersInfo(
             process.env.MAILCHIMP_AUDIENCE_ID!,
-            { status: "subscribed", count: 1000 } // Fetch up to 1000
+            { count: 1000 } // Fetch up to 1000
         );
         
-        const members = response.members || [];
+        const members = (response as any).members || [];
         
         // 2. Build the CSV content
         const csvHeader = "Email Address,First Name,Last Name,Status\n";

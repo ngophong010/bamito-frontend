@@ -13,7 +13,7 @@ interface UserSession {
  * @returns The user session payload or null if not authenticated.
  */
 export const getUserSession = async (): Promise<UserSession | null> => {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get('access_token')?.value;
 
     if (!token) {

@@ -26,7 +26,7 @@ const SaleOffClient = ({ initialProductData }: SaleOffClientProps) => {
   const dispatch = useAppDispatch();
 
   // Get the list of favourite IDs from the user slice
-  const favouriteProductIds = useAppSelector((state) => state.user.favouriteProductIds);
+  const favouriteProductIds = useAppSelector((state) => state.user.favourites);
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
 
   const handleLikeToggle = async (productId: number, isFavourited: boolean) => {
@@ -61,7 +61,7 @@ const SaleOffClient = ({ initialProductData }: SaleOffClientProps) => {
       {productsWithFavouriteStatus.length > 0 ? (
         <Grid container spacing={5}>
           {productsWithFavouriteStatus.map((item) => (
-            <Grid item xs={3} key={item.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.id}>
               <Link
                 href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
                 className="productWrapper"

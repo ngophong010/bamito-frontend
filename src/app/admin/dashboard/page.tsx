@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 // Import all the service functions needed for the dashboard
-import { getStatistics, getSalesReport } from '@/services/orderService';
+import { orderService } from '@/services/orderService';
 import DashboardClient from './DashboardClient'; // Import the Client Component
 
 export const metadata: Metadata = {
@@ -28,10 +28,10 @@ export default async function AdminDashboardPage() {
   try {
     // Fetch all required data in parallel for maximum performance
     const [statistics, yearlySalesReport] = await Promise.all([
-        getStatistics(),
-        getSalesReport({ 
-            timeStart: new Date(new Date().getFullYear(), 0, 1).toISOString(),
-            timeEnd: new Date(new Date().getFullYear(), 11, 31).toISOString(),
+        orderService.getStatistics(),
+        orderService.getSalesReport({ 
+            fromDate: new Date(new Date().getFullYear(), 0, 1).toISOString(),
+            toDate: new Date(new Date().getFullYear(), 11, 31).toISOString(),
         })
     ]);
 

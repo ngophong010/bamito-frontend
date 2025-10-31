@@ -113,11 +113,11 @@ export default async function AdminDashboardPage() {
           {/* ... Grid headers ... */}
           {allOrderStatus.map((item, index) => (
             <React.Fragment key={index}>
-              <Grid className="order-status-item order-item-left" item xs={6}>
+              <Grid className="order-status-item order-item-left" size={{ xs: 6 }}>
                 <Image height={50} width={55} src={item.img} alt={item.label} />
                 <p>{item.label}</p>
               </Grid>
-              <Grid className="order-status-item order-item-right" item xs={6}>
+              <Grid className="order-status-item order-item-right" size={{ xs: 6 }}>
                 <p>{item.quantity}</p>
                 <Link className="detail" href={item.to}>
                   Xem chi tiết

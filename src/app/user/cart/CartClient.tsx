@@ -3,14 +3,15 @@ import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { toast } from 'react-toastify';
-// 1. Import your new, clean Redux thunks and services
-import { updateCartItemQuantity, removeCartItem } from '@/lib/redux/features/cart/cartSlice';
-import { createOrder } from '@/redux-toolkit/orderSlice'; // A new order thunk
+import { DeleteForeverTwoTone } from '@mui/icons-material';
+import { addItemToCart, removeItemFromCart } from '@/lib/redux/features/cart/cartSlice';
+import { orderService } from '@/services/orderService';
 import { createVnPayUrl } from '@/services/paymentService';
 import Paypal from '@/components/Paypal/Paypal';
 import VoucherSelector from '@/components/VoucherSelector/VoucherSelector';
 
-import { CartData, UserProfile, Voucher, ProfileResponse } from '@/types';
+import { CartData, CartItem, UserProfile, Voucher, ProfileResponse } from '@/types';
+import { RootState } from '@/lib/redux/store';
 // ... import UI components
 
 interface CartClientProps {
@@ -28,46 +29,51 @@ const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: Car
     const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
 
     // Get live cart data from the Redux store, which will be updated by thunks
-    const { products, totalCount, status: cartStatus } = useAppSelector(state => state.cart);
-    const { profile } = useAppSelector(state => state.user);
+    const { items, totalCount } = useAppSelector((state: RootState) => state.cart);
+    const { profile } = useAppSelector((state: RootState) => state.user);
 
     const [isSelectingVoucher, setIsSelectingVoucher] = useState(false);
 
     // --- DERIVED DATA (Calculations) ---
     const subtotal = useMemo(() =>
-        products.reduce((acc, item) => acc + item.totalPrice, 0),
-        [products]);
+        items.reduce((acc: number, item: CartItem) => acc + item.totalPrice, 0),
+        [items]);
     const shippingFee = 30000;
     const voucherDiscount = selectedVoucher?.voucherPrice || 0;
     const finalTotal = subtotal + shippingFee - voucherDiscount;
 
     // --- EVENT HANDLERS ---
-    const handleQuantityChange = (productId: number, sizeId: number, newQuantity: number) => {
+    const handleQuantityChange = (productId: string, sizeId: string, newQuantity: number) => {
         // Dispatch a thunk to handle the update. The thunk handles the API call and state sync.
-        dispatch(updateCartItemQuantity({ productId, sizeId, quantity: newQuantity }));
+        dispatch(addItemToCart({ productId: Number(productId), size: Number(sizeId), quantity: newQuantity }));
     };
 
-    const handleRemove = (productId: number, sizeId: number) => {
-        dispatch(removeCartItem({ productId, sizeId }));
+    const handleRemove = (productId: string, sizeId: string) => {
+        dispatch(removeItemFromCart({ productId: Number(productId), size: Number(sizeId) }));
     };
 
     const handlePlaceOrder = async () => {
         // Validation checks
-        if (!profile?.deliveryAddresses?.[0]) {
+        if (!initialProfileData?.user) {
             toast.error("Vui lòng cập nhật địa chỉ giao hàng trong hồ sơ.");
             return;
         }
 
         const orderData = {
             payment: paymentMethod,
-            deliveryAddress: profile.deliveryAddresses[0].streetLine1, // Use the default address
+            deliveryAddress: '', // Use appropriate address field
             voucherId: selectedVoucher?.id,
-            cartItems: products.map(p => ({ productId: p.id, sizeId: p.size.id, quantity: p.quantity })),
+            cartItems: items.map((p: CartItem) => ({ productId: Number(p.productId), sizeId: Number(p.sizeId), quantity: p.quantity })),
         };
 
         if (paymentMethod === 'COD' || paymentMethod === 'PAYPAL') {
-            // Dispatch a single thunk to handle order creation
-            dispatch(createOrder({ data: orderData, router }));
+            try {
+                await orderService.createOrder(orderData);
+                toast.success('Đặt hàng thành công!');
+                router.push('/user/orders');
+            } catch (error: any) {
+                toast.error(error.message || 'Đặt hàng thất bại.');
+            }
         } else if (paymentMethod === 'VNPAY') {
             try {
                 const { paymentUrl } = await createVnPayUrl(orderData);
@@ -104,18 +110,18 @@ const CartClient = ({ initialCartData, initialProfileData, activeVouchers }: Car
             <h1>Giỏ hàng của bạn</h1>
             <div className="cart-container">
                 <div className="cart-list-product">
-                    {/* Map over 'products' from Redux store */}
-                    {products.map(product => (
-                        <div key={`${product.id}-${product.size.id}`} className="product-item">
+                    {/* Map over 'items' from Redux store */}
+                    {items.map((product: CartItem) => (
+                        <div key={`${product.productId}-${product.sizeId}`} className="product-item">
                             {/* ... render product info ... */}
                             <div className="product-action">
-                                <button onClick={() => handleRemove(product.id, product.size.id)}>
-                                    <DeleteForeverTwoToneIcon />
+                                <button onClick={() => handleRemove(product.productId, product.sizeId)}>
+                                    <DeleteForeverTwoTone />
                                 </button>
                                 <div className="quantity-btn">
-                                    <button onClick={() => handleQuantityChange(product.id, product.size.id, product.quantity - 1)}>-</button>
+                                    <button onClick={() => handleQuantityChange(product.productId, product.sizeId, product.quantity - 1)}>-</button>
                                     <p>{product.quantity}</p>
-                                    <button onClick={() => handleQuantityChange(product.id, product.size.id, product.quantity + 1)}>+</button>
+                                    <button onClick={() => handleQuantityChange(product.productId, product.sizeId, product.quantity + 1)}>+</button>
                                 </div>
                             </div>
                         </div>

@@ -68,7 +68,7 @@ const OrderDetailClient = ({ order }: OrderDetailClientProps) => {
             {/* Product List */}
             <Grid container spacing={5} className="products">
                 {order.items.map((item) => (
-                    <Grid item sm={12} md={6} key={item.id}>
+                    <Grid size={{ xs: 12, sm: 12, md: 6 }} key={item.id}>
                         {/* ... your JSX for rendering a single order item ... */}
                     </Grid>
                 ))}

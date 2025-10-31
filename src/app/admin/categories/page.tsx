@@ -1,4 +1,4 @@
-import { getAllCategories } from '@/services/categoryService';
+import { categoryService } from '@/services/categoryService';
 import CategoryClient from './CategoryClient';
 import { Metadata } from 'next';
 
@@ -13,11 +13,9 @@ interface AdminCategoriesPageProps {
 export default async function AdminCategoriesPage({ searchParams }: AdminCategoriesPageProps) {
     // --- Data fetching on the server ---
     try {
-        const initialCategoryData = await getAllCategories({ 
+        const initialCategoryData = await categoryService.getCategories({ 
             page: searchParams.page ? Number(searchParams.page) : 1,
-            name: searchParams.name,
             limit: 10,
-            pagination: true 
         });
         
         return <CategoryClient initialCategoryData={initialCategoryData} />;

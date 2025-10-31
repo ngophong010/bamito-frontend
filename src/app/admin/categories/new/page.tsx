@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { createCategory } from '@/services/categoryService';
+import { categoryService } from '@/services/categoryService';
 import { CategoryCreateData } from '@/types';
 import CategoryForm from '../CategoryForm'; // A new, reusable form component
 
@@ -13,7 +13,7 @@ const CreateCategoryPage = () => {
     const handleCreate = async (data: CategoryCreateData) => {
         setIsLoading(true);
         try {
-            await createCategory(data);
+            await categoryService.createCategory(data);
             toast.success("Thêm danh mục thành công!");
             router.push('/admin/categories');
             router.refresh();
