@@ -2,8 +2,6 @@ import { IBaseRepository } from './IBaseRepository';
 import { Voucher } from '@/types/voucher';
 import { PaginatedApiResponse } from '@/types/common';
 import {
-    CreateVoucherDTO,
-    UpdateVoucherDTO,
     VoucherFilterParams,
     ValidateVoucherDTO,
     VoucherValidationDTO,
