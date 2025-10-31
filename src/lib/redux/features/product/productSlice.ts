@@ -1,22 +1,33 @@
-// src/redux-toolkit/productSlice.ts
-
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-
-// Import service factory
 import { serviceFactory } from '@/factories';
+import { ProductListItem, PaginatedApiResponse } from '@/types';
+import { handleAsyncError } from '../../utils/errorHandling';
+
 const productService = serviceFactory.createProductService();
 const favouriteService = serviceFactory.createFavouriteService();
-import { ProductListItem, PaginatedApiResponse } from '@/types';
 
-// 2. Define a clean, focused state. We only need ONE list of products.
+type ProductQueryType = 'all' | 'category' | 'sale' | 'favourite';
+
+interface ProductQuery {
+  type: ProductQueryType;
+  categoryId?: number;
+  params?: {
+    limit?: number;
+    page?: number;
+    sort?: string;
+    name?: string;
+    filter?: any;
+  };
+}
+
 interface ProductState {
-  items: ProductListItem[]; // The current list of products being displayed
-  // All pagination state is kept here, with its data
+  items: ProductListItem[];
   totalItems: number;
   totalPages: number;
   currentPage: number;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  lastQuery: ProductQuery | null;
 }
 
 const initialState: ProductState = {
@@ -26,65 +37,73 @@ const initialState: ProductState = {
   currentPage: 1,
   status: 'idle',
   error: null,
+  lastQuery: null,
 };
 
-// 3. Create a single, powerful thunk for fetching products
-// The parameters will tell it WHICH products to fetch.
+// Fetch products thunk with query tracking
 export const fetchProducts = createAsyncThunk<
-  PaginatedApiResponse<ProductListItem>,
-  {
-    type: 'all' | 'category' | 'sale' | 'favourite'; // Differentiates the query
-    categoryId?: number;
-    params?: { limit?: number; page?: number; sort?: string; name?: string; filter?: any };
-  },
+  { data: PaginatedApiResponse<ProductListItem>; query: ProductQuery },
+  ProductQuery,
   { rejectValue: string }
 >(
-  'products/fetchProducts',
+  'products/fetch',
   async (query, { rejectWithValue }) => {
     try {
-      // Use a switch statement to call the correct service function
+      let data: PaginatedApiResponse<ProductListItem>;
+      
       switch (query.type) {
         case 'category':
-          if (!query.categoryId) throw new Error('Category ID is required.');
-          return await productService.getProductsByCategory(query.categoryId, query.params);
+          if (!query.categoryId) throw new Error('Category ID is required');
+          data = await productService.getProductsByCategory(query.categoryId, query.params);
+          break;
         case 'sale':
-          return await productService.getProductsOnSale(query.params);
+          data = await productService.getProductsOnSale(query.params);
+          break;
         case 'favourite':
-          return await favouriteService.getMyFavourites(query.params);
+          data = await favouriteService.getMyFavourites(query.params);
+          break;
         case 'all':
         default:
-          return await productService.getAllProducts(query.params);
+          data = await productService.getAllProducts(query.params);
+          break;
       }
+      
+      return { data, query };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch products.');
+      return rejectWithValue(handleAsyncError(error, 'Failed to fetch products'));
     }
   }
 );
 
 
-// 4. Create the slice
 export const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    // Synchronous reducers, e.g., to clear the product list
     clearProducts: (state) => {
-        state.items = [];
-        state.totalItems = 0;
-    }
+      state.items = [];
+      state.totalItems = 0;
+      state.totalPages = 1;
+      state.currentPage = 1;
+      state.status = 'idle';
+      state.error = null;
+      state.lastQuery = null;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
-      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<PaginatedApiResponse<ProductListItem>>) => {
+      .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        // The slice is updated with whatever list was fetched, regardless of type.
-        state.items = action.payload.items;
-        state.totalItems = action.payload.totalItems;
-        state.totalPages = action.payload.totalPages;
-        state.currentPage = action.payload.currentPage;
+        state.items = action.payload.data.items;
+        state.totalItems = action.payload.data.totalItems;
+        state.totalPages = action.payload.data.totalPages;
+        state.currentPage = action.payload.data.currentPage;
+        state.lastQuery = action.payload.query;
+        state.error = null;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = 'failed';
@@ -95,3 +114,26 @@ export const productSlice = createSlice({
 
 export const { clearProducts } = productSlice.actions;
 export default productSlice.reducer;
+
+// Selectors
+export const selectProducts = (state: { products: ProductState }) => state.products.items;
+export const selectProductsStatus = (state: { products: ProductState }) => state.products.status;
+export const selectProductsError = (state: { products: ProductState }) => state.products.error;
+export const selectProductsPagination = (state: { products: ProductState }) => ({
+  totalItems: state.products.totalItems,
+  totalPages: state.products.totalPages,
+  currentPage: state.products.currentPage,
+});
+export const selectLastQuery = (state: { products: ProductState }) => state.products.lastQuery;
+
+// Computed selectors
+export const selectHasProducts = (state: { products: ProductState }) => state.products.items.length > 0;
+export const selectProductsByBrand = (brandId: string) => 
+  (state: { products: ProductState }) => 
+    state.products.items.filter(product => product.brand?.brandId === brandId);
+export const selectProductsInPriceRange = (min: number, max: number) => 
+  (state: { products: ProductState }) => 
+    state.products.items.filter(product => product.price >= min && product.price <= max);
+export const selectIsCurrentQuery = (query: ProductQuery) => 
+  (state: { products: ProductState }) => 
+    JSON.stringify(state.products.lastQuery) === JSON.stringify(query);

@@ -1,91 +1,123 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-
-import { register as registerService, forgotPassword as forgotPasswordService } from '../../../../services/authService';
-import { RegisterData, RegisterResponse } from '../../../../types';
-import { startOtpVerification } from './otpSlice';
+import { authService } from '@/services/authService';
+import { RegisterDTO } from '@/types/dtos/auth.dto';
+import { RegisterResponse } from '@/types';
+import { handleAsyncError } from '../../utils/errorHandling';
 
 interface AuthState {
+  registration: {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
+    data: RegisterResponse | null;
+  };
+  passwordReset: {
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    error: string | null;
+    email: string | null;
+  };
 }
 
 const initialState: AuthState = {
+  registration: {
     status: 'idle',
     error: null,
+    data: null,
+  },
+  passwordReset: {
+    status: 'idle',
+    error: null,
+    email: null,
+  },
 };
 
-// Create the async thunk for the registration process
+// Register user thunk - no side effects
 export const registerUser = createAsyncThunk<
-    RegisterResponse,
-    { data: RegisterData, router: AppRouterInstance },
-    { rejectValue: string }
+  RegisterResponse,
+  RegisterDTO,
+  { rejectValue: string }
 >(
-    'auth/registerUser',
-    async ({ data, router }, { rejectWithValue }) => {
-        try {
-            // The service call is simple and clean
-            const response = await registerService(data);
-
-            // Handle success inside the thunk
-            toast.success(response.message || "Vui lòng kiểm tra email để kích hoạt tài khoản.");
-            router.push('/login'); // Redirect on success
-
-            return response;
-        } catch (error: any) {
-            const message = error.response?.data?.message || 'Đã xảy ra lỗi khi đăng ký.';
-            toast.error(message);
-            return rejectWithValue(message);
-        }
+  'auth/registerUser',
+  async (data, { rejectWithValue }) => {
+    try {
+      return await authService.register(data);
+    } catch (error: any) {
+      return rejectWithValue(handleAsyncError(error, 'Registration failed'));
     }
+  }
 );
 
-export const sendPasswordResetOtp = createAsyncThunk <
-    { message: string },
-    { email: string, router: AppRouterInstance },
-    { rejectValue: string }
+// Send password reset OTP thunk - no side effects
+export const sendPasswordResetOtp = createAsyncThunk<
+  { message: string },
+  string,
+  { rejectValue: string }
 >(
-    'auth/sendPasswordResetOtp',
-    async ({ email, router }, { dispatch, rejectWithValue }) => {
-        try {
-            // The service call is simple and clean
-            const response = await forgotPasswordService(email);
-            // Handle success side-effects inside the thunk
-            toast.success(response.message || "Mã OTP đã được gửi thành công.");
-
-            // Set the context for the next step (the OTP page)
-            dispatch(startOtpVerification(email));
-
-            // Navigate to the next step
-            router.push('/change-password'); // The next page will get the email from the otpSlice
-
-            return response;
-        } catch (error: any) {
-            const message = error.response?.data?.message || 'Email không tồn tại hoặc đã xảy ra lỗi.';
-            toast.error(message);
-            return rejectWithValue(message);
-        }
+  'auth/sendPasswordResetOtp',
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await authService.forgotPassword(email);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(handleAsyncError(error, 'Failed to send password reset OTP'));
     }
+  }
 );
 
 export const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(registerUser.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(registerUser.fulfilled, (state) => {
-                state.status = 'succeeded';
-            })
-            .addCase(registerUser.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload as string;
-            });
+  name: 'auth',
+  initialState,
+  reducers: {
+    clearRegistrationState: (state) => {
+      state.registration = {
+        status: 'idle',
+        error: null,
+        data: null,
+      };
     },
+    clearPasswordResetState: (state) => {
+      state.passwordReset = {
+        status: 'idle',
+        error: null,
+        email: null,
+      };
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Registration cases
+      .addCase(registerUser.pending, (state) => {
+        state.registration.status = 'loading';
+        state.registration.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.registration.status = 'succeeded';
+        state.registration.data = action.payload;
+        state.registration.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.registration.status = 'failed';
+        state.registration.error = action.payload as string;
+      })
+      // Password reset cases
+      .addCase(sendPasswordResetOtp.pending, (state) => {
+        state.passwordReset.status = 'loading';
+        state.passwordReset.error = null;
+      })
+      .addCase(sendPasswordResetOtp.fulfilled, (state, action) => {
+        state.passwordReset.status = 'succeeded';
+        state.passwordReset.error = null;
+      })
+      .addCase(sendPasswordResetOtp.rejected, (state, action) => {
+        state.passwordReset.status = 'failed';
+        state.passwordReset.error = action.payload as string;
+      });
+  },
 });
 
+export const { clearRegistrationState, clearPasswordResetState } = authSlice.actions;
+
 export default authSlice.reducer;
+
+// Selectors
+export const selectRegistrationState = (state: { auth: AuthState }) => state.auth.registration;
+export const selectPasswordResetState = (state: { auth: AuthState }) => state.auth.passwordReset;

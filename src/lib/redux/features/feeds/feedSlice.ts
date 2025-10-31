@@ -1,23 +1,17 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { PAGINATION_LIMIT } from "@/lib/utils"; // Assuming PAGINATION_LIMIT is your items per page constant
+import { PAGINATION_LIMIT } from "@/lib/utils/constants";
+import { handleAsyncError } from '../../utils/errorHandling';
 
-// ===============================================================
-// --- TYPES & INTERFACES ---
-// ===============================================================
-
-// Define the shape of a single item from your RSS feed API
 export interface FeedItem {
   title: string;
   link: string;
   pubDate: string;
   content: string;
-  // ... any other properties
 }
 
-// Define the shape of this slice's state
 interface FeedState {
-  all_items: FeedItem[];       // Holds ALL items fetched from the API
-  current_page_items: FeedItem[]; // Holds only the items for the current page
+  items: FeedItem[];
+  currentPageItems: FeedItem[];
   currentPage: number;
   totalPages: number;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -25,8 +19,8 @@ interface FeedState {
 }
 
 const initialState: FeedState = {
-  all_items: [],
-  current_page_items: [],
+  items: [],
+  currentPageItems: [],
   currentPage: 1,
   totalPages: 1,
   status: 'idle',
@@ -34,76 +28,85 @@ const initialState: FeedState = {
 };
 
 
-// ===============================================================
-// --- ASYNC THUNKS ---
-// ===============================================================
-
-export const fetchAllFeed = createAsyncThunk<
-  FeedItem[], // Type of the successful return value
-  void,       // No arguments are passed to this thunk
+// Fetch RSS feed thunk
+export const fetchFeed = createAsyncThunk<
+  FeedItem[],
+  void,
   { rejectValue: string }
 >(
-  "feed/fetchAllFeed",
+  "feed/fetch",
   async (_, { rejectWithValue }) => {
     try {
       const res = await fetch("/api/rss");
-      if (!res.ok) throw new Error('Failed to fetch RSS feed.');
+      if (!res.ok) throw new Error('Failed to fetch RSS feed');
       const result = await res.json();
-      // The thunk just returns the payload. Redux Toolkit handles the rest.
       return result.items;
     } catch (error: any) {
-      console.error(error);
-      return rejectWithValue(error.message || 'An unexpected error occurred.');
+      return rejectWithValue(handleAsyncError(error, 'Failed to fetch RSS feed'));
     }
   }
 );
 
 
-// ===============================================================
-// --- THE SLICE ---
-// ===============================================================
-
 export const feedSlice = createSlice({
   name: "feed",
   initialState,
-  // Reducers are for SYNCHRONOUS actions. We'll use one for pagination.
   reducers: {
-    setFeedPage: (state, action: PayloadAction<number>) => {
+    setPage: (state, action: PayloadAction<number>) => {
       const page = action.payload;
-      state.currentPage = page;
-      // Calculate the slice of items for the new page
-      state.current_page_items = state.all_items.slice(
-        (page - 1) * PAGINATION_LIMIT.FEED,
-        page * PAGINATION_LIMIT.FEED
-      );
+      if (page >= 1 && page <= state.totalPages) {
+        state.currentPage = page;
+        const startIndex = (page - 1) * PAGINATION_LIMIT.FEED;
+        const endIndex = page * PAGINATION_LIMIT.FEED;
+        state.currentPageItems = state.items.slice(startIndex, endIndex);
+      }
+    },
+    clearFeed: (state) => {
+      state.items = [];
+      state.currentPageItems = [];
+      state.currentPage = 1;
+      state.totalPages = 1;
+      state.status = 'idle';
+      state.error = null;
     },
   },
-  // extraReducers handles ASYNCHRONOUS actions from createAsyncThunk
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllFeed.pending, (state) => {
+      .addCase(fetchFeed.pending, (state) => {
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(fetchAllFeed.fulfilled, (state, action: PayloadAction<FeedItem[]>) => {
+      .addCase(fetchFeed.fulfilled, (state, action: PayloadAction<FeedItem[]>) => {
         state.status = 'succeeded';
-        // When the fetch is complete, store ALL items
-        state.all_items = action.payload;
-        // Calculate the total pages
+        state.items = action.payload;
         state.totalPages = Math.ceil(action.payload.length / PAGINATION_LIMIT.FEED);
-        // Set the initial current page to 1
         state.currentPage = 1;
-        // And populate the items for the first page
-        state.current_page_items = state.all_items.slice(0, PAGINATION_LIMIT.FEED);
+        state.currentPageItems = state.items.slice(0, PAGINATION_LIMIT.FEED);
+        state.error = null;
       })
-      .addCase(fetchAllFeed.rejected, (state, action) => {
+      .addCase(fetchFeed.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
       });
   },
 });
 
-// Export the synchronous action for changing the page
-export const { setFeedPage } = feedSlice.actions;
-
+export const { setPage, clearFeed } = feedSlice.actions;
 export default feedSlice.reducer;
+
+// Selectors
+export const selectFeedItems = (state: { feed: FeedState }) => state.feed.currentPageItems;
+export const selectFeedStatus = (state: { feed: FeedState }) => state.feed.status;
+export const selectFeedError = (state: { feed: FeedState }) => state.feed.error;
+export const selectFeedPagination = (state: { feed: FeedState }) => ({
+  currentPage: state.feed.currentPage,
+  totalPages: state.feed.totalPages,
+  totalItems: state.feed.items.length,
+});
+
+// Computed selectors
+export const selectHasFeedItems = (state: { feed: FeedState }) => state.feed.items.length > 0;
+export const selectCanGoToNextPage = (state: { feed: FeedState }) => 
+  state.feed.currentPage < state.feed.totalPages;
+export const selectCanGoToPrevPage = (state: { feed: FeedState }) => 
+  state.feed.currentPage > 1;

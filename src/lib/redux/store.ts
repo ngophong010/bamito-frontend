@@ -24,19 +24,31 @@ import categoryReducer from './features/category/categorySlice';
 import otpReducer from './features/auth/otpSlice';
 import authReducer from './features/auth/authSlice';
 
+// New focused admin slices
+import userAdminReducer from './features/admin/users/userAdminSlice';
+import productAdminReducer from './features/admin/products/productAdminSlice';
+import orderAdminReducer from './features/admin/orders/orderAdminSlice';
+import adminUIReducer from './features/admin/shared/adminUISlice';
+
 // Combine all your slice reducers into a single rootReducer
 const rootReducer = combineReducers({
   user: userReducer,
   brands: brandReducer,
   categories: categoryReducer,
   products: productReducer,
-  admin: adminReducer,
+  admin: adminReducer, // Legacy - will be removed
   search: searchReducer,
   order: orderReducer,
   cart: cartReducer,
   feed: feedReducer,
   otp: otpReducer,
   auth: authReducer,
+  
+  // New focused admin slices
+  adminUsers: userAdminReducer,
+  adminProducts: productAdminReducer,
+  adminOrders: orderAdminReducer,
+  adminUI: adminUIReducer,
 });
 
 // Create the persist configuration

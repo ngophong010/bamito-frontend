@@ -1,15 +1,19 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
+import { productService } from '@/services/productService';
+import { ProductListItem, PaginatedApiResponse } from '@/types';
+import { handleAsyncError } from '../../utils/errorHandling';
 
-// 1. Import the CORRECT, refactored service function and types
-import { productService } from '../../../../services/productService';
-import { ProductListItem, PaginatedApiResponse } from '../../../../types';
+interface SearchParams {
+  name: string;
+  limit?: number;
+  page?: number;
+}
 
-// 2. Define the state for THIS slice only. We'll only store the server data here.
 interface SearchState {
   results: ProductListItem[];
   totalItems: number;
-  // Let's keep a copy of the search text that *produced* these results for context
+  totalPages: number;
+  currentPage: number;
   lastSearchTerm: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
@@ -18,63 +22,81 @@ interface SearchState {
 const initialState: SearchState = {
   results: [],
   totalItems: 0,
+  totalPages: 1,
+  currentPage: 1,
   lastSearchTerm: null,
   status: 'idle',
   error: null,
 };
 
-// 3. Create the async thunk correctly
-export const fetchSearchResults = createAsyncThunk<
-  PaginatedApiResponse<ProductListItem>, // Type of the successful return value
-  { name: string; limit?: number; page?: number }, // Type of the argument
+// Search products thunk - no side effects
+export const searchProducts = createAsyncThunk<
+  PaginatedApiResponse<ProductListItem>,
+  SearchParams,
   { rejectValue: string }
 >(
-  'search/fetchResults', // Use a descriptive action type prefix
+  'search/searchProducts',
   async (params, { rejectWithValue }) => {
     try {
-      // The thunk just calls the service and RETURNS the data.
-      const data = await productService.getAllProducts(params);
-      return data;
+      return await productService.getAllProducts(params);
     } catch (error: any) {
-      toast.error('Search failed to load.');
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch search results.');
+      return rejectWithValue(handleAsyncError(error, 'Search failed'));
     }
   }
 );
 
-// 4. Create the slice
 export const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    // Add a reducer to clear search results, e.g., when the user clears the search box.
-    clearSearchResults: (state) => {
-      state.results = [];
-      state.totalItems = 0;
-      state.lastSearchTerm = null;
-      state.status = 'idle';
+    clearSearch: (state) => {
+      Object.assign(state, initialState);
+    },
+    setSearchTerm: (state, action: PayloadAction<string>) => {
+      state.lastSearchTerm = action.payload;
     },
   },
-  // 5. Use extraReducers to handle the thunk's lifecycle
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSearchResults.pending, (state, action) => {
+      .addCase(searchProducts.pending, (state, action) => {
         state.status = 'loading';
-        // Store the search term that initiated this fetch
+        state.error = null;
         state.lastSearchTerm = action.meta.arg.name;
       })
-      .addCase(fetchSearchResults.fulfilled, (state, action: PayloadAction<PaginatedApiResponse<ProductListItem>>) => {
+      .addCase(searchProducts.fulfilled, (state, action: PayloadAction<PaginatedApiResponse<ProductListItem>>) => {
         state.status = 'succeeded';
-        // 6. Update state with the payload returned by the thunk
         state.results = action.payload.items;
         state.totalItems = action.payload.totalItems;
+        state.totalPages = action.payload.totalPages;
+        state.currentPage = action.payload.currentPage;
+        state.error = null;
       })
-      .addCase(fetchSearchResults.rejected, (state, action) => {
+      .addCase(searchProducts.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
       });
   },
 });
 
-export const { clearSearchResults } = searchSlice.actions;
+export const { clearSearch, setSearchTerm } = searchSlice.actions;
 export default searchSlice.reducer;
+
+// Selectors
+export const selectSearchResults = (state: { search: SearchState }) => state.search.results;
+export const selectSearchStatus = (state: { search: SearchState }) => state.search.status;
+export const selectSearchError = (state: { search: SearchState }) => state.search.error;
+export const selectLastSearchTerm = (state: { search: SearchState }) => state.search.lastSearchTerm;
+export const selectSearchPagination = (state: { search: SearchState }) => ({
+  totalItems: state.search.totalItems,
+  totalPages: state.search.totalPages,
+  currentPage: state.search.currentPage,
+});
+
+// Computed selectors
+export const selectHasSearchResults = (state: { search: SearchState }) => state.search.results.length > 0;
+export const selectIsSearching = (state: { search: SearchState }) => state.search.status === 'loading';
+export const selectSearchResultsCount = (state: { search: SearchState }) => state.search.totalItems;
+
+// Legacy export for backward compatibility
+export const fetchSearchResults = searchProducts;
+export const clearSearchResults = clearSearch;
