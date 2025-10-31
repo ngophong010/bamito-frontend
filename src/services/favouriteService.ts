@@ -4,7 +4,7 @@ import { ProductListItem } from '@/types/product';
 import { PaginatedApiResponse } from '@/types/common';
 
 class FavouriteService {
-    private repository: FavouriteRepository;
+    private readonly repository: FavouriteRepository;
 
     constructor() {
         this.repository = new FavouriteRepository(apiClient);

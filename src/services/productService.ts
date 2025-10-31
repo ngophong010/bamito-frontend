@@ -7,7 +7,7 @@ import { PaginatedApiResponse } from '@/types/common';
 import { Category } from '@/types/category';
 
 class ProductService {
-    private repository: ProductRepository;
+    private readonly repository: ProductRepository;
 
     constructor() {
         this.repository = new ProductRepository(apiClient);

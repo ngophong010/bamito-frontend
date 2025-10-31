@@ -1,5 +1,4 @@
 import apiClient from './apiClient';
-// --- FIX: Import the specific, correct types ---
 import { 
     OrderSummary, 
     OrderDetails, 
@@ -11,7 +10,6 @@ import {
 // --- INTERFACES & TYPES ---
 // ===============================================================
 
-// Data needed to create an order
 export interface OrderCreateData {
     payment: string;
     deliveryAddress: string;
