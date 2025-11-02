@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
@@ -28,6 +28,26 @@ const GridData = <T extends { id: number }>({
     onEdit,
     onDelete,
 }: GridDataProps<T>) => {
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<T | null>(null);
+
+    const handleDeleteClick = (item: T) => {
+        setItemToDelete(item);
+        setDeleteModalOpen(true);
+    };
+
+    const handleDeleteConfirm = () => {
+        if (itemToDelete && onDelete) {
+            onDelete(itemToDelete);
+        }
+        setDeleteModalOpen(false);
+        setItemToDelete(null);
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteModalOpen(false);
+        setItemToDelete(null);
+    };
     
     return (
         <div className="GridData-Global">
@@ -61,7 +81,9 @@ const GridData = <T extends { id: number }>({
                                             </button>
                                         )}
                                         {onDelete && (
-                                            <ModalDelete handleDelete={() => onDelete(item)} />
+                                            <button onClick={() => handleDeleteClick(item)} className="action-btn delete">
+                                                Xóa
+                                            </button>
                                         )}
                                     </td>
                                 )}
@@ -76,6 +98,12 @@ const GridData = <T extends { id: number }>({
             )}
 
             {/* The Pagination component is now handled by the parent page */}
+            
+            <ModalDelete
+                open={deleteModalOpen}
+                onClose={handleDeleteCancel}
+                onConfirm={handleDeleteConfirm}
+            />
         </div>
     );
 };

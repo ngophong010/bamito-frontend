@@ -12,9 +12,9 @@ import Image from 'next/image';
 import styles from './ImageUpload.module.scss';
 
 interface ImageUploadProps {
-    images: string[];
-    onImageChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    onRemoveImage: (index: number) => void;
+    readonly images: string[];
+    readonly onImageChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    readonly onRemoveImage: (index: number) => void;
 }
 
 export default function ImageUpload({
@@ -30,43 +30,44 @@ export default function ImageUpload({
                     variant="outlined"
                     startIcon={<AddPhotoAlternateIcon />}
                 >
-                    Add Images
-                    <input
-                        type="file"
-                        hidden
-                        multiple
-                        accept="image/*"
-                        onChange={onImageChange}
-                    />
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <Typography>Add Images</Typography>
+                        <input
+                            type="file"
+                            hidden
+                            multiple
+                            accept="image/*"
+                            onChange={onImageChange}
+                        />
+                    </Box>
                 </Button>
                 <Typography variant="caption" color="textSecondary">
                     Upload product images (PNG, JPG)
                 </Typography>
             </Box>
 
-            <Grid container spacing={2} className={styles.previewGrid}>
-                {images.map((image, index) => (
-                    <Grid item xs={6} sm={4} md={3} key={index}>
-                        <Box className={styles.imagePreview}>
-                            <Image
-                                src={image}
-                                alt={`Product image ${index + 1}`}
-                                width={150}
-                                height={150}
-                                objectFit="cover"
-                            />
-                            <IconButton
-                                className={styles.deleteButton}
-                                onClick={() => onRemoveImage(index)}
-                                size="small"
-                                color="error"
-                            >
-                                <DeleteIcon />
-                            </IconButton>
-                        </Box>
-                    </Grid>
-                ))}
-            </Grid>
+            {images.map((image) => (
+                <Grid size={{ xs: 6, sm: 4, md: 3 }} key={image}>
+                    <Box className={styles.imagePreview}>
+                        <Image
+                            src={image}
+                            alt={`Product image`}
+                            width={150}
+                            height={150}
+                            style={{ objectFit: 'cover' }}
+                        />
+                        <IconButton
+                            className={styles.deleteButton}
+                            onClick={() => onRemoveImage(images.indexOf(image))}
+                            size="small"
+                            color="error"
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </Box>
+                </Grid>
+            ))}
+
         </Box>
     );
 }

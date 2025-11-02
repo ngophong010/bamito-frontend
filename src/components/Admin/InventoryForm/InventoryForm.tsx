@@ -27,6 +27,14 @@ const InventoryForm = ({ onFormSubmit, isLoading, initialData, availableSizes, p
         onFormSubmit(data);
     };
 
+    const getSubmitButtonLabel = (isLoading: boolean, hasInitialData: boolean): string => {
+        if (isLoading) return 'Submitting...';
+        if (hasInitialData) return 'Update Inventory';
+        return 'Add Inventory';
+    };
+
+    const submitButtonLabel = getSubmitButtonLabel(isLoading, !!initialData);
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="inventory-form">
             <TextField
@@ -35,19 +43,18 @@ const InventoryForm = ({ onFormSubmit, isLoading, initialData, availableSizes, p
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                InputProps={{ readOnly: true }}
             />
-            
+
             <Controller
                 name="sizeId"
                 control={control}
                 rules={{ required: "Please select a size" }}
                 render={({ field }) => (
-                    <TextField 
-                        {...field} 
-                        label="Size" 
-                        select 
-                        fullWidth 
+                    <TextField
+                        {...field}
+                        label="Size"
+                        select
+                        fullWidth
                         margin="normal"
                         error={!!errors.sizeId}
                         helperText={errors.sizeId?.message}
@@ -59,18 +66,18 @@ const InventoryForm = ({ onFormSubmit, isLoading, initialData, availableSizes, p
                     </TextField>
                 )}
             />
-            
+
             <Controller
                 name="quantity"
                 control={control}
-                rules={{ required: "Please enter a quantity", min: { value: 0, message: "Quantity cannot be negative"} }}
+                rules={{ required: "Please enter a quantity", min: { value: 0, message: "Quantity cannot be negative" } }}
                 render={({ field }) => (
-                    <TextField 
-                        {...field} 
-                        label="Stock Quantity" 
-                        type="number" 
-                        fullWidth 
-                        margin="normal" 
+                    <TextField
+                        {...field}
+                        label="Stock Quantity"
+                        type="number"
+                        fullWidth
+                        margin="normal"
                         error={!!errors.quantity}
                         helperText={errors.quantity?.message}
                     />
@@ -78,7 +85,7 @@ const InventoryForm = ({ onFormSubmit, isLoading, initialData, availableSizes, p
             />
 
             <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
-                {isLoading ? 'Saving...' : (initialData ? 'Update Inventory' : 'Add to Inventory')}
+                {submitButtonLabel}
             </Button>
         </form>
     );

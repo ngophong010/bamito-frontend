@@ -5,8 +5,7 @@ import Slider from '@mui/material/Slider';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Brand } from '@/types';
 import { brandService } from '@/services/brandService';
-// import './ProductFilterSidebar.scss';
-// Reusable currency formatter
+
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 const ProductFilterSidebar = () => {
     const router = useRouter();

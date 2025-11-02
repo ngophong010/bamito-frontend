@@ -37,7 +37,7 @@ const Introduce = ({ featuredData = [] }: { featuredData: FeaturedData[] }) => {
                 This prevents a crash if an object in the array is missing the 'data' property.
               */}
               {categorySection.data?.map((product) => (
-                <Grid item xs={3} key={product.id}>
+                <Grid size={{ xs: 3 }} key={product.id}>
                   <ProductCard product={product} />
                 </Grid>
               ))}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AppDispatch, RootState } from "@/lib/redux/store"; // Import your store types
 import { fetchCart } from "@/lib/redux/features/cart/cartSlice";
+import { CartItem } from "@/types";
 import { createSlug } from "@/lib/utils/slug";
 import "./TippyCart.scss";
 
@@ -19,31 +20,31 @@ const TippyCart = () => {
   const dispatch: AppDispatch = useDispatch();
 
   // Select the necessary data directly from the Redux store
-  const { products, totalCount, status } = useSelector(
-    (state: RootState) => state.cart
-  );
+  const items = useSelector((state: RootState) => state.cart.items);
+  const totalCount = useSelector((state: RootState) => state.cart.totalCount);
+  const fetchStatus = useSelector((state: RootState) => state.cart.operations.fetch.status);
   const userId = useSelector((state: RootState) => state.user.profile?.id);
 
   // Trigger the initial fetch for cart data if it hasn't been fetched yet
   useEffect(() => {
     // Only fetch if the user is logged in and the cart is in an 'idle' state
-    if (userId && status === 'idle') {
+    if (userId && fetchStatus === 'idle') {
       dispatch(fetchCart());
     }
-  }, [userId, status, dispatch]);
+  }, [userId, fetchStatus, dispatch]);
 
   // The component is now much simpler. It just renders the data from Redux.
   // No more local state or complex data fetching logic.
   
-  if (status === 'loading') {
+  if (fetchStatus === 'loading') {
     return <div className="tippy-cart-container">Loading...</div>;
   }
 
   return (
     <div className="tippy-cart-container">
       <h2 className="tippy-cart-title">Sản Phẩm Mới Thêm</h2>
-      {products && products.length > 0 ? (
-        products.slice(0, 5).map((product) => (
+      {items && items.length > 0 ? (
+        items.slice(0, 5).map((product) => (
           // The categoryName is now available directly on the product object from Redux
           <Link
             className="product-item"

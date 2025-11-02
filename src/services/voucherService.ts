@@ -59,7 +59,7 @@ class VoucherService {
             });
             return response.data.data;
         }
-        return this.repository.create(data as CreateVoucherDTO);
+        return this.repository.create(data);
     }
 
     /**
@@ -73,7 +73,7 @@ class VoucherService {
             });
             return response.data.data;
         }
-        return this.repository.update(id, data as UpdateVoucherDTO);
+        return this.repository.update(id, data);
     }
 
     /**

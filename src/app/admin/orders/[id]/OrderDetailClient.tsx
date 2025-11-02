@@ -39,7 +39,7 @@ const OrderDetailClient: React.FC<OrderDetailClientProps> = ({ order }) => {
     }
 
     const handleDelete = async () => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
+        if (globalThis.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
             setIsLoading(true);
             try {
                 await orderService.deleteOrder(order.id);

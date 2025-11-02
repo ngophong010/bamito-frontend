@@ -4,8 +4,8 @@ import { Box, Paper, Typography, Skeleton } from '@mui/material';
 import { StatisticCardData } from '@/types/dashboard';
 
 interface StatisticCardProps {
-    data: StatisticCardData;
-    isLoading?: boolean;
+    readonly data: StatisticCardData;
+    readonly isLoading?: boolean;
 }
 
 export default function StatisticCard({ data, isLoading = false }: StatisticCardProps) {

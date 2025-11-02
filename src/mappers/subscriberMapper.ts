@@ -1,7 +1,6 @@
 import { 
     SubscriberDTO, 
-    SubscriberStatsDTO, 
-    SubscriptionStatus 
+    SubscriberStatsDTO,
 } from '@/types/dtos/subscriber.dto';
 import { Subscriber, SubscriberStats } from '@/types/models/subscriber';
 import { BaseMapper } from './BaseMapper';

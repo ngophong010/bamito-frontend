@@ -1,13 +1,13 @@
 "use client";
 
 import { Breadcrumb, BreadcrumbItem } from '@/components/Breadcrumb/Breadcrumb';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { productService } from '@/services/productService';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-interface LayoutProps {
-  children: ReactNode;
-}
+type LayoutProps = Readonly<{
+  children: React.ReactNode;
+}>;
 
 /**
  * This is the layout component for the product category page.
@@ -45,7 +45,7 @@ export default function ProductLayout({ children }: LayoutProps) {
             // If we have a product slug, add the product to breadcrumb
             if (productSlug) {
               const productSlugParts = String(productSlug).split('-');
-              const productId = productSlugParts[productSlugParts.length - 1];
+              const productId = productSlugParts.at(-1);
               
               if (productId) {
                 const product = await productService.getProductDetails(productId);

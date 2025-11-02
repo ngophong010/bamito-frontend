@@ -1,4 +1,3 @@
-// This can be a Server Component as it's just static content and a client child
 import Link from 'next/link';
 import Script from 'next/script';
 import SubscribeForm from './SubscribeForm'; // Import the client component

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, use } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { faSpinner, faCircleXmark, faMagnifyingGlass } from "@fortawesome/free-s
 
 import { useDebounce } from "@/hooks/useDebounce"; // Assuming a custom debounce hook
 import { AppDispatch, RootState } from "@/lib/redux/store";
-import { fetchSearchResults, clearSearchResults } from "@/redux/searchSlice";
+import { fetchSearchResults, clearSearchResults } from "@/lib/redux/features/search/searchSlice";
 import { createSlug } from "@/lib/utils/slug"; // Assuming a slug utility
 import { ProductListItem } from "@/types";
 import "./Search.scss";
@@ -108,7 +108,6 @@ const SearchResultsDropdown = ({ searchResults, isLoading, searchText, onClose }
     </div>
   );
 };
-
 
 // ===============================================================
 // --- Main Search Component ---

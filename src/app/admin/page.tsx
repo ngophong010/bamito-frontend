@@ -1,30 +1,28 @@
 
-import { Grid, Alert, AlertTitle, Box } from '@mui/material';
+import { Grid} from '@mui/material';
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 import { orderService } from '@/services/orderService';
-import { DashboardStatistics, ChartTimeRange } from '@/types/dashboard';
-
-import StatisticCard from '@/components/Admin/Dashboard/StatisticCard';
 import RevenueChart from '@/components/Admin/Dashboard/RevenueChart';
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
 // Helper function to process chart data on the server
 const processChartData = (revenueData: any[]) => {
-    const monthlyData = Array(12).fill(0);
-    const currentYear = new Date().getFullYear();
+  const monthlyData = new Array(12).fill(0);
+  const currentYear = new Date().getFullYear();
 
-    revenueData?.forEach((item) => {
-        const date = new Date(item.time); // Assuming 'time' is a valid date string
-        if (date.getFullYear() === currentYear) {
-            const month = date.getMonth(); // 0-indexed (0 for January)
-            monthlyData[month] += item.totalPrice;
-        }
-    });
-    return monthlyData;
+  for (const item of revenueData ?? []) {
+    const date = new Date(item.time);
+    if (date.getFullYear() === currentYear) {
+      const month = date.getMonth();
+      monthlyData[month] += item.totalPrice;
+    }
+  }
+
+  return monthlyData;
 };
 
 // Helper to map order status data on the server
@@ -111,8 +109,8 @@ export default async function AdminDashboardPage() {
         <h1 className="order-status-heading">THỐNG KÊ TRẠNG THÁI ĐƠN HÀNG</h1>
         <Grid className="order-status-grid-container" container>
           {/* ... Grid headers ... */}
-          {allOrderStatus.map((item, index) => (
-            <React.Fragment key={index}>
+          {allOrderStatus.map((item) => (
+            <React.Fragment key={item.label}>
               <Grid className="order-status-item order-item-left" size={{ xs: 6 }}>
                 <Image height={50} width={55} src={item.img} alt={item.label} />
                 <p>{item.label}</p>

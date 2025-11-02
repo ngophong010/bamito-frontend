@@ -1,4 +1,4 @@
-"use client"; // This is a client component because it has interactive links
+"use client";
 import React from 'react';
 import Link from 'next/link';
 import { Category } from '@/types'; // Import the central Category type

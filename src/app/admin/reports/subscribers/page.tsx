@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { subscriberService } from '@/services/subcriberService';
+import { subscriberService } from '@/services/subscriberService';
 import SubscriberClient from './SubscriberClient';
 
 export const metadata: Metadata = {

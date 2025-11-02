@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { OrderStatusUIData } from '@/types/dashboard';
 
 interface OrderStatusGridProps {
-    data: OrderStatusUIData[];
+    readonly data: OrderStatusUIData[];
 }
 
 export default function OrderStatusGrid({ data }: OrderStatusGridProps) {
@@ -17,8 +17,8 @@ export default function OrderStatusGrid({ data }: OrderStatusGridProps) {
             </Typography>
 
             <Grid container spacing={2}>
-                {data.map((item, index) => (
-                    <Grid item xs={12} sm={6} key={index}>
+                {data.map((item) => (
+                    <Grid size={{xs: 12, sm: 6}} key={item.label}>
                         <Box 
                             display="flex" 
                             alignItems="center" 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { TextField, Button, MenuItem, Typography } from '@mui/material';
+import { TextField, Button, MenuItem, Typography, Box } from '@mui/material';
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import Image from 'next/image';
@@ -32,7 +32,7 @@ type FormInputs = Omit<ProductCreateData, 'brandId' | 'categoryId'> & {
 
 
 const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories }: ProductFormProps) => {
-    const { handleSubmit, control, setValue, formState: { errors } } = useForm<FormInputs>({
+    const { handleSubmit, control } = useForm<FormInputs>({
         defaultValues: {
             productId: initialData?.productId || '',
             name: initialData?.name || '',
@@ -42,7 +42,7 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
             categoryId: initialData?.category?.categoryId?.toString() || '',
         }
     });
-    
+
     const [descriptionHTML, setDescriptionHTML] = useState(initialData?.descriptionHTML || '');
     const [previewImage, setPreviewImage] = useState(initialData?.image || '/images/ImgNoProduct.png');
 
@@ -62,8 +62,8 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
             const formData = new FormData();
 
             // Convert string IDs to numbers for the API
-            const numericBrandId = parseInt(data.brandId, 10);
-            const numericCategoryId = parseInt(data.categoryId, 10);
+            const numericBrandId = Number.parseInt(data.brandId, 10);
+            const numericCategoryId = Number.parseInt(data.categoryId, 10);
 
             // Append basic fields
             formData.append('productId', data.productId);
@@ -86,6 +86,16 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
         }
     };
 
+    const getSubmitButtonLabel = (isLoading: boolean, isEditing: boolean): string => {
+        if (isLoading) return 'Saving...';
+        if (isEditing) return 'Update Product';
+        return 'Create Product';
+    };
+
+    const isEditing = Boolean(initialData);
+    const submitButtonLabel = getSubmitButtonLabel(isLoading, isEditing);
+
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={styles['product-form']}>
             <div className={styles['product-form__header']}>
@@ -96,10 +106,10 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
 
             {/* Image Upload and Preview */}
             <div className={styles['product-form__image-section']}>
-                <Image 
-                    src={previewImage} 
-                    alt="Product Preview" 
-                    width={200} 
+                <Image
+                    src={previewImage}
+                    alt="Product Preview"
+                    width={200}
                     height={200}
                     objectFit="contain"
                 />
@@ -107,21 +117,24 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
                     name="imageFile"
                     control={control}
                     render={({ field }) => (
-                        <Button 
-                            component="label" 
+                        <Button
+                            component="label"
                             variant="contained"
                             color="primary"
                         >
-                            Upload Image
-                            <input
-                                type="file"
-                                hidden
-                                accept="image/*"
-                                onChange={(e) => {
-                                    field.onChange(e.target.files);
-                                    handleImageChange(e);
-                                }}
-                            />
+                            <Box display="flex" alignItems="center" gap={1}>
+                                <Typography>Add Images</Typography>
+                                <input
+                                    type="file"
+                                    hidden
+                                    multiple
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        field.onChange(e.target.files);
+                                        handleImageChange(e);
+                                    }}
+                                />
+                            </Box>
                         </Button>
                     )}
                 />
@@ -174,9 +187,6 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
                             error={!!error}
                             helperText={error?.message}
                             fullWidth
-                            InputProps={{
-                                inputProps: { min: 0 }
-                            }}
                         />
                     )}
                 />
@@ -193,9 +203,6 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
                             error={!!error}
                             helperText={error?.message}
                             fullWidth
-                            InputProps={{
-                                inputProps: { min: 0, max: 100 }
-                            }}
                         />
                     )}
                 />
@@ -265,14 +272,14 @@ const ProductForm = ({ onFormSubmit, isLoading, initialData, brands, categories 
 
             {/* Form Actions */}
             <div className={styles['product-form__actions']}>
-                <Button 
-                    type="submit" 
-                    variant="contained" 
+                <Button
+                    type="submit"
+                    variant="contained"
                     color="primary"
                     disabled={isLoading}
                     size="large"
                 >
-                    {isLoading ? 'Saving...' : (initialData ? 'Update Product' : 'Create Product')}
+                    {submitButtonLabel}
                 </Button>
             </div>
         </form>

@@ -19,7 +19,7 @@ const SizeForm = ({ onFormSubmit, isLoading, initialData, categories }: SizeForm
         defaultValues: {
             sizeId: initialData?.sizeId || '',
             name: initialData?.name || '',
-            categoryId: initialData?.categoryId || undefined,
+            categoryId: initialData?.categoryId?.toString() || '',
         }
     });
 
@@ -69,7 +69,7 @@ const SizeForm = ({ onFormSubmit, isLoading, initialData, categories }: SizeForm
                         disabled={!!initialData} // Usually can't change a size's category
                     >
                         {categories.map(cat => (
-                            <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                            <MenuItem key={cat.id} value={cat.id.toString()}>{cat.name}</MenuItem>
                         ))}
                     </TextField>
                 )}

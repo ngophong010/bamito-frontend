@@ -7,7 +7,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { toast } from "react-toastify";
 
 // 1. Import types from the central /types directory
-import { ProductDetails, Inventory, Feedback } from "@/types";
+import { ProductDetails, Feedback } from "@/types";
 // 2. Import the correct, typed Redux hooks and actions
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { addItemToCart } from "@/lib/redux/features/cart/cartSlice";

@@ -1,6 +1,6 @@
 "use client";
 import Script from "next/script";
-import "./ZaloChat.scss"; // Renamed from ZaloZhat.scss for consistency
+import "./ZaloChat.scss";
 
 // 1. Add types for the global window object to make TypeScript aware of ZaloChatWidget.
 // This is a best practice for integrating third-party scripts.
