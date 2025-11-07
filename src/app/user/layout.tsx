@@ -1,10 +1,18 @@
+import { ReactNode } from 'react';
 import UserLayout from "@/layout/userLayout/UserLayout";
-import ProtectUser from "@/ProtectUser";
+import { categoryService } from '@/services/categoryService';
 
-export default function LayoutUser({ children }) {
+interface LayoutUserProps {
+  children: ReactNode;
+}
+
+export default async function LayoutUser({ children }: LayoutUserProps) {
+  // Fetch categories on server side
+  const categories = await categoryService.getAllCategoriesList();
+
   return (
-    <UserLayout>
-      <ProtectUser>{children}</ProtectUser>
+    <UserLayout categories={categories}>
+      {children}
     </UserLayout>
   );
 }

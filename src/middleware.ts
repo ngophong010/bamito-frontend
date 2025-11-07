@@ -7,10 +7,25 @@ export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-url', request.url);
 
-  // You can also add logic here to handle redirects for authenticated users
   const sessionToken = request.cookies.get('access_token')?.value;
 
-  // Example: Prevent logged-in users from accessing login/register pages
+  // Protect user routes - require authentication
+  if (request.nextUrl.pathname.startsWith('/user')) {
+    if (!sessionToken) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // Protect admin routes - require authentication
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!sessionToken) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
+  // Prevent logged-in users from accessing login/register pages
   if (sessionToken && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register'))) {
     return NextResponse.redirect(new URL('/', request.url));
   }

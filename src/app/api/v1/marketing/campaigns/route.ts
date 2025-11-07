@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mailchimp } from '@/lib/mailchimp'; // Assuming you create a central mailchimp config
+import { mailchimp } from '@/lib/clients/mailchimp'; // Assuming you create a central mailchimp config
 import { getUserSession } from '@/lib/auth/session'; // Our server-side auth helper
 import { ROLES } from '@/config/role';
 
@@ -22,12 +22,12 @@ export async function GET() {
     try {
         const response = await mailchimp.campaigns.list({
             count: 50, // Best practice: add pagination
-            sort_field: "create_time",
-            sort_dir: "DESC",
+            sortField: "create_time",
+            sortDir: "DESC",
         });
 
         // 2. Standardized Success Response
-        return NextResponse.json({ status: "success", data: response.campaigns });
+        return NextResponse.json({ status: "success", data: (response as any).campaigns });
 
     } catch (error: any) {
         console.error("Mailchimp API Error (List Campaigns):", error.response?.body || error.message);
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         }
 
         // Replicate the campaign to create a draft
-        const replicatedCampaign = await mailchimp.campaigns.replicate(campaignIdToReplicate);
+        const replicatedCampaign = await (mailchimp.campaigns as any).replicate(campaignIdToReplicate);
         
         // Send the newly created draft
         await mailchimp.campaigns.send(replicatedCampaign.id);

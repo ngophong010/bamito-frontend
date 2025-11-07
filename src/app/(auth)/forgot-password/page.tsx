@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 
-import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
-import { sendPasswordResetOtp } from "@/redux-toolkit/authSlice"; // Import the new thunk
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { sendPasswordResetOtp } from "@/lib/redux/features/auth/authSlice"; // Import the new thunk
 import Loading from "@/components/Loading/Loading";
-import { regex } from "@/utils/regex";
+import { regex } from "@/lib/utils/regex";
 import "./page.scss";
 
 // Define the shape of our form data
@@ -21,7 +21,7 @@ const ForgotPassword = () => {
   const router = useRouter();
 
   // Get the loading status from the authSlice
-  const { status } = useAppSelector((state) => state.auth);
+  const passwordResetStatus = useAppSelector((state) => state.auth.passwordReset.status);
 
   const {
     register,
@@ -29,15 +29,13 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm<FormInputs>();
 
-  // The onSubmit handler is now just one clean line!
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    // Dispatch the single async thunk. It handles everything else.
-    dispatch(sendPasswordResetOtp({ email: data.email, router }));
+    dispatch(sendPasswordResetOtp(data.email));
   };
 
   return (
     // Use the global loading state from the Redux slice
-    <Loading loading={status === 'loading'}>
+    <Loading loading={passwordResetStatus === 'loading'}>
       <div className="forgot-password-container">
         <h1 className="forgot-password-title">Quên mật khẩu</h1>
         <form className="forgot-password-content" onSubmit={handleSubmit(onSubmit)}>
@@ -64,9 +62,9 @@ const ForgotPassword = () => {
           <button
             type="submit"
             className="forgot-password-send"
-            disabled={status === 'loading'}
+            disabled={passwordResetStatus === 'loading'}
           >
-            {status === 'loading' ? 'Đang gửi...' : 'Gửi mã OTP'}
+            {passwordResetStatus === 'loading' ? 'Đang gửi...' : 'Gửi mã OTP'}
           </button>
         </form>
       </div>

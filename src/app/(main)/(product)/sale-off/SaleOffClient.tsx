@@ -3,18 +3,17 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Grid } from "@mui/material";
-import Rating from "@mui/material/Rating";
 import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
-import { setFavourites } from "@/redux-toolkit/userSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setFavourites } from "@/lib/redux/features/user/userSlice";
 
 import { ProductListItem, PaginatedApiResponse } from "@/types";
 import { addFavourite, removeFavourite, getMyFavouriteIds } from "@/services/favouriteService";
 import PaginatedItems from "@/components/Pagination/Pagination";
-import { createSlug } from "@/utils/slug";
-import "./page.scss";
+import { createSlug } from "@/lib/utils/slug";
+import "./page.module.scss";
 
 // Reusable currency formatter
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
@@ -27,7 +26,7 @@ const SaleOffClient = ({ initialProductData }: SaleOffClientProps) => {
   const dispatch = useAppDispatch();
 
   // Get the list of favourite IDs from the user slice
-  const favouriteProductIds = useAppSelector((state) => state.user.favouriteProductIds);
+  const favouriteProductIds = useAppSelector((state) => state.user.favourites);
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
 
   const handleLikeToggle = async (productId: number, isFavourited: boolean) => {
@@ -62,7 +61,7 @@ const SaleOffClient = ({ initialProductData }: SaleOffClientProps) => {
       {productsWithFavouriteStatus.length > 0 ? (
         <Grid container spacing={5}>
           {productsWithFavouriteStatus.map((item) => (
-            <Grid item xs={3} key={item.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.id}>
               <Link
                 href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
                 className="productWrapper"

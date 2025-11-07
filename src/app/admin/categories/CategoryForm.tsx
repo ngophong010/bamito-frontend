@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Category, CategoryCreateData } from '@/types';
-import { createSlug } from '@/utils/slug'; // Assuming you have a slug utility
+import { createSlug } from '@/lib/utils/slug'; // Assuming you have a slug utility
 
 interface CategoryFormProps {
     onFormSubmit: (data: any) => Promise<void>;
@@ -69,8 +69,7 @@ const CategoryForm = ({ onFormSubmit, isLoading, initialData }: CategoryFormProp
                         error={!!errors.categoryId} 
                         helperText={errors.categoryId?.message} 
                         fullWidth 
-                        margin="normal" 
-                        InputProps={{ readOnly: !!initialData }} // Make it read-only when editing
+                        margin="normal"
                     />
                 )}
             />

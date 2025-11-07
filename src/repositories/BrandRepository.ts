@@ -20,7 +20,7 @@ export class BrandRepository extends BaseRepository<Brand> implements IBrandRepo
      * Get all brands with filtering and pagination
      */
     async getBrands(params?: BrandFilterParams): Promise<PaginatedApiResponse<Brand>> {
-        const response = await this.apiClient.get<PaginatedApiResponse<Brand>>(this.endpoint, { params });
+        const response = await this.apiClient.get<PaginatedApiResponse<Brand>>(this.basePath, { params });
         return response.data;
     }
 
@@ -28,7 +28,7 @@ export class BrandRepository extends BaseRepository<Brand> implements IBrandRepo
      * Get brand statistics
      */
     async getBrandStats(): Promise<BrandStatsDTO> {
-        const response = await this.apiClient.get<BrandStatsDTO>(`${this.endpoint}/stats`);
+        const response = await this.apiClient.get<BrandStatsDTO>(`${this.basePath}/stats`);
         return response.data;
     }
 
@@ -36,7 +36,7 @@ export class BrandRepository extends BaseRepository<Brand> implements IBrandRepo
      * Get brands with their product counts
      */
     async getBrandsWithProductCount(params?: BrandFilterParams): Promise<BrandListResponseDTO> {
-        const response = await this.apiClient.get<BrandListResponseDTO>(`${this.endpoint}/with-product-count`, {
+        const response = await this.apiClient.get<BrandListResponseDTO>(`${this.basePath}/with-product-count`, {
             params
         });
         return response.data;
@@ -46,7 +46,7 @@ export class BrandRepository extends BaseRepository<Brand> implements IBrandRepo
      * Toggle brand active status
      */
     async toggleBrandStatus(brandId: number, isActive: boolean): Promise<Brand> {
-        const response = await this.apiClient.patch<Brand>(`${this.endpoint}/${brandId}/toggle-status`, {
+        const response = await this.apiClient.patch<Brand>(`${this.basePath}/${brandId}/toggle-status`, {
             isActive
         });
         return response.data;
@@ -57,7 +57,7 @@ export class BrandRepository extends BaseRepository<Brand> implements IBrandRepo
      */
     async getBrandProductCount(brandId: number): Promise<{ total: number; active: number }> {
         const response = await this.apiClient.get<{ total: number; active: number }>(
-            `${this.endpoint}/${brandId}/product-count`
+            `${this.basePath}/${brandId}/product-count`
         );
         return response.data;
     }
@@ -66,14 +66,14 @@ export class BrandRepository extends BaseRepository<Brand> implements IBrandRepo
      * Update brand display order
      */
     async updateBrandOrder(orderedIds: number[]): Promise<void> {
-        await this.apiClient.put(`${this.endpoint}/order`, { orderedIds });
+        await this.apiClient.put(`${this.basePath}/order`, { orderedIds });
     }
 
     /**
      * Search brands by name
      */
     async searchBrands(query: string, limit: number = 10): Promise<Brand[]> {
-        const response = await this.apiClient.get<Brand[]>(`${this.endpoint}/search`, {
+        const response = await this.apiClient.get<Brand[]>(`${this.basePath}/search`, {
             params: { query, limit }
         });
         return response.data;

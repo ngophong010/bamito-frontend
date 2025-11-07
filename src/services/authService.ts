@@ -1,208 +1,223 @@
 import apiClient from './apiClient';
-import axios from 'axios';
-import type { ServiceResponse } from "@/types/common";
-import { AuthCredentials, LoginResponse, UserProfile, RegisterResponse, SuccessApiResponse } from '../types';
-import { ResetPasswordData } from '@/types';
-import { jwtManager, TokenPair } from '@/lib/auth';
-
-// --- TYPE DEFINITIONS for function parameters ---
-interface LoginData {
-  email: string;
-  password?: string; // Password might be omitted for social logins in the future
-}
-
-interface RegisterData {
-  email: string;
-  userName: string;
-  password?: string;
-  roleId: number; // e.g., 2 for Customer
-}
-
-interface PasswordResetData {
-  email: string;
-  otpCode: string;
-  password?: string; // new password
-}
+import { AuthRepository } from '@/repositories/AuthRepository';
+import { jwtManager } from '@/lib/auth';
+import { handleApiError } from '@/lib/utils/errorHandler';
+import { logger } from '@/lib/utils/logger';
+import {
+  LoginDTO,
+  RegisterDTO,
+  ResetPasswordDTO,
+  ChangePasswordDTO
+} from '@/types/dtos/auth.dto';
+import { LoginResponse, RegisterResponse, UserProfile } from '@/types';
+import type { ServiceResponse } from '@/types/common';
 
 export interface ProfileResponse {
   user: UserProfile;
-  favourites: number[];
+  favourites?: number[];
 }
 
-// ===============================================================
-// --- AUTHENTICATION & REGISTRATION ---
-// ===============================================================
-
-export const login = async (credentials: AuthCredentials): Promise<LoginResponse> => {
-  const response = await apiClient.post<SuccessApiResponse<LoginResponse>>('/auth/login', credentials);
-  const loginData = response.data.data;
-  
-  // Store tokens if login successful and no OTP required
-  if (loginData.accessToken && !loginData.otpRequired) {
-    jwtManager.setTokens({
-      accessToken: loginData.accessToken,
-      refreshToken: loginData.refreshToken
-    });
-  }
-  
-  return loginData;
-};
+interface IAuthService {
+  login(credentials: LoginDTO): Promise<LoginResponse>;
+  register(data: RegisterDTO): Promise<RegisterResponse>;
+  logout(): Promise<ServiceResponse>;
+  verifyOtp(email: string, otpCode: string): Promise<LoginResponse>;
+  resendOtp(email: string): Promise<{ message: string }>;
+  refreshToken(): Promise<ServiceResponse>;
+  getProfile(): Promise<ProfileResponse>;
+  forgotPassword(email: string): Promise<{ message: string }>;
+  resetPassword(data: ResetPasswordDTO): Promise<{ message: string }>;
+  changePassword(data: ChangePasswordDTO): Promise<ServiceResponse>;
+}
 
 /**
- * Performs a user registration API call.
- * @param data The user's registration details.
- * @returns A promise that resolves to an object containing a success message.
+ * Service class for authentication and user management
+ * Implements the Repository pattern with proper error handling
  */
-export const register = async (data: RegisterData): Promise<RegisterResponse> => {
-    // Tell Axios to expect this specific response shape
-    const response = await apiClient.post<SuccessApiResponse<RegisterResponse>>('/auth/register', data);
-    // Extract and return ONLY the data payload
-    return response.data.data;
-};
+class AuthService implements IAuthService {
+  private readonly repository: AuthRepository;
 
-export const logout = async (): Promise<ServiceResponse> => {
-  try {
-    await apiClient.post('/auth/logout');
-  } catch (error) {
-    // Continue with logout even if API call fails
-    console.warn('Logout API call failed:', error);
-  } finally {
-    // Always clear tokens on logout
-    jwtManager.clearTokens();
-  }
-  return { errCode: 0, message: 'Logged out successfully' };
-};
-
-/**
- * Verifies a user's OTP code.
- * Maps to: POST /api/v1/auth/verify-otp
- * @param email - The user's email (the verification context).
- * @param otpCode - The code entered by the user.
- * @returns The full user profile data on success (completes the login).
- */
-export const verifyOtp = async (email: string, otpCode: string): Promise<LoginResponse> => {
-  const response = await apiClient.post<SuccessApiResponse<LoginResponse>>('/auth/verify-otp', {
-    email,
-    otpCode
-  });
-  const loginData = response.data.data;
-  
-  // Store tokens after successful OTP verification
-  if (loginData.accessToken) {
-    jwtManager.setTokens({
-      accessToken: loginData.accessToken,
-      refreshToken: loginData.refreshToken
-    });
-  }
-  
-  return loginData;
-};
-
-/**
- * Requests to resend a new OTP code to the user.
- * Maps to: POST /api/v1/auth/resend-otp
- * @param email - The user's email.
- */
-export const resendOtp = async (email: string): Promise<{ message: string }> => {
-  const response = await apiClient.post('/auth/resend-otp', { email });
-  return response.data;
-};
-
-export const refreshToken = async (): Promise<ServiceResponse> => {
-  const response = await axios.post(`/api/v1/auth/refresh-token`);
-  return response.data;
-};
-
-/**
- * Fetches the full profile for the currently authenticated user.
- * Maps to: GET /api/v1/profile
- */
-export const getProfile = async (): Promise<ProfileResponse> => {
-  // Tell Axios to expect this specific response shape
-  const response = await apiClient.get<SuccessApiResponse<ProfileResponse>>('/profile');
-  // Extract and return ONLY the data payload
-  return response.data.data;
-};
-
-/**
- * Initiates the password reset process by requesting an OTP for a given email.
- * Maps to: POST /api/v1/auth/forgot-password
- * @param email - The user's email address.
- */
-export const forgotPassword = async (email: string): Promise<{ message: string }> => {
-  const response = await apiClient.post('/auth/forgot-password', { email });
-  return response.data;
-};
-
-// ===============================================================
-// --- PASSWORD MANAGEMENT ---
-// ===============================================================
-
-export const sendPasswordResetOtp = async (email: string): Promise<ServiceResponse> => {
-  const response = await axios.post(`/api/v1/auth/password/send-otp`, { email });
-  return response.data;
-};
-
-export const resetPasswordWithOtp = async (data: PasswordResetData): Promise<ServiceResponse> => {
-  const response = await axios.put(`/api/v1/auth/password/reset`, data);
-  return response.data;
-};
-
-/**
- * Completes the password reset process using a secure token, OTP, and new password.
- * Maps to: POST /api/v1/auth/reset-password
- */
-export const resetPassword = async (data: ResetPasswordData): Promise<{ message: string }> => {
-  const response = await apiClient.post('/auth/reset-password', data);
-  return response.data;
-};
-
-// Create AuthService class to match repository pattern
-class AuthService {
-  async login(credentials: AuthCredentials): Promise<LoginResponse> {
-    return login(credentials);
+  constructor() {
+    this.repository = new AuthRepository(apiClient);
+    logger.info('AuthService initialized');
   }
 
-  async register(data: RegisterData): Promise<RegisterResponse> {
-    return register(data);
+  /**
+   * Authenticate user with credentials
+   * @param credentials User login credentials
+   * @returns Promise with login response including tokens
+   */
+  public async login(credentials: LoginDTO): Promise<LoginResponse> {
+    try {
+      logger.debug(`Login attempt for: ${credentials.identifier}`);
+      const loginData = await this.repository.login(credentials);
+      
+      // Store tokens if login successful and no OTP required
+      if (loginData.accessToken && !loginData.otpRequired) {
+        jwtManager.setTokens({
+          accessToken: loginData.accessToken,
+          refreshToken: loginData.refreshToken
+        });
+      }
+      
+      return loginData;
+    } catch (error) {
+      logger.error(`Login failed for: ${credentials.identifier}`, error as Error);
+      throw handleApiError(error, 'Login failed');
+    }
   }
 
-  async logout(): Promise<ServiceResponse> {
-    return logout();
+  /**
+   * Register new user account
+   * @param data User registration data
+   * @returns Promise with registration response
+   */
+  public async register(data: RegisterDTO): Promise<RegisterResponse> {
+    try {
+      logger.info(`Registration attempt for: ${data.email}`);
+      return await this.repository.register(data);
+    } catch (error) {
+      logger.error(`Registration failed for: ${data.email}`, error as Error);
+      throw handleApiError(error, 'Registration failed');
+    }
   }
 
-  async verifyOtp(email: string, otpCode: string): Promise<LoginResponse> {
-    return verifyOtp(email, otpCode);
+  /**
+   * Logout current user and clear tokens
+   * @returns Promise with service response
+   */
+  public async logout(): Promise<ServiceResponse> {
+    try {
+      await this.repository.logout();
+    } catch (error) {
+      // Continue with logout even if API call fails
+      logger.warn('Logout API call failed:', error as Error);
+    } finally {
+      // Always clear tokens on logout
+      jwtManager.clearTokens();
+      logger.info('User logged out successfully');
+    }
+    return { errCode: 0, message: 'Logged out successfully' };
   }
 
-  async resendOtp(email: string): Promise<{ message: string }> {
-    return resendOtp(email);
+  /**
+   * Verify OTP code for two-factor authentication
+   * @param email User's email address
+   * @param otpCode OTP code to verify
+   * @returns Promise with login response
+   */
+  public async verifyOtp(email: string, otpCode: string): Promise<LoginResponse> {
+    try {
+      logger.debug(`OTP verification for: ${email}`);
+      const loginData = await this.repository.verifyOtp(email, otpCode);
+      
+      // Store tokens after successful OTP verification
+      if (loginData.accessToken) {
+        jwtManager.setTokens({
+          accessToken: loginData.accessToken,
+          refreshToken: loginData.refreshToken
+        });
+      }
+      
+      return loginData;
+    } catch (error) {
+      logger.error(`OTP verification failed for: ${email}`, error as Error);
+      throw handleApiError(error, 'OTP verification failed');
+    }
   }
 
-  async refreshToken(): Promise<ServiceResponse> {
-    return refreshToken();
+  /**
+   * Resend OTP code to user
+   * @param email User's email address
+   * @returns Promise with success message
+   */
+  public async resendOtp(email: string): Promise<{ message: string }> {
+    try {
+      logger.info(`Resending OTP to: ${email}`);
+      return await this.repository.resendOtp(email);
+    } catch (error) {
+      logger.error(`Failed to resend OTP to: ${email}`, error as Error);
+      throw handleApiError(error, 'Failed to resend OTP');
+    }
   }
 
-  async getProfile(): Promise<ProfileResponse> {
-    return getProfile();
+  /**
+   * Refresh authentication tokens
+   * @returns Promise with service response
+   */
+  public async refreshToken(): Promise<ServiceResponse> {
+    try {
+      logger.debug('Refreshing authentication token');
+      const result = await this.repository.refreshToken();
+      return result as ServiceResponse;
+    } catch (error) {
+      logger.error('Token refresh failed', error as Error);
+      throw handleApiError(error, 'Token refresh failed');
+    }
   }
 
-  async forgotPassword(email: string): Promise<{ message: string }> {
-    return forgotPassword(email);
+  /**
+   * Get current user profile with favourites
+   * @returns Promise with user profile data
+   */
+  public async getProfile(): Promise<ProfileResponse> {
+    try {
+      logger.debug('Fetching user profile');
+      return await this.repository.getProfile();
+    } catch (error) {
+      logger.error('Failed to fetch user profile', error as Error);
+      throw handleApiError(error, 'Failed to fetch profile');
+    }
   }
 
-  async sendPasswordResetOtp(email: string): Promise<ServiceResponse> {
-    return sendPasswordResetOtp(email);
+  /**
+   * Initiate password reset process
+   * @param email User's email address
+   * @returns Promise with success message
+   */
+  public async forgotPassword(email: string): Promise<{ message: string }> {
+    try {
+      logger.info(`Password reset request for: ${email}`);
+      return await this.repository.forgotPassword(email);
+    } catch (error) {
+      logger.error(`Password reset failed for: ${email}`, error as Error);
+      throw handleApiError(error, 'Password reset request failed');
+    }
   }
 
-  async resetPasswordWithOtp(data: PasswordResetData): Promise<ServiceResponse> {
-    return resetPasswordWithOtp(data);
+  /**
+   * Complete password reset with token and new password
+   * @param data Reset password data including token and new password
+   * @returns Promise with success message
+   */
+  public async resetPassword(data: ResetPasswordDTO): Promise<{ message: string }> {
+    try {
+      logger.info('Processing password reset');
+      return await this.repository.resetPassword(data);
+    } catch (error) {
+      logger.error('Password reset failed', error as Error);
+      throw handleApiError(error, 'Password reset failed');
+    }
   }
 
-  async resetPassword(data: ResetPasswordData): Promise<{ message: string }> {
-    return resetPassword(data);
+  /**
+   * Change user password with current password verification
+   * @param data Change password data
+   * @returns Promise with service response
+   */
+  public async changePassword(data: ChangePasswordDTO): Promise<ServiceResponse> {
+    try {
+      logger.info('Processing password change');
+      return await this.repository.changePassword(data);
+    } catch (error) {
+      logger.error('Password change failed', error as Error);
+      throw handleApiError(error, 'Password change failed');
+    }
   }
 }
 
 // Export singleton instance
 export const authService = new AuthService();
+
+// Export types for use in components
+export type { IAuthService };

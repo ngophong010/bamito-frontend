@@ -47,7 +47,6 @@ const Chart = ({
       xAxis={[{ 
         data: xLabels,
         scaleType: "band",
-        categoryGapRatio: 0.5,
         label: "Tháng" // Add an axis label
       }]}
       // Add a y-axis for better readability

@@ -1,6 +1,4 @@
 "use client";
-// This component is almost identical to CreateProductClient,
-// but it calls the `updateProduct` service and passes `initialData`.
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';

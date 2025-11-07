@@ -7,18 +7,18 @@ import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 import { toast } from 'react-toastify';
 
-import { useAppSelector, useAppDispatch } from '@/redux-toolkit/hooks';
-import { setFavourites } from '@/redux-toolkit/userSlice';
+import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
+import { setFavourites } from '@/lib/redux/features/user/userSlice';
 import { favouriteService } from '@/services/favouriteService';
 import { ProductListItem } from '@/types';
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 
 const ProductCard = ({ product }: { product: ProductListItem }) => {
     const dispatch = useAppDispatch();
-    const { isLoggedIn, favouriteProductIds } = useAppSelector((state) => state.user);
+    const { isLoggedIn, favourites } = useAppSelector((state) => state.user);
 
     // Derive the liked status from Redux state
-    const isFavourited = favouriteProductIds.includes(product.id);
+    const isFavourited = favourites.includes(product.id);
 
     const handleLikeToggle = async (e: React.MouseEvent) => {
         e.preventDefault(); // Prevent navigating when clicking the button
@@ -33,7 +33,7 @@ const ProductCard = ({ product }: { product: ProductListItem }) => {
                 await favouriteService.addFavourite(product.id);
             }
             // Re-fetch the source of truth and update Redux
-            const updatedIds = await favouriteService.getFavouriteIds();
+            const updatedIds = await favouriteService.getMyFavouriteIds();
             dispatch(setFavourites(updatedIds));
         } catch (error) {
             toast.error("Đã xảy ra lỗi.");

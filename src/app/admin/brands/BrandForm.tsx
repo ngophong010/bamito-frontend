@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Brand, BrandCreateData } from '@/types';
-import { createSlug } from '@/utils/slug'; // Assuming you have this
+import { createSlug } from '@/lib/utils/slug'; // Assuming you have this
 
 // --- PROPS DEFINITION ---
 interface BrandFormProps {

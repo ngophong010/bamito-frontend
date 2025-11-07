@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import crypto from 'crypto'; // Use Node.js built-in crypto module
-import { mailchimp } from '@/lib/mailchimp';
+import { mailchimp } from '@/lib/clients/mailchimp';
 import { getUserSession } from '@/lib/auth/session';
 import { ROLES } from '@/config/role';
 
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
         const response = await mailchimp.lists.getListMembersInfo(
             process.env.MAILCHIMP_AUDIENCE_ID!,
-            { count, offset, status: "subscribed" }
+            { count, offset }
         );
 
         return NextResponse.json({ status: 'success', data: response });
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       }
     );
 
-    return NextResponse.json({ status: 'success', data: { message: "Email subscribed successfully.", id: response.id } });
+    return NextResponse.json({ status: 'success', data: { message: "Email subscribed successfully.", id: (response as any).id } });
 
   } catch (error: any) {
     console.error("Mailchimp API Error (POST Subscriber):", error.response?.body || error.message);

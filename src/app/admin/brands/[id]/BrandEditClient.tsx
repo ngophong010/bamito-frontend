@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { updateBrand } from '@/services/brandService';
+import { brandService } from '@/services/brandService';
 import { Brand, BrandUpdateData } from '@/types';
 import BrandForm from '../BrandForm';
 
@@ -14,7 +14,7 @@ const BrandEditClient = ({ brand }: { brand: Brand }) => {
     const handleUpdate = async (data: BrandUpdateData) => {
         setIsLoading(true);
         try {
-            await updateBrand(brand.id, data);
+            await brandService.updateBrand(brand.id, data);
             toast.success("Cập nhật thương hiệu thành công!");
             router.push('/admin/brands');
             router.refresh();
@@ -36,4 +36,5 @@ const BrandEditClient = ({ brand }: { brand: Brand }) => {
         </div>
     );
 };
+
 export default BrandEditClient;

@@ -7,10 +7,10 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { toast } from "react-toastify";
 
 // 1. Import types from the central /types directory
-import { ProductDetails, Inventory, Feedback } from "@/types";
+import { ProductDetails, Feedback } from "@/types";
 // 2. Import the correct, typed Redux hooks and actions
-import { useAppDispatch, useAppSelector } from "@/redux-toolkit/hooks";
-import { addItemToCart } from "@/redux-toolkit/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { addItemToCart } from "@/lib/redux/features/cart/cartSlice";
 import DisplayFeedbacks from "@/components/DisplayFeedbacks/DisplayFeedbacks";
 import "./page.module.scss";
 
@@ -31,7 +31,7 @@ const ProductDetailClient = ({ product, initialFeedbacks }: ProductDetailClientP
 
   // --- REDUX STATE ---
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
-  const cartStatus = useAppSelector((state) => state.cart.status);
+  const cartAddStatus = useAppSelector((state) => state.cart.operations.add.status);
 
   // --- DERIVED STATE (from props and local state) ---
   // No need for a separate useState for stock. Derive it when needed.
@@ -157,9 +157,9 @@ const ProductDetailClient = ({ product, initialFeedbacks }: ProductDetailClientP
           <button 
             className="cart-btn" 
             onClick={handleAddToCart} 
-            disabled={cartStatus === 'loading' || stockQuantity === 0}
+            disabled={cartAddStatus === 'loading' || stockQuantity === 0}
           >
-            {cartStatus === 'loading' ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
+            {cartAddStatus === 'loading' ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
           </button>
         </div>
       </div>
@@ -168,7 +168,11 @@ const ProductDetailClient = ({ product, initialFeedbacks }: ProductDetailClientP
       <div className="description_review_wrapper">
         {/* ... Tab logic ... */}
         <div dangerouslySetInnerHTML={{ __html: product.descriptionHTML || '' }} />
-        <DisplayFeedbacks productId={product.id} initialFeedbacks={initialFeedbacks} />
+        <DisplayFeedbacks productId={product.id} initialFeedbacks={initialFeedbacks.map(f => ({
+          ...f,
+          user: { id: f.id, userName: f.user.userName, avatar: f.user.avatar },
+          product: { id: product.id, name: product.name }
+        }))} />
       </div>
     </div>
   );

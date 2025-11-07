@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import GridData from '@/components/GridData/GridData'; // Your "dumb" data table component
 
-import { deleteCategory } from '@/services/categoryService';
+import { categoryService } from '@/services/categoryService';
 import { PaginatedApiResponse, Category } from '@/types';
 
 interface CategoryClientProps {
@@ -18,7 +18,7 @@ const CategoryClient = ({ initialCategoryData }: CategoryClientProps) => {
     const handleDelete = async (category: Category) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa danh mục "${category.name}" không?`)) {
             try {
-                await deleteCategory(category.id);
+                await categoryService.deleteCategory(category.id);
                 toast.success("Xóa danh mục thành công!");
                 router.refresh(); // Re-fetch Server Component data
             } catch (error: any) {

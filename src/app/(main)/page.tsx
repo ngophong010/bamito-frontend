@@ -1,7 +1,6 @@
 import Banner from "@/components/Banner/Banner";
 import Introduce from "@/components/Introduce/Introduce";
 import { Metadata } from 'next';
-import { Category } from '@/types/category';
 import { ProductListItem } from '@/types/product';
 
 // Import services

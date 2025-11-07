@@ -21,6 +21,7 @@ export interface LoginResponse {
 export interface RegisterData extends AuthCredentials {
     userName: string;
     phoneNumber?: string;
+    roleId?: number; // Default to customer role (2) if not provided
 }
 
 export interface RegisterResponse {

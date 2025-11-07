@@ -95,4 +95,5 @@ const RatingForm = ({ isOpen, onClose, onSubmit, productName, initialData }: Rat
     </Modal>
   );
 };
+
 export default RatingForm;

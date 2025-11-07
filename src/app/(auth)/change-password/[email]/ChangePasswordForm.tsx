@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 // 1. Import the correct, refactored service function and types
-import { resetPassword } from '@/services/authService';
+import { authService } from '@/services/authService';
 import { ResetPasswordData } from '@/types';
 import Loading from '@/components/Loading/Loading';
 import './page.scss';
@@ -40,7 +40,7 @@ const ChangePasswordForm = () => {
         setIsLoading(true);
         try {
             // 4. The service call now includes the secure token
-            await resetPassword({
+            await authService.resetPassword({
                 token,
                 otpCode: data.otpCode,
                 newPassword: data.newPassword,

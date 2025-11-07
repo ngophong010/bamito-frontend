@@ -39,7 +39,7 @@ const OrderDetailClient: React.FC<OrderDetailClientProps> = ({ order }) => {
     }
 
     const handleDelete = async () => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
+        if (globalThis.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
             setIsLoading(true);
             try {
                 await orderService.deleteOrder(order.id);
@@ -87,7 +87,7 @@ const OrderDetailClient: React.FC<OrderDetailClientProps> = ({ order }) => {
             {/* Product List */}
             <Grid container spacing={5} className="products">
                 {order.items.map((item: OrderItem) => (
-                    <Grid item sm={10} md={5} key={item.id} className="product-item">
+                    <Grid size={{ xs: 12, sm: 10, md: 5 }} key={item.id} className="product-item">
                         <Box display="flex" gap={2} alignItems="center">
                             <div className="product-image">
                                 <Image

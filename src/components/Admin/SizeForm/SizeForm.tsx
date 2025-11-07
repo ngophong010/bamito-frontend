@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { TextField, Button, MenuItem } from '@mui/material';
 import { Size, Category, SizeCreateData } from '@/types';
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 
 interface SizeFormProps {
     onFormSubmit: (data: any) => void;
@@ -19,7 +19,7 @@ const SizeForm = ({ onFormSubmit, isLoading, initialData, categories }: SizeForm
         defaultValues: {
             sizeId: initialData?.sizeId || '',
             name: initialData?.name || '',
-            categoryId: initialData?.categoryId || undefined,
+            categoryId: initialData?.categoryId?.toString() || '',
         }
     });
 
@@ -69,7 +69,7 @@ const SizeForm = ({ onFormSubmit, isLoading, initialData, categories }: SizeForm
                         disabled={!!initialData} // Usually can't change a size's category
                     >
                         {categories.map(cat => (
-                            <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                            <MenuItem key={cat.id} value={cat.id.toString()}>{cat.name}</MenuItem>
                         ))}
                     </TextField>
                 )}

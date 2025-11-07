@@ -2,12 +2,9 @@ import { IBaseRepository } from './IBaseRepository';
 import { Brand } from '@/types/brand';
 import { PaginatedApiResponse } from '@/types/common';
 import {
-    CreateBrandDTO,
-    UpdateBrandDTO,
     BrandFilterParams,
     BrandStatsDTO,
     BrandListResponseDTO,
-    BrandWithProductCountDTO
 } from '@/types/dtos/brand.dto';
 
 export interface IBrandRepository extends IBaseRepository<Brand> {

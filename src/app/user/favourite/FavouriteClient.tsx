@@ -4,20 +4,15 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Grid } from '@mui/material';
-import Rating from '@mui/material/Rating';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import { toast } from 'react-toastify';
-import { useAppDispatch } from '@/redux-toolkit/hooks';
-import { setFavourites } from '@/redux-toolkit/userSlice';
-
-// 1. Import your "dumb" reusable components and correct types/services
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { setFavourites } from '@/lib/redux/features/user/userSlice';
 import PaginatedItems from '@/components/Pagination/Pagination';
 import { favouriteService } from '@/services/favouriteService';
 import { PaginatedApiResponse, ProductListItem } from '@/types';
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 import './page.scss';
-
-const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
 interface FavouriteClientProps {
   initialFavouriteData: PaginatedApiResponse<ProductListItem>;
@@ -37,7 +32,7 @@ const FavouriteClient = ({ initialFavouriteData }: FavouriteClientProps) => {
             toast.success(`Đã xóa "${product.name}" khỏi danh sách yêu thích.`);
             
             // Re-fetch the global list of favourite IDs to update the userSlice
-            const updatedFavouriteIds = await favouriteService.getFavouriteIds();
+            const updatedFavouriteIds = await favouriteService.getMyFavouriteIds();
             dispatch(setFavourites(updatedFavouriteIds));
 
             // Use router.refresh() to re-fetch the server component's data and update the list
@@ -60,7 +55,7 @@ const FavouriteClient = ({ initialFavouriteData }: FavouriteClientProps) => {
             {initialFavouriteData.items.length > 0 ? (
                 <Grid container spacing={5}>
                     {initialFavouriteData.items.map((item) => (
-                        <Grid item xs={3} key={item.id}>
+                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.id}>
                             <Link
                                 href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
                                 className="productWrapper"

@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosInstance } from 'axios';
 import { IBaseRepository } from './interfaces/IBaseRepository';
 import { PaginatedApiResponse} from '@/types/common';
 import { handleAxiosError } from './errors/RepositoryError';

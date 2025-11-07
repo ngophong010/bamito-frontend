@@ -93,7 +93,4 @@ export interface SalesReportItem {
     };
 }
 
-
-
-// Re-export the legacy Order type for backward compatibility
 export type Order = OrderDetails;

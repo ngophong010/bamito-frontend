@@ -3,7 +3,7 @@ import { UserRepository } from '@/repositories/UserRepository';
 import { UserProfile, UserProfileUpdateData, ChangePasswordData } from '@/types/user';
 
 class ProfileService {
-    private repository: UserRepository;
+    private readonly repository: UserRepository;
 
     constructor() {
         this.repository = new UserRepository(apiClient);

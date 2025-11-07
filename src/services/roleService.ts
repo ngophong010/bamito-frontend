@@ -3,7 +3,7 @@ import { RoleRepository } from '@/repositories/RoleRepository';
 import { Role } from '@/types/role';
 
 class RoleService {
-    private repository: RoleRepository;
+    private readonly repository: RoleRepository;
 
     constructor() {
         this.repository = new RoleRepository(apiClient);

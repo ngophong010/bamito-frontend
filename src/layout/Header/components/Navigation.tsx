@@ -35,19 +35,22 @@ export const Navigation: React.FC<NavigationProps> = ({
                     </div>
                 )}
             >
-                <div 
-                    className="drop-down-product" 
-                    onMouseEnter={showMenu} 
+                <button
+                    type="button"
+                    className="drop-down-product"
+                    onMouseEnter={showMenu}
                     onMouseLeave={hideMenu}
+                    aria-haspopup="menu"
+                    aria-expanded={isProductMenuOpen}
                 >
                     <span className={`text ${isProductMenuOpen ? "is-tippy-on" : ""}`}>
                         SẢN PHẨM
                     </span>
-                    <FontAwesomeIcon 
-                        icon={faChevronDown} 
-                        className={`icon ${isProductMenuOpen ? "is-tippy-on" : ""}`} 
+                    <FontAwesomeIcon
+                        icon={faChevronDown}
+                        className={`icon ${isProductMenuOpen ? "is-tippy-on" : ""}`}
                     />
-                </div>
+                </button>
             </Tippy>
 
             <Link href="/sale-off" className="nav-link">SALE OFF</Link>

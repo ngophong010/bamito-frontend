@@ -7,7 +7,7 @@ import { PaginatedApiResponse } from '@/types/common';
 import { Category } from '@/types/category';
 
 class ProductService {
-    private repository: ProductRepository;
+    private readonly repository: ProductRepository;
 
     constructor() {
         this.repository = new ProductRepository(apiClient);
@@ -47,7 +47,6 @@ class ProductService {
     ): Promise<PaginatedApiResponse<ProductListItem>> {
         return this.repository.getByCategory(categoryId, params);
     }
-
 
     /**
      * [ADMIN] Creates a new product with an image upload.

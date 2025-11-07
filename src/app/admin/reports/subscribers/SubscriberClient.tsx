@@ -6,7 +6,8 @@ import { Button } from '@mui/material';
 
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { PaginatedApiResponse, Subscriber } from '@/types';
+import { PaginatedApiResponse } from '@/types';
+import { Subscriber } from '@/types/models/subscriber';
 import { subscriberService } from '@/services/subscriberService';
 import { CampaignComposerModal } from '@/components/CampaignComposerModal/CampaignComposerModal';
 import './page.scss';

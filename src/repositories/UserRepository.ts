@@ -209,6 +209,4 @@ export class UserRepository implements IUserRepository {
             throw handleAxiosError(error);
         }
     }
-
-    
 }

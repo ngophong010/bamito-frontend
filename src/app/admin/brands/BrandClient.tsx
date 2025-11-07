@@ -3,11 +3,11 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-
+import { useState } from 'react';
 import ConfirmationModal from '@/components/Modal/ConfirmationModal';
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { deleteBrand } from '@/services/brandService';
+import { brandService } from '@/services/brandService';
 import { PaginatedApiResponse, Brand } from '@/types';
 
 interface BrandClientProps {
@@ -34,7 +34,7 @@ const BrandClient = ({ initialBrandData }: { initialBrandData: PaginatedApiRespo
     const handleDelete = async (brand: Brand) => {
         if (window.confirm(`Are you sure you want to delete brand "${brand.name}"?`)) {
             try {
-                await deleteBrand(brand.id);
+                await brandService.deleteBrand(brand.id);
                 toast.success("Brand deleted successfully!");
                 router.refresh(); // Re-fetch Server Component data
             } catch (error: any) {
@@ -48,7 +48,7 @@ const BrandClient = ({ initialBrandData }: { initialBrandData: PaginatedApiRespo
 
         setIsLoading(true);
         try {
-            await deleteBrand(selectedBrand.id);
+            await brandService.deleteBrand(selectedBrand.id);
             toast.success(`Brand "${selectedBrand.name}" has been deleted.`);
             closeDeleteModal();
             router.refresh();

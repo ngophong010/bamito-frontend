@@ -1,8 +1,8 @@
-"use client"; // This is a client component because it has interactive links
+"use client";
 import React from 'react';
 import Link from 'next/link';
 import { Category } from '@/types'; // Import the central Category type
-import { createSlug } from '@/utils/slug';
+import { createSlug } from '@/lib/utils/slug';
 import './CategoriesMenu.scss';
 
 // 1. Define the props interface for strong typing

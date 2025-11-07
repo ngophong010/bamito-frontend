@@ -9,6 +9,8 @@ const nextConfig = {
       },
     ],
   },
+  // Add this line to enable standalone output
+  output: 'standalone',
 };
 
 export default nextConfig;

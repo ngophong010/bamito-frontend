@@ -158,10 +158,7 @@ class UserService {
     async isEmailRegistered(email: string): Promise<boolean> {
         return this.repository.isEmailRegistered(email);
     }
-
-    
 }
 
 // Export a singleton instance
 export const userService = new UserService();
-

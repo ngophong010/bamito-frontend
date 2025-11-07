@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 // Import the correct, refactored service function
-import { getProductsOnSale } from '@/services/productService';
+import { productService } from '@/services/productService';
 import SaleOffClient from './SaleOffClient'; // Import the new Client Component
 
 // Define the shape of the props Next.js will provide
@@ -24,7 +24,7 @@ export default async function SaleOffPage({ searchParams }: SaleOffPageProps) {
     const page = searchParams.page ? Number(searchParams.page) : 1;
     
     // Fetch the initial list of products that are on sale
-    const saleProductData = await getProductsOnSale({ page, limit: 12, sort: searchParams.sort });
+    const saleProductData = await productService.getProductsOnSale({ page, limit: 12, sort: searchParams.sort });
 
     // Pass the server-fetched data as a prop to the Client Component
     return <SaleOffClient initialProductData={saleProductData} />;

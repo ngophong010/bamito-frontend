@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-// 1. Import the correct, refactored service function
 import { subscriberService } from '@/services/subscriberService';
 
 const SubscribeForm = () => {
@@ -11,14 +10,14 @@ const SubscribeForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!email || !email.includes("@")) {
+        if (!email?.includes("@")) {
             toast.error("Vui lòng nhập một địa chỉ email hợp lệ.");
             return;
         }
 
         setIsLoading(true);
         try {
-            await subscriberService.subscribeEmail(email);
+            await subscriberService.subscribe(email);
             toast.success("Cảm ơn bạn đã đăng ký nhận tin!");
             setEmail("");
         } catch (error: any) {
