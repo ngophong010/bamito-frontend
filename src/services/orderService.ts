@@ -1,7 +1,7 @@
 import apiClient from './apiClient';
 import { OrderRepository } from '@/repositories/OrderRepository';
 import { StatisticsRepository } from '@/repositories/StatisticsRepository';
-import { Order, OrderStatus, OrderStats } from '@/types/order';
+import { Order, OrderSummary, OrderStatus, OrderStats } from '@/types/order';
 import { StatisticsResponse, SalesReportResponse, SalesReportParams } from '@/types/statistics';
 import { PaginatedApiResponse } from '@/types/common';
 import { 
@@ -25,6 +25,22 @@ class OrderService {
      */
     async getAllOrders(params: OrderFilterParams): Promise<PaginatedApiResponse<Order>> {
         return this.repository.getOrders(params);
+    }
+
+    /**
+     * [ADMIN] Get orders with summary data for admin list view
+     */
+    async getOrderSummaries(params: OrderFilterParams): Promise<PaginatedApiResponse<OrderSummary>> {
+        const response = await this.repository.getOrders(params);
+        // Transform OrderDetails to OrderSummary by adding itemCount
+        const summaries = response.items.map(order => ({
+            ...order,
+            itemCount: order.items?.length || 0
+        }));
+        return {
+            ...response,
+            items: summaries
+        };
     }
 
     /**
@@ -78,6 +94,7 @@ class OrderService {
     async getOrderStats(params?: { fromDate?: string; toDate?: string; status?: OrderStatus[] }): Promise<OrderStats> {
         return this.repository.getOrderStats(params);
     }
+
 
     /**
      * Delete an order (soft delete)

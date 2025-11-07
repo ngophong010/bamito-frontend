@@ -15,20 +15,21 @@ interface VoucherFormProps {
     initialData?: Voucher;
 }
 
-type FormInputs = Omit<VoucherCreateData, 'timeStart' | 'timeEnd' | 'image'> & {
-    timeStart: Dayjs | null;
-    timeEnd: Dayjs | null;
+type FormInputs = Omit<VoucherCreateData, 'startDate' | 'endDate'> & {
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
     image?: FileList;
 };
 
 const VoucherForm = ({ onFormSubmit, isLoading, initialData }: VoucherFormProps) => {
     const { handleSubmit, control, formState: { errors } } = useForm<FormInputs>({
         defaultValues: {
-            voucherId: initialData?.voucherId || '',
-            voucherPrice: initialData?.voucherPrice || 0,
+            code: initialData?.voucherId || '',
+            discountType: 'fixed' as const,
+            discountValue: initialData?.voucherPrice || 0,
             quantity: initialData?.quantity || 0,
-            timeStart: initialData ? dayjs(initialData.timeStart) : null,
-            timeEnd: initialData ? dayjs(initialData.timeEnd) : null,
+            startDate: initialData ? dayjs(initialData.timeStart) : null,
+            endDate: initialData ? dayjs(initialData.timeEnd) : null,
         }
     });
 
@@ -44,9 +45,9 @@ const VoucherForm = ({ onFormSubmit, isLoading, initialData }: VoucherFormProps)
     const onSubmit: SubmitHandler<FormInputs> = (data) => {
         const formData = new FormData();
         Object.entries(data).forEach(([key, value]) => {
-            if (key === 'image' && value?.[0]) {
+            if (key === 'image' && value instanceof FileList && value[0]) {
                 formData.append('image', value[0]);
-            } else if ((key === 'timeStart' || key === 'timeEnd') && value) {
+            } else if ((key === 'startDate' || key === 'endDate') && value) {
                 formData.append(key, (value as dayjs.Dayjs).toISOString());
             } else if (value) {
                 formData.append(key, String(value));
@@ -73,13 +74,13 @@ const VoucherForm = ({ onFormSubmit, isLoading, initialData }: VoucherFormProps)
                  {errors.image && <p className="error-message">An image is required.</p>}
             </div>
 
-            <Controller name="voucherId" control={control} rules={{ required: "Voucher ID is required" }} render={({ field }) => <TextField {...field} label="Voucher ID" fullWidth margin="normal" error={!!errors.voucherId} helperText={errors.voucherId?.message} />} />
-            <Controller name="voucherPrice" control={control} rules={{ required: true }} render={({ field }) => <TextField {...field} label="Voucher Price (VND)" type="number" fullWidth margin="normal" />} />
+            <Controller name="code" control={control} rules={{ required: "Voucher code is required" }} render={({ field }) => <TextField {...field} label="Voucher Code" fullWidth margin="normal" error={!!errors.code} helperText={errors.code?.message} />} />
+            <Controller name="discountValue" control={control} rules={{ required: true }} render={({ field }) => <TextField {...field} label="Discount Value (VND)" type="number" fullWidth margin="normal" />} />
             <Controller name="quantity" control={control} rules={{ required: true, min: 0 }} render={({ field }) => <TextField {...field} label="Quantity" type="number" fullWidth margin="normal" />} />
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Controller name="timeStart" control={control} rules={{ required: true }} render={({ field }) => <DatePicker {...field} label="Start Date" />} />
-                <Controller name="timeEnd" control={control} rules={{ required: true }} render={({ field }) => <DatePicker {...field} label="End Date" />} />
+                <Controller name="startDate" control={control} rules={{ required: true }} render={({ field }) => <DatePicker {...field} label="Start Date" />} />
+                <Controller name="endDate" control={control} rules={{ required: true }} render={({ field }) => <DatePicker {...field} label="End Date" />} />
             </LocalizationProvider>
             
             <Button type="submit" variant="contained" disabled={isLoading}>

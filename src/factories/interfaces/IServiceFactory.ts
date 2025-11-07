@@ -6,9 +6,10 @@ import { voucherService } from '@/services/voucherService';
 import { cartService } from '@/services/cartService';
 import { orderService } from '@/services/orderService';
 import { sizeService } from '@/services/sizeService';
-import * as authService from '@/services/authService';
-import * as favouriteService from '@/services/favouriteService';
-import * as inventoryService from '@/services/inventoryService';
+import { roleService } from '@/services/roleService';
+import { authService } from '@/services/authService';
+import { favouriteService } from '@/services/favouriteService';
+import { inventoryService } from '@/services/inventoryService';
 
 /**
  * Service factory interface defining all available services
@@ -22,6 +23,7 @@ export interface IServiceFactory {
     createCartService(): typeof cartService;
     createOrderService(): typeof orderService;
     createSizeService(): typeof sizeService;
+    createRoleService(): typeof roleService;
     createInventoryService(): typeof inventoryService;
     createAuthService(): typeof authService;
     createFavouriteService(): typeof favouriteService;

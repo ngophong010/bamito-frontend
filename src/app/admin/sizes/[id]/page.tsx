@@ -8,7 +8,7 @@ export default async function EditSizePage({ params }: { params: { id: string } 
     // Fetch all necessary data in parallel
     const [size, categories] = await Promise.all([
         sizeService.getSizeById(id),
-        categoryService.getCategories(),
+        categoryService.getAllCategoriesList(),
     ]);
 
     return <EditSizeClient size={size} categories={categories} />;

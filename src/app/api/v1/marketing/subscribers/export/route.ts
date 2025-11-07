@@ -25,7 +25,7 @@ export async function GET() {
         
         // 2. Build the CSV content
         const csvHeader = "Email Address,First Name,Last Name,Status\n";
-        const csvRows = members.map(member => 
+        const csvRows = members.map((member: any) => 
             [
                 member.email_address,
                 member.merge_fields?.FNAME || '',

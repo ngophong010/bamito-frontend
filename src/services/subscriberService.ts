@@ -108,6 +108,13 @@ class SubscriberService implements ISubscriberService {
     }
 
     /**
+     * Subscribe email (legacy method name)
+     */
+    public async subscribeEmail(email: string): Promise<void> {
+        return this.subscribe(email);
+    }
+
+    /**
      * Unsubscribe an email from the newsletter
      * @param email Email address to unsubscribe
      */
@@ -157,3 +164,6 @@ export const subscriberService = new SubscriberService();
 
 // Export types for use in components
 export type { ISubscriberService };
+
+// Legacy exports for backward compatibility  
+export const subscribeEmail = subscriberService.subscribeEmail.bind(subscriberService);

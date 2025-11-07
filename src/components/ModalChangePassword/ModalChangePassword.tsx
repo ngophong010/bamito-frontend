@@ -54,11 +54,11 @@ const ModalChangePassword = ({ open, onClose, onSubmit }: ModalChangePasswordPro
 
         <form onSubmit={handleSubmit(handleFormSubmit)}>
             <Controller
-                name="currentPassword"
+                name="oldPassword"
                 control={control}
                 rules={{ required: "Vui lòng nhập mật khẩu hiện tại" }}
                 render={({ field }) => (
-                    <TextField {...field} type="password" label="Mật khẩu hiện tại" fullWidth margin="normal" error={!!errors.currentPassword} helperText={errors.currentPassword?.message} />
+                    <TextField {...field} type="password" label="Mật khẩu hiện tại" fullWidth margin="normal" error={!!errors.oldPassword} helperText={errors.oldPassword?.message} />
                 )}
             />
             <Controller

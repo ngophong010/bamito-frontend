@@ -13,7 +13,7 @@ import { setFavourites } from "@/redux-toolkit/userSlice";
 import { ProductListItem, PaginatedApiResponse } from "@/types";
 import { addFavourite, removeFavourite, getMyFavouriteIds } from "@/services/favouriteService";
 import PaginatedItems from "@/components/Pagination/Pagination";
-import { createSlug } from "@/utils/formatters";
+import { createSlug } from "@/utils/slug";
 import "./page.scss";
 
 // Reusable currency formatter

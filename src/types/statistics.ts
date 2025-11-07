@@ -18,16 +18,20 @@ export interface SalesReportParams {
 }
 
 export interface SalesReportItem {
-    readonly time: string;
-    readonly totalPrice: number;
+    readonly id: number;
     readonly quantity: number;
-    readonly productId: number;
+    readonly price: number;
     readonly productName: string;
+    readonly productImage: string | null;
+    readonly sizeName: string;
+    readonly order?: {
+        createdAt: string;
+    };
 }
 
 export interface SalesReportResponse {
-    readonly reportItems: SalesReportItem[];
+    readonly items: SalesReportItem[];
     readonly totalItems: number;
-    readonly page: number;
+    readonly currentPage: number;
     readonly totalPages: number;
 }

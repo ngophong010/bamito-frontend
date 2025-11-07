@@ -2,6 +2,8 @@
 export interface Subscriber {
     id: number;
     email: string;
+    email_address: string;
+    bamito_status: string;
     status: SubscriberStatus;
     createdAt: string;
     updatedAt: string;

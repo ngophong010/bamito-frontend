@@ -18,7 +18,7 @@ import {
   handleUpdateProductService,
 } from "@/services/productService";
 import { regex } from "@/utils";
-import CreateCode from "@/utils/commonUtils";
+import { useDebounce } from "@/utils/commonUtils";
 import Image from "next/image";
 import { logOut } from "@/redux-toolkit/userSlice";
 
@@ -195,7 +195,7 @@ const ProductPost = () => {
 
   const handleChangeProductName = (e) => {
     if (e.target.value) {
-      let productID = CreateCode(e.target.value);
+      let productID = e.target.value.toLowerCase().replace(/\s+/g, '-');
       setValue("productID", productID, { shouldValidate: true });
     } else {
       setValue("productID", "", { shouldValidate: false });
@@ -259,7 +259,7 @@ const ProductPost = () => {
             style={{
               height: 250,
               width: 200,
-              objectFit: "containt",
+              objectFit: "contain",
               borderRadius: 10,
               border: "1px solid gray",
             }}

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getAllCategories } from '../services/categoryService';
+import { categoryService } from '../services/categoryService';
 import { Category, PaginatedApiResponse } from '../types';
 interface CategoryState {
     items: Category[];
@@ -13,8 +13,17 @@ const initialState: CategoryState = {
 };
 export const fetchCategories = createAsyncThunk(
     'categories/fetchCategories',
-    async (params: { pagination?: boolean }, { rejectWithValue }) => {
-        // ... (try/catch block calling getAllCategories)
+    async (params: { pagination?: boolean } = {}, { rejectWithValue }) => {
+        try {
+            if (params.pagination === false) {
+                return await categoryService.getAllCategoriesList();
+            } else {
+                const response = await categoryService.getCategories();
+                return response.items;
+            }
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'Failed to fetch categories');
+        }
     }
 );
 export const categorySlice = createSlice({
@@ -25,8 +34,9 @@ export const categorySlice = createSlice({
         builder
             .addCase(fetchCategories.pending, (state) => { /* ... / })
 .addCase(fetchCategories.fulfilled, (state, action) => {
-// ... update state with payload
-state.items = action.payload as Category[]; // Handle non-paginated case
+state.status = 'succeeded';
+state.items = action.payload;
+state.error = null;
 })
 .addCase(fetchCategories.rejected, (state, action) => { / ... */ });
     },

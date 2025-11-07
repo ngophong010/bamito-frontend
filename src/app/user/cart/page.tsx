@@ -7,18 +7,24 @@ import CartClient from './CartClient'; // Import the new Client Component
 
 export const metadata: Metadata = {
     title: 'Giỏ hàng của bạn',
-    robots: { noindex: true, nofollow: true }, // Don't index personal cart pages
+    robots: { index: false, follow: false }, // Don't index personal cart pages
 };
 
 export default async function CartPage() {
   // --- 2. DATA FETCHING ON THE SERVER ---
   // Fetch all necessary data in parallel for the initial page load.
   try {
-    const [cartData, profileData, activeVouchers] = await Promise.all([
+    const [cartSummary, profileData, activeVouchers] = await Promise.all([
         cartService.getCart(),
         getProfile(),
         voucherService.getActiveVouchers(),
     ]);
+    
+    // Transform CartSummaryDTO to CartData format
+    const cartData = {
+        products: cartSummary.items,
+        totalProduct: cartSummary.totalItems
+    };
     
     // 3. Pass the server-fetched data as props to the Client Component
     return (

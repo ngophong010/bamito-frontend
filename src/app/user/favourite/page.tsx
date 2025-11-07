@@ -25,7 +25,7 @@ export default async function FavouritePage({ searchParams }: FavouritePageProps
     const page = searchParams.page ? Number(searchParams.page) : 1;
     
     // Fetch the initial list of the user's favourite products
-    const initialFavouriteData = await favouriteService.getFavourites({ page, limit: 12 });
+    const initialFavouriteData = await favouriteService.getMyFavourites({ page, limit: 12 });
 
     // 4. Pass the server-fetched data as a prop to the Client Component
     return <FavouriteClient initialFavouriteData={initialFavouriteData} />;

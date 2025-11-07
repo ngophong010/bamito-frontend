@@ -54,7 +54,7 @@ export default function HomePage() {
     <div className="home-container">
       <Banner />
       <div className="home-content">
-        <Introduce />
+        <Introduce featuredData={[]} />
         <div className="home-benefit">
           <div className="benefit-grid-container">
             <div className="benefit-item">

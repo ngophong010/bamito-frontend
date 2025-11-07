@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { updateSize } from '@/services/sizeService';
+import { sizeService } from '@/services/sizeService';
 import { Category, Size, SizeUpdateData } from '@/types';
 import SizeForm from '@/components/Admin/SizeForm/SizeForm';
 
@@ -13,7 +13,7 @@ const EditSizeClient = ({ size, categories }: { size: Size, categories: Category
     const handleUpdate = async (data: SizeUpdateData) => {
         setIsLoading(true);
         try {
-            await updateSize(size.id, data);
+            await sizeService.updateSize(size.id, data);
             toast.success("Cập nhật kích thước thành công!");
             router.push('/admin/sizes');
             router.refresh();

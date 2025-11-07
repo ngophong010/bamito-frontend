@@ -74,7 +74,7 @@ export default async function AdminDashboardPage() {
   }
 
   // --- DATA TRANSFORMATION ON THE SERVER ---
-  const chartData = processChartData(monthlyRevenue.reportItems);
+  const chartData = processChartData(monthlyRevenue.items);
   const allOrderStatus = mapOrderStatusData(statistics.allTotalOrder);
   const xLabels = Array.from({ length: 12 }, (_, i) => i + 1);
 

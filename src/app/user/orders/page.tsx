@@ -5,7 +5,7 @@ import OrderListClient from './OrderListClient'; // Import the new Client Compon
 import { redirect } from 'next/navigation';
 export const metadata: Metadata = {
   title: 'Lịch sử Đơn hàng',
-  robots: { noindex: true, nofollow: true },
+  robots: { index: false, follow: false },
 };
 // 2. Define the shape of the props Next.js will provide
 interface MyOrdersPageProps {

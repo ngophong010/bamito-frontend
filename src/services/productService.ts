@@ -25,6 +25,7 @@ class ProductService {
         return this.repository.getAll(params);
     }
 
+    
     /**
      * Fetches the full details for a single product by its public-facing string ID.
      */
@@ -47,16 +48,6 @@ class ProductService {
         return this.repository.getByCategory(categoryId, params);
     }
 
-    /**
-     * Fetches a paginated list of all products currently on sale.
-     */
-    async getProductsOnSale(params?: { 
-        limit?: number; 
-        page?: number; 
-        sort?: string 
-    }): Promise<PaginatedApiResponse<ProductListItem>> {
-        return this.repository.getProductsOnSale(params);
-    }
 
     /**
      * [ADMIN] Creates a new product with an image upload.
@@ -93,6 +84,17 @@ class ProductService {
             return response.data.data;
         }
         throw new Error(response.data.message || 'Failed to fetch category');
+    }
+
+    /**
+     * Fetches a paginated list of all products currently on sale.
+     */
+    async getProductsOnSale(params?: { 
+        limit?: number; 
+        page?: number; 
+        sort?: string 
+    }): Promise<PaginatedApiResponse<ProductListItem>> {
+        return this.repository.getProductsOnSale(params);
     }
 }
 

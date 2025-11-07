@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: 'Đánh giá Sản phẩm',
-    robots: { noindex: true, nofollow: true },
+    robots: { index: false, follow: false },
 };
 
 export default async function FeedbackPage() {

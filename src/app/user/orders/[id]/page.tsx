@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: MyOrderDetailPageProps): Prom
         const order = await getMyOrderDetails(Number(params.id));
         return {
             title: `Chi tiết Đơn hàng #${order.orderId}`,
-            robots: { noindex: true, nofollow: true },
+            robots: { index: false, follow: false },
         };
     } catch (error) {
         return { title: 'Không tìm thấy Đơn hàng' };

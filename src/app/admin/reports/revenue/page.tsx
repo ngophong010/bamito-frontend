@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 interface RevenueReportPageProps {
   searchParams: {
     page?: string;
-    timeStart?: string; // ISO Date string
-    timeEnd?: string;   // ISO Date string
+    fromDate?: string; // ISO Date string
+    toDate?: string;   // ISO Date string
   };
 }
 
@@ -22,14 +22,14 @@ export default async function RevenueReportPage({ searchParams }: RevenueReportP
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
     // Provide sensible defaults for the date range if they aren't in the URL
-    const timeStart = searchParams.timeStart || dayjs().startOf('month').toISOString();
-    const timeEnd = searchParams.timeEnd || dayjs().endOf('month').toISOString();
+    const fromDate = searchParams.fromDate || dayjs().startOf('month').toISOString();
+    const toDate = searchParams.toDate || dayjs().endOf('month').toISOString();
     const page = searchParams.page ? Number(searchParams.page) : 1;
 
     // Fetch the sales report data from the API
     const initialReportData = await orderService.getSalesReport({
-      timeStart,
-      timeEnd,
+      fromDate,
+      toDate,
       page,
       limit: 15,
     });

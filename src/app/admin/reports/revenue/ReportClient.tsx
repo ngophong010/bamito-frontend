@@ -8,14 +8,13 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
-import { PaginatedApiResponse, OrderItem } from '@/types'; // Assuming OrderItem is the type for report items
+import { SalesReportResponse, SalesReportItem } from '@/types/statistics';
 import './page.scss';
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
-const formatterDate = (date: string) => dayjs(date).format("DD/MM/YYYY");
 
 interface ReportClientProps {
-  initialReportData: PaginatedApiResponse<OrderItem>;
+  initialReportData: SalesReportResponse;
 }
 
 const ReportClient = ({ initialReportData }: ReportClientProps) => {
@@ -49,13 +48,13 @@ const ReportClient = ({ initialReportData }: ReportClientProps) => {
 
     // Define HOW to render the columns for a REPORT ITEM
     const tableColumns = [
-        { label: "STT", render: (item: OrderItem, index: number) => <span>{(initialReportData.currentPage - 1) * 15 + index + 1}</span> },
-        { label: "TÊN SẢN PHẨM", render: (item: OrderItem) => <span>{item.productName}</span> },
-        { label: "KÍCH CỠ", render: (item: OrderItem) => <span>{item.sizeName}</span> },
-        { label: "GIÁ", render: (item: OrderItem) => <span>{currencyFormatter.format(item.price)}</span> },
-        { label: "SỐ LƯỢNG", render: (item: OrderItem) => <span>{item.quantity}</span> },
-        { label: "TỔNG TIỀN", render: (item: OrderItem) => <span>{currencyFormatter.format(item.price * item.quantity)}</span> },
-        { label: "NGÀY MUA", render: (item: OrderItem) => <span>{formatterDate(item.order.createdAt)}</span> },
+        { label: "STT", render: (item: SalesReportItem, index: number) => <span>{(initialReportData.currentPage - 1) * 15 + index + 1}</span> },
+        { label: "TÊN SẢN PHẨM", render: (item: SalesReportItem) => <span>{item.productName}</span> },
+        { label: "KÍCH CỠ", render: (item: SalesReportItem) => <span>{item.sizeName}</span> },
+        { label: "GIÁ", render: (item: SalesReportItem) => <span>{currencyFormatter.format(item.price)}</span> },
+        { label: "SỐ LƯỢNG", render: (item: SalesReportItem) => <span>{item.quantity}</span> },
+        { label: "TỔNG TIỀN", render: (item: SalesReportItem) => <span>{currencyFormatter.format(item.price * item.quantity)}</span> },
+        { label: "NGÀY MUA", render: (item: SalesReportItem) => <span>{item.order?.createdAt ? new Date(item.order.createdAt).toLocaleDateString('vi-VN') : 'N/A'}</span> },
     ];
     
     return (

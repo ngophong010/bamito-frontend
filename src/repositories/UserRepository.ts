@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { User } from '@/types/user';
+import { User, UserProfileUpdateData } from '@/types/user';
 import { IUserRepository } from './interfaces/IUserRepository';
 import { PaginatedApiResponse } from '@/types/common';
 import {
@@ -166,6 +166,45 @@ export class UserRepository implements IUserRepository {
         try {
             const response = await this.apiClient.post<{ data: { exists: boolean } }>(`${this.basePath}/check-email`, { email });
             return response.data.data.exists;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
+    }
+
+    async getProfile(): Promise<User> {
+        try {
+            const response = await this.apiClient.get<{ data: User }>(`${this.basePath}/profile`);
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
+    }
+
+    async updateProfile(data: UserProfileUpdateData): Promise<User> {
+        try {
+            const response = await this.apiClient.put<{ data: User }>(`${this.basePath}/profile`, data);
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
+    }
+
+    async updateProfileWithAvatar(formData: FormData): Promise<User> {
+        try {
+            const response = await this.apiClient.put<{ data: User }>(`${this.basePath}/profile`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data.data;
+        } catch (error) {
+            throw handleAxiosError(error);
+        }
+    }
+
+    async changePassword(data: { oldPassword: string; newPassword: string }): Promise<void> {
+        try {
+            await this.apiClient.post(`${this.basePath}/change-password`, data);
         } catch (error) {
             throw handleAxiosError(error);
         }

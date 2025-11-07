@@ -19,18 +19,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // --- 2. Dynamic Category Pages ---
     // Fetch all categories to generate their URLs.
-    const categories = await categoryService.getCategories();
-    const categoryEntries = categories.map((category) => ({
-      url: `${SITE_URL}/${createSlug(category.name)}-${category.categoryId}`, // Assuming this is your URL structure
-      lastModified: new Date(), // Or a real 'updatedAt' field if you have one
+    const categoriesResponse = await categoryService.getCategories();
+    const categoryEntries = categoriesResponse.items.map((category: any) => ({
+      url: `${SITE_URL}/${createSlug(category.name)}-${category.categoryId}`,
+      lastModified: new Date(),
       priority: 0.9,
     }));
 
     // --- 3. Dynamic Product Pages (CRITICAL) ---
     // Fetch all products to generate their URLs.
-    // Create a new service 'getAllProductsList' that fetches all products without pagination.
-    const products = await productService.getAllProducts(); 
-    const productEntries = products.map((product) => ({
+    const productsResponse = await productService.getAllProducts({ limit: 1000 }); 
+    const productEntries = productsResponse.items.map((product: any) => ({
       url: `${SITE_URL}/${createSlug(product.category.name)}/${createSlug(product.name)}-${product.productId}`,
       lastModified: product.updatedAt || new Date(),
       priority: 0.8,
