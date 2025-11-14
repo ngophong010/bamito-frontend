@@ -3,7 +3,6 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Grid } from "@mui/material";
-import Rating from "@mui/material/Rating";
 import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 import { toast } from "react-toastify";
@@ -69,7 +68,7 @@ const SearchClient = ({ initialProductData, searchTerm }: SearchClientProps) => 
       {productsWithFavouriteStatus.length > 0 ? (
         <Grid container spacing={5}>
           {productsWithFavouriteStatus.map((item) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.id}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
               <Link
                 href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
                 className="productWrapper"

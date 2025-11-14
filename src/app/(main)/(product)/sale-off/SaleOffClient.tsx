@@ -61,7 +61,7 @@ const SaleOffClient = ({ initialProductData }: SaleOffClientProps) => {
       {productsWithFavouriteStatus.length > 0 ? (
         <Grid container spacing={5}>
           {productsWithFavouriteStatus.map((item) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.id}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
               <Link
                 href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
                 className="productWrapper"
