@@ -22,7 +22,8 @@ interface CategoryPageProps {
 // 1. DYNAMIC METADATA GENERATION (ESSENTIAL FOR SEO)
 // =================================================================
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const categoryId = Number(params.categorySlug.split('-').pop());
+  const resolvedParams = await params;
+  const categoryId = Number(resolvedParams.categorySlug.split('-').pop());
 
   if (Number.isNaN(categoryId)) {
     return { title: 'Invalid Category | Bamito' };
@@ -51,7 +52,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const { categorySlug } = params;
+  const resolvedParams = await params;
+  const { categorySlug } = resolvedParams;
   
   // A robust way to get the ID from a slug like 'vot-cau-long-1'
   const categoryId = Number(categorySlug.split('-').pop());

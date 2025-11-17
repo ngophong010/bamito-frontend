@@ -86,7 +86,14 @@ export const userSlice = createSlice({
       state.favourites = action.payload.favourites || [];
     },
     logOut: (state) => {
-      Object.assign(state, initialState);
+      state.isLoggedIn = false;
+      state.profile = null;
+      state.favourites = [];
+      state.login = {
+        status: 'idle',
+        error: null,
+        otpRequired: false,
+      };
     },
     updateAvatar: (state, action: PayloadAction<string>) => {
       if (state.profile) {
@@ -109,10 +116,16 @@ export const userSlice = createSlice({
     builder
       // Login cases
       .addCase(loginUser.pending, (state) => {
+        if (!state.login || typeof state.login !== 'object') {
+          state.login = { status: 'idle', error: null, otpRequired: false };
+        }
         state.login.status = 'loading';
         state.login.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        if (!state.login || typeof state.login !== 'object') {
+          state.login = { status: 'idle', error: null, otpRequired: false };
+        }
         state.login.status = 'succeeded';
         state.login.otpRequired = action.payload.otpRequired;
         
@@ -124,6 +137,9 @@ export const userSlice = createSlice({
         state.login.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        if (!state.login || typeof state.login !== 'object') {
+          state.login = { status: 'idle', error: null, otpRequired: false };
+        }
         state.login.status = 'failed';
         state.login.error = action.payload as string;
       })

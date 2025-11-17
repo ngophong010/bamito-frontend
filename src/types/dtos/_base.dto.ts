@@ -139,6 +139,7 @@ export interface RegisterDTO {
   userName: string;
   email: string;
   password: string;
+  roleId?: number;
   phoneNumber?: string;
   birthday?: string; // ISO date
   avatar?: string;

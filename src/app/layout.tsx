@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import Providers from "../Providers";
 import ZaloChat from "@/components/ZaloChat/ZaloChat";
 import Script from "next/script";
+import "react-toastify/ReactToastify.css";
 import "./global.scss";
 
 // Import the necessary types from Next.js and React
@@ -69,8 +70,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
   return (
-    <html lang="vi" className={inter.variable}> {/* Use font variable */}
-      {/* GTM Script */}
+    <html lang="vi" className={inter.variable} suppressHydrationWarning>
       {GTM_ID && (
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
