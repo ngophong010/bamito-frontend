@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
-import Tippy from '@tippyjs/react/headless';
+import { Popover } from '@mui/material';
 import UserMenu from '@/components/UserMenu/UserMenu';
 import { MenuItem } from '@/config/menu';
 
@@ -20,6 +20,7 @@ export const UserSection: React.FC<UserSectionProps> = ({
     visibleMenuItems,
     onUserMenuItemClick
 }) => {
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     if (!isLoggedIn) {
         return (
             <Link href="/login" className="login-btn">
@@ -30,28 +31,41 @@ export const UserSection: React.FC<UserSectionProps> = ({
     }
 
     return (
-        <Tippy
-            interactive
-            placement="bottom-end"
-            delay={[0, 300]}
-            render={(attrs) => (
+        <>
+            <div tabIndex={0} role="button">
+                <button 
+                    className="header-action-btn"
+                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                >
+                    <Image
+                        src={profile?.avatar || '/images/default-avatar.png'}
+                        alt="User avatar"
+                        width={50}
+                        height={50}
+                        className="action-avatar"
+                    />
+                </button>
+            </div>
+            
+            <Popover
+                open={Boolean(anchorEl)}
+                anchorEl={anchorEl}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+            >
                 <UserMenu
-                    attrs={attrs}
+                    attrs={{}}
                     menuItems={visibleMenuItems}
                     onItemClick={onUserMenuItemClick}
                 />
-            )}
-        >
-            <div tabIndex={0} role="button">
-                <button className="header-action-btn">
-                    <Image
-                    src={profile?.avatar || '/images/default-avatar.png'}
-                    alt="User avatar"
-                    fill
-                    className="action-avatar"
-                />
-                </button>
-            </div>
-        </Tippy>
+            </Popover>
+        </>
     );
 };

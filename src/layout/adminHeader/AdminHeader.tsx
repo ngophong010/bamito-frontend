@@ -1,22 +1,20 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Tippy from "@tippyjs/react/headless";
-
-// 1. Import your typed hooks and actions
+import { Popover } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { logOut } from "@/lib/redux/features/user/userSlice";
 import { MenuItem } from "@/config/menu";
 import { User, LogOut } from "lucide-react";
-
 import UserMenu from "@/components/UserMenu/UserMenu";
 import "./adminHeader.scss";
 
 const AdminHeader = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   // 2. Select from the new, clean Redux state shape
   // The useAppSelector hook is typed, so `profile` is known to be `UserProfile | null`.
@@ -76,30 +74,42 @@ const AdminHeader = () => {
           className="logo"
         />
       </Link>
-      <Tippy
-        interactive
-        placement="bottom-end"
-        delay={[0, 300]}
-        render={(attrs) => (
-          <UserMenu
-            attrs={attrs}
-            menuItems={menuItems}
-            onItemClick={handleMenuItemClick}
-          />
-        )}
+      <div
+        className="admin-info"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        style={{ cursor: 'pointer' }}
       >
-        <div className="admin-info">
-          <h2 className="admin-name">{profile.userName}</h2>
-          <div className="admin-avatar">
-            <Image
-                src={profile.avatar || "/images/default-avatar.png"}
-                alt={profile.userName}
-                fill // Use 'fill' for responsive, parent-contained images
-                style={{ objectFit: 'cover' }}
-            />
-          </div>
+        <h2 className="admin-name">{profile.userName}</h2>
+        <div className="admin-avatar">
+          <Image
+              src={profile.avatar || "/images/default-avatar.png"}
+              alt={profile.userName}
+              width={40}
+              height={40}
+              style={{ objectFit: 'cover', borderRadius: '50%' }}
+          />
         </div>
-      </Tippy>
+      </div>
+      
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <UserMenu
+          attrs={{}}
+          menuItems={menuItems}
+          onItemClick={handleMenuItemClick}
+        />
+      </Popover>
     </header>
   );
 };

@@ -11,25 +11,37 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfilePage() {
-  // --- 2. DATA FETCHING ON THE SERVER ---
+  // Create empty profile data as fallback
+  const emptyProfileData = {
+    user: {
+      id: 0,
+      email: '',
+      firstName: '',
+      lastName: '',
+      userName: '',
+      phone: '',
+      phoneNumber: '',
+      birthday: null,
+      avatar: null,
+      role: { id: 1, roleId: 'USER', roleName: 'User' }
+    },
+    favourites: [],
+    orderCounts: 0
+  };
+
   try {
-    // The getProfile service is secure and gets the user ID from the backend session
     const userProfile = await profileService.getProfile();
     
-    // Wrap in ProfileResponse format
     const initialProfileData = {
       user: userProfile,
       favourites: [],
       orderCounts: 0
     };
 
-    // 3. Pass the server-fetched data as a prop to the Client Component
     return <ProfileClient initialProfileData={initialProfileData} />;
   } catch (error: any) {
-    if (error.response?.status === 401) {
-        redirect('/login');
-    }
-    console.error("Failed to fetch profile:", error);
-    return <div>Không thể tải thông tin hồ sơ. Vui lòng thử lại.</div>;
+    console.warn("Profile service unavailable, using empty profile:", error);
+    // Return ProfileClient with empty data instead of error page
+    return <ProfileClient initialProfileData={emptyProfileData} />;
   }
 }

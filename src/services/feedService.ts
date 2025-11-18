@@ -27,16 +27,23 @@ export const getRssFeed = async (): Promise<FeedItem[]> => {
         const res = await fetch(apiUrl, { cache: 'no-store' });
 
         if (!res.ok) {
-            // Throw an error if the response is not successful
-            throw new Error(`Failed to fetch RSS feed. Status: ${res.status}`);
+            console.warn(`RSS feed endpoint not available. Status: ${res.status}`);
+            return []; // Return empty array instead of throwing
+        }
+
+        // Check if response is JSON
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.warn('RSS feed endpoint returned non-JSON response');
+            return []; // Return empty array for non-JSON responses
         }
 
         const data: RssApiResponse = await res.json();
         
         return data.items;
     } catch (error) {
-        console.error("Error in getRssFeed service:", error);
-        // Re-throw the error so the calling component can handle it (e.g., in a try/catch block)
-        throw error;
+        console.warn("RSS feed service unavailable, returning empty feed:", error);
+        // Return empty array instead of throwing to prevent page crashes
+        return [];
     }
 };

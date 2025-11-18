@@ -62,11 +62,22 @@ export class ProductRepository extends BaseRepository<ProductListItem, FormData,
         page?: number;
         sort?: string;
     }): Promise<PaginatedApiResponse<ProductListItem>> {
-        const response = await this.apiClient.get<SuccessApiResponse<PaginatedApiResponse<ProductListItem>>>(
-            `${this.basePath}/on-sale`,
-            { params }
-        );
-        return response.data.data;
+        try {
+            const response = await this.apiClient.get<SuccessApiResponse<PaginatedApiResponse<ProductListItem>>>(
+                `${this.basePath}/on-sale`,
+                { params }
+            );
+            return response.data.data;
+        } catch (error) {
+            console.warn('Sale products endpoint not available, returning empty results');
+            // Return empty results when endpoint doesn't exist
+            return {
+                items: [],
+                totalItems: 0,
+                totalPages: 1,
+                currentPage: params?.page || 1
+            };
+        }
     }
 
     /**

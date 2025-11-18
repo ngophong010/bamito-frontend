@@ -1,13 +1,11 @@
-// src/layout/Header/components/Navigation.tsx (with MUI)
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Popover, Button, Box } from '@mui/material'; // Import MUI components
+import { Popover, Button, Box } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import CategoriesMenu from '@/components/CategoriesMenu/CategoriesMenu';
 import { Category } from '@/types';
 
-// Props are the same...
 interface NavigationProps { categories: Category[] }
 
 export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
@@ -26,7 +24,6 @@ export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
 
   return (
     <nav className="header-nav">
-      {/* The trigger button */}
       <Button
         aria-owns={isOpen ? 'product-menu-popover' : undefined}
         aria-haspopup="true"
@@ -37,7 +34,6 @@ export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
         SẢN PHẨM
       </Button>
 
-      {/* The Popover component itself */}
       <Popover
         id="product-menu-popover"
         open={isOpen}
@@ -48,7 +44,6 @@ export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
         // Disables the default Material-UI background styles
         slotProps={{ paper: { sx: { background: 'none', boxShadow: 'none' } } }}
       >
-        {/* You can place your existing dropdown menu component right here */}
         <div className="drop-down-menu">
             <CategoriesMenu categories={categories} onLinkClick={handleCloseMenu} />
         </div>

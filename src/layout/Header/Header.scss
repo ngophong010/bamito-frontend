@@ -19,6 +19,7 @@
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
     width: 22rem;
     background-color: #fff;
+    z-index: 1000;
 
     .product-type-wrapper {
       display: block;
@@ -38,35 +39,41 @@
     }
   }
 
-  .drop-down-product {
-    cursor: pointer;
-    padding: 2rem 0px;
-
-    .text {
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    
+    .drop-down-product {
       font-size: 2rem;
       color: #000;
       font-weight: 600;
+      padding: 1rem 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      
+      &:hover {
+        color: var(--primary-color);
+        transition: color 0.3s;
+      }
+      
+      .MuiButton-endIcon {
+        margin-left: 0.5rem;
+      }
     }
-
-    .icon {
+    
+    .nav-link {
       font-size: 2rem;
       color: #000;
-      margin-left: 1rem;
-    }
-
-    .is-tippy-on {
-      color: var(--primary-color);
-      transition: color 0.3s;
-    }
-  }
-  .btn-sale-off {
-    font-size: 2rem;
-    color: #000;
-    font-weight: 600;
-    &:hover {
-      cursor: pointer;
-      color: var(--primary-color);
-      transition: color 0.3s;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 1rem 0;
+      
+      &:hover {
+        color: var(--primary-color);
+        transition: color 0.3s;
+      }
     }
   }
 
@@ -121,15 +128,25 @@
         height: 100%;
         display: flex;
         align-items: center;
+        position: relative;
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 0;
 
         .action-avatar {
           height: 50px;
           width: 50px;
           object-fit: cover;
           border-radius: 100%;
+          display: block;
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+          transform: translateZ(0);
         }
       }
     }
+
     .header-action-btn {
       color: var(--primary-color);
       font-size: 3rem;
@@ -137,6 +154,7 @@
       display: flex;
       align-items: center;
     }
+
     .login-btn {
       width: 13rem;
       height: 4rem;
