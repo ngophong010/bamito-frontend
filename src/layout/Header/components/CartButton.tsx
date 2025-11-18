@@ -21,12 +21,14 @@ export const CartButton: React.FC<CartButtonProps> = ({ totalCount }) => {
                 </div>
             )}
         >
-            <Link href="/user/cart" className="header-cart">
-                <ShoppingCartOutlinedIcon className="header-cart-icon" />
-                {totalCount > 0 && (
-                    <span className="header-cart-notification">{totalCount}</span>
-                )}
-            </Link>
+            <div>
+                <Link href="/user/cart" className="header-cart">
+                    <ShoppingCartOutlinedIcon className="header-cart-icon" />
+                    {totalCount > 0 && (
+                        <span className="header-cart-notification">{totalCount}</span>
+                    )}
+                </Link>
+            </div>
         </Tippy>
     );
 };

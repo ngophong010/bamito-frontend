@@ -20,10 +20,10 @@ const TippyCart = () => {
   const dispatch: AppDispatch = useDispatch();
 
   // Select the necessary data directly from the Redux store
-  const items = useSelector((state: RootState) => state.cart.items);
-  const totalCount = useSelector((state: RootState) => state.cart.totalCount);
-  const fetchStatus = useSelector((state: RootState) => state.cart.operations.fetch.status);
-  const userId = useSelector((state: RootState) => state.user.profile?.id);
+  const items = useSelector((state: RootState) => state.cart?.items || []);
+  const totalCount = useSelector((state: RootState) => state.cart?.totalCount || 0);
+  const fetchStatus = useSelector((state: RootState) => state.cart?.operations?.fetch?.status || 'idle');
+  const userId = useSelector((state: RootState) => state.user?.profile?.id);
 
   // Trigger the initial fetch for cart data if it hasn't been fetched yet
   useEffect(() => {

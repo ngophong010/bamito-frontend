@@ -45,7 +45,6 @@ const Register = () => {
     // Use the global loading state from the Redux slice
     <Loading loading={registrationStatus === 'loading'}>
       <div className="register-container">
-        {/* --- Your JSX for the form remains the same --- */}
         <div className="register-content">
           <div className="register-content-left">
             <div className="register-form-container">
@@ -97,14 +96,19 @@ const Register = () => {
                     {...register("password", {
                       required: "Mật khẩu là bắt buộc",
                       minLength: {
-                        value: 6,
-                        message: "Mật khẩu phải có ít nhất 6 ký tự"
+                        value: 8,
+                        message: "Mật khẩu phải có ít nhất 8 ký tự"
+                      },
+                      pattern: {
+                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]/,
+                        message: "Mật khẩu phải có chữ hoa, chữ thường, số và ký tự đặc biệt"
                       }
                     })}
-                    placeholder="Nhập mật khẩu"
+                    placeholder="Ví dụ: Password123!"
                     className={errors.password ? 'error' : ''}
                   />
                   {errors.password && <span className="error-message">{errors.password.message}</span>}
+                  <small className="password-hint">8+ ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&#)</small>
                 </div>
 
                 <div className="form-group">

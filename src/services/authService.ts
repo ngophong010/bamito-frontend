@@ -52,13 +52,8 @@ class AuthService implements IAuthService {
       logger.debug(`Login attempt for: ${credentials.identifier}`);
       const loginData = await this.repository.login(credentials);
       
-      // Store tokens if login successful and no OTP required
-      if (loginData.accessToken && !loginData.otpRequired) {
-        jwtManager.setTokens({
-          accessToken: loginData.accessToken,
-          refreshToken: loginData.refreshToken
-        });
-      }
+      // Tokens are stored in HTTP-Only cookies automatically
+      // No need to manually store tokens in localStorage
       
       return loginData;
     } catch (error) {
@@ -89,14 +84,12 @@ class AuthService implements IAuthService {
   public async logout(): Promise<ServiceResponse> {
     try {
       await this.repository.logout();
+      logger.info('User logged out successfully');
     } catch (error) {
       // Continue with logout even if API call fails
       logger.warn('Logout API call failed:', error as Error);
-    } finally {
-      // Always clear tokens on logout
-      jwtManager.clearTokens();
-      logger.info('User logged out successfully');
     }
+    // Cookies are cleared by backend
     return { errCode: 0, message: 'Logged out successfully' };
   }
 
@@ -111,13 +104,7 @@ class AuthService implements IAuthService {
       logger.debug(`OTP verification for: ${email}`);
       const loginData = await this.repository.verifyOtp(email, otpCode);
       
-      // Store tokens after successful OTP verification
-      if (loginData.accessToken) {
-        jwtManager.setTokens({
-          accessToken: loginData.accessToken,
-          refreshToken: loginData.refreshToken
-        });
-      }
+      // Tokens are stored in HTTP-Only cookies automatically
       
       return loginData;
     } catch (error) {

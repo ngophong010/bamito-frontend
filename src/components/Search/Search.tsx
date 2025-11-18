@@ -1,205 +1,139 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import Tippy from "@tippyjs/react/headless";
+import { Autocomplete, TextField, Box, CircularProgress, Paper } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner, faCircleXmark, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-import { useDebounce } from "@/hooks/useDebounce"; // Assuming a custom debounce hook
-import { AppDispatch, RootState } from "@/lib/redux/store";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { fetchSearchResults, clearSearchResults } from "@/lib/redux/features/search/searchSlice";
-import { createSlug } from "@/lib/utils/slug"; // Assuming a slug utility
+import { createSlug } from "@/lib/utils/slug";
 import { ProductListItem } from "@/types";
-import "./Search.scss";
 import { getPopularSearches } from "@/services/searchService";
-import { set } from "react-hook-form";
+import "./Search.scss";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
-// ===============================================================
-// --- Sub-component for the Dropdown Results ---
-// ===============================================================
-interface SearchResultsDropdownProps {
-  searchResults: ProductListItem[];
-  isLoading: boolean;
-  searchText: string;
-  onClose: () => void;
-}
-
-const SearchResultsDropdown = ({ searchResults, isLoading, searchText, onClose }: SearchResultsDropdownProps) => {
+const Search = () => {
+  const [inputValue, setInputValue] = useState("");
+  const [popularSearches, setPopularSearches] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [popularSearches, setPopularSearches] = useState<string[]>([]);
-  const [isFetchingPopular, setIsFetchingPopular] = useState(true);
+  const { results, status } = useAppSelector((state) => state.search);
+  const isLoading = status === 'loading';
 
+  // Fetch popular searches on mount
   useEffect(() => {
     const fetchPopular = async () => {
-      setIsFetchingPopular(true);
       const terms = await getPopularSearches();
       setPopularSearches(terms);
-      setIsFetchingPopular(false);
     };
-    
     fetchPopular();
-}, []);
+  }, []);
 
-  const handleNavigateToSearchPage = () => {
-    onClose();
-    router.push(`/search?q=${encodeURIComponent(searchText)}`);
-  };
-  
-  const handleItemClick = () => {
-    onClose();
-  };
-
-  return (
-    <div className="searchResult">
-      <div className="search-popular">
-        <div className="search-popular-title">TÌM KIẾM PHỔ BIẾN</div>
-        <hr className="search-separator" />
-        <div className="search-popular-list">
-          {isFetchingPopular ? (
-            <div className="popular-search-loading">Loading...</div>
-          ) : (
-            popularSearches.map((item) => (
-              <Link href={`/search?q=${encodeURIComponent(item)}`} key={item} className="search-popular-item" onClick={onClose}>
-                {item}
-              </Link>
-            ))
-          )}
-        </div>
-      </div>
-
-      {isLoading && <div className="search-loading-text">Đang tìm kiếm...</div>}
-
-      {!isLoading && searchResults.length > 0 && (
-        <>
-          {searchResults.map((item) => (
-            <Link
-              key={item.id}
-              href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
-              className="searchProduct"
-              onClick={handleItemClick}
-            >
-              <Image src={item.image || '/placeholder.png'} alt={item.name} width={60} height={60} />
-              <div>
-                <h2 className="searchProductName">{item.name}</h2>
-                <h2 className="searchProductPrice">{currencyFormatter.format(item.price)}</h2>
-              </div>
-            </Link>
-          ))}
-          {searchResults.length >= 5 && (
-            <button className="search-more" onClick={handleNavigateToSearchPage}>
-              <hr className="search-separator" style={{ margin: "1.6rem 0" }} />
-              Xem tất cả kết quả
-            </button>
-          )}
-        </>
-      )}
-
-      {!isLoading && searchText && searchResults.length === 0 && (
-        <h2 className="search-no-results">
-          Không tìm thấy kết quả cho '{searchText}'
-        </h2>
-      )}
-    </div>
-  );
-};
-
-// ===============================================================
-// --- Main Search Component ---
-// ===============================================================
-const Search = () => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const debouncedSearchTerm = useDebounce(inputValue, 500);
-
-  const dispatch: AppDispatch = useDispatch();
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Get the actual search results and status from our clean searchSlice
-  const { results, status, lastSearchTerm } = useSelector((state: RootState) => state.search);
-
+  // Debounced search
   useEffect(() => {
-    // Only dispatch the search thunk if the debounced term is not empty
-    if (debouncedSearchTerm.trim()) {
-      dispatch(fetchSearchResults({ name: debouncedSearchTerm, limit: 5 }));
+    if (inputValue.trim()) {
+      const handler = setTimeout(() => {
+        dispatch(fetchSearchResults({ name: inputValue, limit: 5 }));
+      }, 500);
+      return () => clearTimeout(handler);
     } else {
-      // If the input is cleared, clear the results in the Redux store
       dispatch(clearSearchResults());
     }
-  }, [debouncedSearchTerm, dispatch]);
+  }, [inputValue, dispatch]);
 
-  const handleClear = () => {
-    setInputValue("");
-    dispatch(clearSearchResults());
-    inputRef.current?.focus();
-  };
+  // Combine popular searches and results for options
+  const options: (string | ProductListItem)[] = inputValue.trim() ? results : popularSearches;
 
-  const handleHideResults = () => {
-    setIsFocused(false);
-  };
-
-  const handleSearchSubmit = () => {
-    handleHideResults();
-    if(inputValue.trim()){
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && inputValue.trim()) {
       router.push(`/search?q=${encodeURIComponent(inputValue.trim())}`);
     }
   };
 
-  const showResults = isFocused && inputValue.trim() !== '';
-
   return (
-    <div> {/* Extra div to prevent Tippy from attaching to a component that gets re-rendered */}
-      <Tippy
-        interactive
-        visible={showResults}
-        onClickOutside={handleHideResults}
-        placement="bottom"
-        offset={[0, 8]}
-        render={(attrs) => (
-          <div className="dropdownSearch" tabIndex={-1} {...attrs}>
-            <SearchResultsDropdown
-              searchResults={results}
-              isLoading={status === 'loading'}
-              searchText={lastSearchTerm || ''}
-              onClose={handleHideResults}
-            />
-          </div>
-        )}
-      >
-        <div className="search">
-          <input
-            ref={inputRef}
-            className="searchInput"
-            onFocus={() => setIsFocused(true)}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Tìm kiếm sản phẩm..."
-            onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit() }}
-          />
-
-          {status === 'loading' && (
-            <FontAwesomeIcon className="searchLoading" icon={faSpinner} spin />
+    <Autocomplete
+      freeSolo
+      options={options}
+      loading={isLoading}
+      getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
+      onInputChange={(event, newInputValue) => {
+        setInputValue(newInputValue);
+      }}
+      onChange={(event, value) => {
+        if (value) {
+          if (typeof value === 'string') {
+            router.push(`/search?q=${encodeURIComponent(value)}`);
+          } else {
+            router.push(`/${createSlug(value.category.name)}/${createSlug(value.name)}-${value.productId}`);
+          }
+        }
+      }}
+      renderOption={(props, option) => {
+        if (typeof option === 'string') {
+          return (
+            <Box component="li" {...props} key={option}>
+              <FontAwesomeIcon icon={faMagnifyingGlass} style={{ marginRight: '8px', color: '#666' }} />
+              {option}
+            </Box>
+          );
+        }
+        return (
+          <Box component="li" {...props} key={option.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Image src={option.image || '/placeholder.png'} alt={option.name} width={40} height={40} />
+            <Box>
+              <div>{option.name}</div>
+              <div style={{ color: '#666', fontSize: '0.9em' }}>{currencyFormatter.format(option.price)}</div>
+            </Box>
+          </Box>
+        );
+      }}
+      PaperComponent={(props) => (
+        <Paper {...props}>
+          {!inputValue.trim() && (
+            <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>TÌM KIẾM PHỔ BIẾN</div>
+            </Box>
           )}
-
-          {inputValue && status !== 'loading' && (
-            <button className="searchClear" onClick={handleClear}>
-              <FontAwesomeIcon icon={faCircleXmark} />
-            </button>
+          {props.children}
+          {inputValue.trim() && results.length >= 5 && (
+            <Box sx={{ p: 1, borderTop: '1px solid #eee', textAlign: 'center' }}>
+              <Link href={`/search?q=${encodeURIComponent(inputValue)}`} style={{ color: '#1976d2', textDecoration: 'none' }}>
+                Xem tất cả kết quả
+              </Link>
+            </Box>
           )}
-
-          <span className="search-divider"></span>
-          <button className="searchBtn" onMouseDown={handleSearchSubmit}>
-            <FontAwesomeIcon className="searchIcon" icon={faMagnifyingGlass} />
-          </button>
-        </div>
-      </Tippy>
-    </div>
+          {inputValue.trim() && results.length === 0 && !isLoading && (
+            <Box sx={{ p: 2, textAlign: 'center', color: '#666' }}>
+              Không tìm thấy kết quả cho '{inputValue}'
+            </Box>
+          )}
+        </Paper>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          placeholder="Tìm kiếm sản phẩm..."
+          variant="outlined"
+          size="small"
+          onKeyDown={handleKeyDown}
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                {params.InputProps.endAdornment}
+                <FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: '#666' }} />
+              </>
+            ),
+          }}
+        />
+      )}
+    />
   );
 };
 

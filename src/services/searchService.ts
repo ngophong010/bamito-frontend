@@ -8,10 +8,15 @@ export const getPopularSearches = async (): Promise<string[]> => {
     try {
         const response = await apiClient.get<SuccessApiResponse<string[]>>('/search/popular');
         return response.data.data;
-
     } catch (error) {
-        console.error("Failed to fetch popular searches:", error);
-    // Return an empty array on failure so the UI doesn't break
-    return []; 
-  }
+        console.warn("Popular searches endpoint not available, using fallback data");
+        // Return fallback popular searches for badminton products
+        return [
+            "Vợt cầu lông",
+            "Giày cầu lông",
+            "Áo cầu lông",
+            "Quần cầu lông",
+            "Phụ kiện cầu lông"
+        ];
+    }
 };

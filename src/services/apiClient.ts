@@ -10,15 +10,13 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Enable sending cookies with requests
 });
 
-// Request interceptor: Add auth token to requests
+// Request interceptor: Cookies are sent automatically via withCredentials
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = jwtManager.getAccessToken();
-    if (token && !jwtManager.isTokenExpired(token)) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // No need to manually add Authorization header - cookies are sent automatically
     return config;
   },
   (error) => Promise.reject(error)
@@ -34,30 +32,16 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
-      const refreshToken = jwtManager.getRefreshToken();
-      if (refreshToken) {
-        try {
-          // Attempt token refresh
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-            refreshToken
-          });
-          
-          const { accessToken, refreshToken: newRefreshToken } = response.data.data;
-          jwtManager.setTokens({ accessToken, refreshToken: newRefreshToken });
-          
-          // Retry original request with new token
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          return apiClient(originalRequest);
-        } catch (refreshError) {
-          // Refresh failed - redirect to login
-          jwtManager.clearTokens();
-          if (typeof window !== 'undefined') {
-            window.location.href = '/login';
-          }
-        }
-      } else {
-        // No refresh token - redirect to login
-        jwtManager.clearTokens();
+      try {
+        // Attempt token refresh (refresh_token cookie sent automatically)
+        await axios.post(`${API_BASE_URL}/auth/refresh-token`, {}, {
+          withCredentials: true
+        });
+        
+        // Retry original request (new access_token cookie sent automatically)
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed - redirect to login
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }

@@ -42,14 +42,16 @@ export const UserSection: React.FC<UserSectionProps> = ({
                 />
             )}
         >
-            <button className="header-action-btn">
-                <Image
+            <div tabIndex={0} role="button">
+                <button className="header-action-btn">
+                    <Image
                     src={profile?.avatar || '/images/default-avatar.png'}
                     alt="User avatar"
                     fill
                     className="action-avatar"
                 />
-            </button>
+                </button>
+            </div>
         </Tippy>
     );
 };

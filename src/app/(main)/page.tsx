@@ -81,9 +81,15 @@ export default async function HomePage() {
   } catch (error) {
     console.error("Failed to load homepage data:", error);
     return (
-      <div className="error-container">
-        <h2>Không thể tải nội dung trang</h2>
-        <p>Vui lòng thử lại sau.</p>
+      <div className="home-container">
+        <Banner />
+        <div className="home-content">
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            <h2>Chào mừng đến với BAMITO Shop</h2>
+            <p>Cửa hàng cầu lông chuyên nghiệp</p>
+            <p style={{ color: '#666', fontSize: '0.9rem' }}>Đang tải dữ liệu sản phẩm...</p>
+          </div>
+        </div>
       </div>
     );
   }

@@ -38,7 +38,7 @@ export const loginUser = createAsyncThunk<
   async (credentials, { rejectWithValue }) => {
     try {
       const response: LoginResponse = await authService.login(credentials);
-      const { user, otpRequired } = response;
+      const { user, otpRequired = false } = response;
 
       if (otpRequired) {
         return { 
@@ -55,6 +55,7 @@ export const loginUser = createAsyncThunk<
         };
       }
     } catch (error: any) {
+      console.error('Login error:', error);
       return rejectWithValue(handleAsyncError(error, 'Login failed'));
     }
   }

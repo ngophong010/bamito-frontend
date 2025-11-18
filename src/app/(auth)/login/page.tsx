@@ -17,28 +17,45 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // Get the loading status from the Redux store
-  const loginStatus = useAppSelector((state) => state.user?.login?.status || 'idle');
+  // Get the login state from Redux store
+  const loginState = useAppSelector((state) => state.user?.login || { status: 'idle', error: null, otpRequired: false });
+  const isLoggedIn = useAppSelector((state) => state.user?.isLoggedIn || false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<AuthCredentials>();
 
-  const onSubmit: SubmitHandler<AuthCredentials> = (data) => {
-    dispatch(loginUser({
-      identifier: data.email,
-      password: data.password,
-    }));
+  // Handle successful login navigation
+  React.useEffect(() => {
+    if (isLoggedIn && loginState.status === 'succeeded' && !loginState.otpRequired) {
+      // Check if there's a redirect parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get('redirect') || '/';
+      
+      // Use replace instead of push to prevent back navigation to login
+      router.replace(redirectTo);
+    }
+  }, [isLoggedIn, loginState.status, loginState.otpRequired, router]);
+
+  const onSubmit: SubmitHandler<AuthCredentials> = async (data) => {
+    try {
+      await dispatch(loginUser({
+        identifier: data.email,
+        password: data.password,
+      })).unwrap();
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
     // Use the global loading state from the Redux slice
-    <Loading loading={loginStatus === 'loading'}>
+    <Loading loading={loginState.status === 'loading'}>
       <div className="login-container">
         {/* --- Your JSX for the form remains largely the same --- */}
         {/* It's now a pure presentation component. */}
         <div className="login-content">
             <div className="login-content-left">
                 <Image
-                    src="/images/login-banner.jpg"
+                    src="/images/login-banner.png"
                     alt="Login Banner"
                     width={500}
                     height={600}
@@ -51,6 +68,12 @@ const Login = () => {
                     <p>Chào mừng bạn trở lại!</p>
                     
                     <form onSubmit={handleSubmit(onSubmit)}>
+                        {loginState.error && (
+                            <div className="error-message" style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: '#fee', border: '1px solid #fcc', borderRadius: '4px' }}>
+                                {loginState.error}
+                            </div>
+                        )}
+                        
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
                             <input
@@ -103,15 +126,15 @@ const Login = () => {
                         </div>
 
                         <div className="login-auth-buttons">
-                            <button type="submit" className="login-button" disabled={loginStatus === 'loading'}>
-                                {loginStatus === 'loading' ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                            <button type="submit" className="login-button" disabled={loginState.status === 'loading'}>
+                                {loginState.status === 'loading' ? 'Đang đăng nhập...' : 'Đăng nhập'}
                             </button>
                         </div>
                     </form>
                     
                     <div className="login-footer">
                         <p>
-                            Chưa có tài khoản?{" "} 
+                            Chưa có tài khoản? {" "} 
                             <Link href="/register" className="register-link">
                                 Đăng ký ngay
                             </Link>

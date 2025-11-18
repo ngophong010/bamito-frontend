@@ -31,8 +31,8 @@ export class AuthRepository implements IAuthRepository {
 
   async login(credentials: LoginDTO): Promise<LoginResponse> {
     try {
-      const response = await this.apiClient.post<{ data: LoginResponse }>('/auth/login', credentials);
-      return response.data.data;
+      const response = await this.apiClient.post<LoginResponse>('/auth/login', credentials);
+      return response.data;
     } catch (error) {
       throw handleAxiosError(error);
     }

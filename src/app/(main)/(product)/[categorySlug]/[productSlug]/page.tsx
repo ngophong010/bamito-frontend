@@ -19,8 +19,9 @@ interface ProductPageProps {
 // 1. GENERATE METADATA (Runs on the Server)
 // ===============================================================
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  // Use a more robust way to get the ID from the slug
-  const productId = params.productSlug.split('-').pop();
+  // Await params in Next.js 15
+  const resolvedParams = await params;
+  const productId = resolvedParams.productSlug.split('-').pop();
 
   if (!productId) {
     return { title: 'Invalid Product' };
@@ -56,7 +57,9 @@ const stripHtml = (html: string) => html.replaceAll(/<[^>]*>?/gm, '');
 // 2. THE PAGE COMPONENT (Also Runs on the Server)
 // ===============================================================
 export default async function ProductDetailPage({ params }: ProductPageProps) {
-  const productId = params.productSlug.split('-').pop();
+  // Await params in Next.js 15
+  const resolvedParams = await params;
+  const productId = resolvedParams.productSlug.split('-').pop();
 
   if (!productId) {
     notFound(); // Redirects to the 404 page

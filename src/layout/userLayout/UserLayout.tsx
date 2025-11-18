@@ -14,10 +14,12 @@ interface UserLayoutProps {
 }
 
 const UserLayout = ({ children, categories }: UserLayoutProps) => {
+  console.log('UserLayout rendering with categories:', categories?.length || 0);
+  
   return (
       <div className="layout-container">
         {/* Pass the server-fetched categories down to the Header */}
-        <Header categories={categories} />
+        <Header categories={categories || []} />
                 
         <main className="layout-content">{children}</main>
         
