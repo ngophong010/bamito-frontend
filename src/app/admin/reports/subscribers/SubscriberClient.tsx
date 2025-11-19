@@ -10,7 +10,6 @@ import { PaginatedApiResponse } from '@/types';
 import { Subscriber } from '@/types/models/subscriber';
 import { subscriberService } from '@/services/subscriberService';
 import { CampaignComposerModal } from '@/components/CampaignComposerModal/CampaignComposerModal';
-import './page.scss';
 
 interface SubscriberClientProps {
   initialSubscriberData: PaginatedApiResponse<Subscriber>;
@@ -23,10 +22,10 @@ const SubscriberClient = ({ initialSubscriberData }: SubscriberClientProps) => {
 
     // --- ACTION HANDLERS NOW LIVE IN THE SMART PARENT ---
     const handleDelete = async (subscriber: Subscriber) => {
-        if (window.confirm(`Bạn có chắc muốn xóa email "${subscriber.email}"?`)) {
+        if (window.confirm(`Bạn có chắc muốn xóa email "${subscriber.emailAddress}"?`)) {
             try {
                 setIsLoading(true);
-                await subscriberService.deleteSubscriber(subscriber.email);
+                await subscriberService.deleteSubscriber(subscriber.emailAddress);
                 toast.success("Xóa email thành công!");
                 router.refresh(); // Re-fetch Server Component data
             } catch (error: any) {
@@ -74,7 +73,7 @@ const SubscriberClient = ({ initialSubscriberData }: SubscriberClientProps) => {
     // Define how to render the columns for SUBSCRIBERS
     const tableColumns = [
         { label: "STT", render: (item: Subscriber, index: number) => <span>{(initialSubscriberData.currentPage - 1) * 15 + index + 1}</span> },
-        { label: "EMAIL", render: (item: Subscriber) => <span>{item.email}</span> },
+        { label: "EMAIL", render: (item: Subscriber) => <span>{item.emailAddress}</span> },
         { label: "NGƯỜI DÙNG", render: (item: Subscriber) => <span>{item.status}</span> },
     ];
     

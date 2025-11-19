@@ -1,6 +1,5 @@
 import apiClient from './apiClient';
 import { AuthRepository } from '@/repositories/AuthRepository';
-import { jwtManager } from '@/lib/auth';
 import { handleApiError } from '@/lib/utils/errorHandler';
 import { logger } from '@/lib/utils/logger';
 import {

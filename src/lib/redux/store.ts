@@ -29,6 +29,12 @@ import userAdminReducer from './features/admin/users/userAdminSlice';
 import productAdminReducer from './features/admin/products/productAdminSlice';
 import orderAdminReducer from './features/admin/orders/orderAdminSlice';
 import adminUIReducer from './features/admin/shared/adminUISlice';
+import brandAdminReducer from './features/admin/brand/brandSlice';
+import sizeAdminReducer from './features/admin/size/sizeSlice';
+import voucherAdminReducer from './features/admin/voucher/voucherSlice';
+import roleAdminReducer from './features/admin/role/roleSlice';
+import subscriberAdminReducer from './features/admin/subscriber/subscriberSlice';
+import inventoryAdminReducer from './features/admin/inventory/inventorySlice';
 
 // Combine all your slice reducers into a single rootReducer
 const rootReducer = combineReducers({
@@ -49,6 +55,12 @@ const rootReducer = combineReducers({
   adminProducts: productAdminReducer,
   adminOrders: orderAdminReducer,
   adminUI: adminUIReducer,
+  adminBrands: brandAdminReducer,
+  adminSizes: sizeAdminReducer,
+  adminVouchers: voucherAdminReducer,
+  adminRoles: roleAdminReducer,
+  adminSubscribers: subscriberAdminReducer,
+  adminInventory: inventoryAdminReducer,
 });
 
 // Create the persist configuration

@@ -1,6 +1,6 @@
 import { UserProfile } from './user';
 import { Voucher } from './voucher';
-import { BaseEntity, PaginatedApiResponse } from './common';
+import { BaseEntity } from './common';
 
 export enum OrderStatus {
     PENDING = 1,

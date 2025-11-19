@@ -12,7 +12,6 @@ import VoucherSelector from '@/components/VoucherSelector/VoucherSelector';
 
 import { CartData, CartItem, UserProfile, Voucher, ProfileResponse } from '@/types';
 import { RootState } from '@/lib/redux/store';
-// ... import UI components
 
 interface CartClientProps {
     initialCartData: CartData;

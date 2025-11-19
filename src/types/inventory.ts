@@ -14,7 +14,7 @@ export interface InventoryCreateData {
     quantity: number;
 }
 
-export interface InventoryUpdateData extends Partial<Pick<InventoryCreateData, 'quantity'>> {}
+export type InventoryUpdateData = Partial<Pick<InventoryCreateData, 'quantity'>>;
 
 export interface InventoryFilter extends BaseFilterParams {
     productId?: number;

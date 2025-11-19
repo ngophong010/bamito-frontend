@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { serviceFactory } from '@/factories';
 import { ProductListItem, PaginatedApiResponse } from '@/types';
 import { handleAsyncError } from '../../utils/errorHandling';

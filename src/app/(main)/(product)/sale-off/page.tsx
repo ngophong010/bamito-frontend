@@ -5,11 +5,11 @@ import SaleOffClient from './SaleOffClient'; // Import the new Client Component
 
 // Define the shape of the props Next.js will provide
 interface SaleOffPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     // You can add sort, brands, etc. here just like the category page
     sort?: string;
-  };
+  }>;
 }
 
 // Add metadata for this specific page
@@ -21,10 +21,11 @@ export const metadata = {
 export default async function SaleOffPage({ searchParams }: SaleOffPageProps) {
   // --- DATA FETCHING ON THE SERVER ---
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
     
     // Fetch the initial list of products that are on sale
-    const saleProductData = await productService.getProductsOnSale({ page, limit: 12, sort: searchParams.sort });
+    const saleProductData = await productService.getProductsOnSale({ page, limit: 12, sort: resolvedParams.sort });
 
     // Pass the server-fetched data as a prop to the Client Component
     return <SaleOffClient initialProductData={saleProductData} />;

@@ -43,7 +43,7 @@ const OtpPage = () => {
 
         setIsLoading(true);
         try {
-            const loginData = await authService.verifyOtp(verificationContext, otp);
+            await authService.verifyOtp(verificationContext, otp);
             const profileData = await authService.getProfile();
             
             dispatch(setLoginSuccess({ profile: profileData.user, favourites: profileData.favourites }));
@@ -51,8 +51,9 @@ const OtpPage = () => {
             toast.success("Xác thực thành công! Đang đăng nhập...");
             router.push('/');
             
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Mã OTP không hợp lệ hoặc đã hết hạn.");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Mã OTP không hợp lệ hoặc đã hết hạn.";
+            toast.error(errorMessage);
             setOtp('');
         } finally {
             setIsLoading(false);
@@ -66,8 +67,9 @@ const OtpPage = () => {
             await authService.resendOtp(verificationContext); // This API call should be rate-limited on the backend
             toast.success("Đã gửi lại mã OTP.");
             setResendCooldown(60); // Reset the cooldown timer
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Không thể gửi lại mã. Vui lòng thử lại sau.");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Không thể gửi lại mã. Vui lòng thử lại sau.";
+            toast.error(errorMessage);
         }
     };
 

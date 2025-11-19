@@ -15,7 +15,7 @@ export interface CreateSizeDTO {
     };
 }
 
-export interface UpdateSizeDTO extends Partial<CreateSizeDTO> {}
+export type UpdateSizeDTO = Partial<CreateSizeDTO>;
 
 export interface SizeFilterParams {
     search?: string;                     // Search by name or ID

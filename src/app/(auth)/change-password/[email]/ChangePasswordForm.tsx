@@ -47,8 +47,9 @@ const ChangePasswordForm = () => {
             });
             toast.success("Mật khẩu của bạn đã được thay đổi thành công!");
             router.push('/login'); // Redirect to login on success
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Đặt lại mật khẩu thất bại. Vui lòng thử lại.";
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

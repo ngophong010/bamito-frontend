@@ -4,7 +4,6 @@ import Modal from '@mui/material/Modal';
 import { Box, Button, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTriangleExclamation, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import './ConfirmationModal.scss';
 
 // 1. Define the props. This makes the component highly configurable.
 interface ConfirmationModalProps {

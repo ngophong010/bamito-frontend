@@ -9,7 +9,6 @@ import dayjs, { Dayjs } from 'dayjs';
 import GridData from '@/components/GridData/GridData';
 import PaginatedItems from '@/components/Pagination/Pagination';
 import { SalesReportResponse, SalesReportItem } from '@/types/statistics';
-import './page.scss';
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 

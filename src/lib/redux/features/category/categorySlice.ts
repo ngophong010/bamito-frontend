@@ -3,7 +3,7 @@ import { categoryService } from '@/services/categoryService';
 import { Category } from '@/types/category';
 import { handleAsyncError } from '../../utils/errorHandling';
 
-interface CategoryState {
+export interface CategoryState {
   items: Category[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;

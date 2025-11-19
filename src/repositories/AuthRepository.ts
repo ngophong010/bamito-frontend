@@ -1,5 +1,4 @@
 import { AxiosInstance } from 'axios';
-import { BaseRepository } from './BaseRepository';
 import { IAuthRepository } from './interfaces/IAuthRepository';
 import { handleAxiosError } from './errors/RepositoryError';
 import {

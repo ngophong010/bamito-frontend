@@ -37,8 +37,9 @@ const BrandClient = ({ initialBrandData }: { initialBrandData: PaginatedApiRespo
                 await brandService.deleteBrand(brand.id);
                 toast.success("Brand deleted successfully!");
                 router.refresh(); // Re-fetch Server Component data
-            } catch (error: any) {
-                toast.error(error.message || "Failed to delete brand.");
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "Failed to delete brand.";
+                toast.error(errorMessage);
             }
         }
     };
@@ -52,8 +53,9 @@ const BrandClient = ({ initialBrandData }: { initialBrandData: PaginatedApiRespo
             toast.success(`Brand "${selectedBrand.name}" has been deleted.`);
             closeDeleteModal();
             router.refresh();
-        } catch (error: any) {
-            toast.error(error.message || "Failed to delete brand.");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to delete brand.";
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

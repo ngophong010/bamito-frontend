@@ -9,10 +9,10 @@ import { feedbackService } from '@/services/feedbackService';
 import ProductDetailClient from './ProductDetailClient';
 
 interface ProductPageProps {
-  readonly params: {
+  readonly params: Promise<{
     readonly productSlug: string; // The full slug, e.g., 'yonex-astrox-99-prod123'
     readonly categorySlug: string;
-  };
+  }>;
 }
 
 // ===============================================================

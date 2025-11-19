@@ -7,7 +7,7 @@ import { createSlug } from '@/lib/utils/slug'; // Assuming you have this
 
 // --- PROPS DEFINITION ---
 interface BrandFormProps {
-    onFormSubmit: (data: any) => Promise<void>; // Can be improved
+    onFormSubmit: (data: BrandCreateData) => Promise<void>;
     isLoading: boolean;
     initialData?: Brand; // Optional initial data for editing
 }

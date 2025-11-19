@@ -1,10 +1,11 @@
-import { ReactNode } from 'react';
 import UserLayout from "@/layout/userLayout/UserLayout";
-import { PropsWithChildren } from 'react';
+import { ReactNode } from 'react';
 import { categoryService } from '@/services/categoryService';
 import { Category } from '@/types/category';
 
-interface MainLayoutProps extends PropsWithChildren {}
+interface MainLayoutProps {
+  children: ReactNode;
+}
 
 /**
  * Main layout component that wraps the main content of the application.

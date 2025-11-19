@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { Voucher } from '@/types'; // Import your central Voucher type
-import "./VoucherSelector.scss";
+import "./Voucher.scss";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 

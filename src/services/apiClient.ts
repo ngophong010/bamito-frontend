@@ -1,5 +1,4 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from 'axios';
-import { jwtManager } from '@/lib/auth';
 
 // Get the base URL from environment variables
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8181/api/v1';

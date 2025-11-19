@@ -9,4 +9,4 @@ export interface CreateProductDTO {
     categoryId: number;
 }
 
-export interface UpdateProductDTO extends Partial<CreateProductDTO> {}
+export type UpdateProductDTO = Partial<CreateProductDTO>;

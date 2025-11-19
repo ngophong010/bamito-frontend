@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { brandService } from '@/services/brandService';
@@ -18,8 +17,9 @@ const CreateBrandPage = () => {
             toast.success("Thêm thương hiệu thành công!");
             router.push('/admin/brands');
             router.refresh(); // Ensure the list page gets the new data
-        } catch (error: any) {
-            toast.error(error.message || "Tạo thương hiệu thất bại.");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Tạo thương hiệu thất bại.";
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

@@ -6,9 +6,11 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import CategoriesMenu from '@/components/CategoriesMenu/CategoriesMenu';
 import { Category } from '@/types';
 
-interface NavigationProps { categories: Category[] }
+interface NavigationProps { 
+  categories: Category[];
+}
 
-export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
+export const Navigation: React.FC<NavigationProps> = ({ categories }: NavigationProps) => {
   // MUI's Popover controls its own state, which is very convenient
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 

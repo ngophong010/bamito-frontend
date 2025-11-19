@@ -13,7 +13,7 @@ import { ProductListItem, PaginatedApiResponse } from "@/types";
 import { addFavourite, removeFavourite, getMyFavouriteIds } from "@/services/favouriteService";
 import PaginatedItems from "@/components/Pagination/Pagination";
 import { createSlug } from "@/lib/utils/slug";
-import "./page.scss";
+import "./page.module.scss";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
@@ -68,7 +68,7 @@ const SearchClient = ({ initialProductData, searchTerm }: SearchClientProps) => 
       {productsWithFavouriteStatus.length > 0 ? (
         <Grid container spacing={5}>
           {productsWithFavouriteStatus.map((item) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.id}>
               <Link
                 href={`/${createSlug(item.category.name)}/${createSlug(item.name)}-${item.productId}`}
                 className="productWrapper"

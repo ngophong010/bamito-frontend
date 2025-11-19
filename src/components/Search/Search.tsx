@@ -84,7 +84,13 @@ const Search = () => {
         }
         return (
           <Box component="li" {...props} key={option.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Image src={option.image || '/placeholder.png'} alt={option.name} width={40} height={40} />
+            <img 
+              src={option.image || '/placeholder.png'} 
+              alt={option.name} 
+              width={40} 
+              height={40}
+              style={{ objectFit: 'cover' }}
+            />
             <Box>
               <div>{option.name}</div>
               <div style={{ color: '#666', fontSize: '0.9em' }}>{currencyFormatter.format(option.price)}</div>
@@ -92,28 +98,30 @@ const Search = () => {
           </Box>
         );
       }}
-      PaperComponent={(props) => (
-        <Paper {...props}>
-          {!inputValue.trim() && (
-            <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>TÌM KIẾM PHỔ BIẾN</div>
-            </Box>
-          )}
-          {props.children}
-          {inputValue.trim() && results.length >= 5 && (
-            <Box sx={{ p: 1, borderTop: '1px solid #eee', textAlign: 'center' }}>
-              <Link href={`/search?q=${encodeURIComponent(inputValue)}`} style={{ color: '#1976d2', textDecoration: 'none' }}>
-                Xem tất cả kết quả
-              </Link>
-            </Box>
-          )}
-          {inputValue.trim() && results.length === 0 && !isLoading && (
-            <Box sx={{ p: 2, textAlign: 'center', color: '#666' }}>
-              Không tìm thấy kết quả cho '{inputValue}'
-            </Box>
-          )}
-        </Paper>
-      )}
+      slots={{
+        paper: (props) => (
+          <Paper {...props}>
+            {!inputValue.trim() && (
+              <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>TÌM KIẾM PHỔ BIẾN</div>
+              </Box>
+            )}
+            {props.children}
+            {inputValue.trim() && results.length >= 5 && (
+              <Box sx={{ p: 1, borderTop: '1px solid #eee', textAlign: 'center' }}>
+                <Link href={`/search?q=${encodeURIComponent(inputValue)}`} style={{ color: '#1976d2', textDecoration: 'none' }}>
+                  Xem tất cả kết quả
+                </Link>
+              </Box>
+            )}
+            {inputValue.trim() && results.length === 0 && !isLoading && (
+              <Box sx={{ p: 2, textAlign: 'center', color: '#666' }}>
+                Không tìm thấy kết quả cho '{inputValue}'
+              </Box>
+            )}
+          </Paper>
+        )
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { BarChart, Mail } from 'lucide-react'; // Using a simple icon library for visuals
-import './page.scss'; // A stylesheet for this hub page
 
 export const metadata: Metadata = {
     title: 'Báo cáo & Thống kê',

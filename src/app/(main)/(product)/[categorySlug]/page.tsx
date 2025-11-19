@@ -6,16 +6,16 @@ import { brandService } from '@/services/brandService';
 import CategoryClient from './CategoryClient';
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     categorySlug: string;
-  };
-  searchParams: { // Next.js automatically provides search params
+  }>;
+  searchParams: Promise<{
     page?: string;
     sort?: string;
     brands?: string; // e.g., '1,2,3'
     minPrice?: string;
     maxPrice?: string;
-  };
+  }>;
 }
 
 // =================================================================
@@ -53,6 +53,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const { categorySlug } = resolvedParams;
   
   // A robust way to get the ID from a slug like 'vot-cau-long-1'
@@ -65,18 +66,18 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   // --- DATA FETCHING ON THE SERVER ---
   try {
     // Parse search params for the API call
-    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const page = resolvedSearchParams.page ? Number(resolvedSearchParams.page) : 1;
     const filter = {
-      brandId: searchParams.brands?.split(',').map(Number),
+      brandId: resolvedSearchParams.brands?.split(',').map(Number),
       price: [
-        searchParams.minPrice ? Number(searchParams.minPrice) : 0,
-        searchParams.maxPrice ? Number(searchParams.maxPrice) : 10000000,
+        resolvedSearchParams.minPrice ? Number(resolvedSearchParams.minPrice) : 0,
+        resolvedSearchParams.maxPrice ? Number(resolvedSearchParams.maxPrice) : 10000000,
       ] as [number, number]
     };
 
     // Fetch the initial product list and the list of all brands in parallel
     const [productData, allBrands] = await Promise.all([
-      productService.getProductsByCategory(categoryId, { page, filter, sort: searchParams.sort }),
+      productService.getProductsByCategory(categoryId, { page, filter, sort: resolvedSearchParams.sort }),
       brandService.getAllBrandsList() // Fetch all brands for the filter sidebar
     ]);
 

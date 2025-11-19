@@ -13,7 +13,7 @@ export interface User {
 }
 
 // The shape of the user profile data (what a user sees of their own account)
-export interface UserProfile extends Omit<User, 'roleId' | 'status'> {}
+export type UserProfile = Omit<User, 'roleId' | 'status'>;
 
 export interface ProfileResponse {
   user: UserProfile;
