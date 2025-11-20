@@ -6,15 +6,18 @@ export const metadata: Metadata = {
     title: 'Quản lý Danh mục',
 };
 
+export const dynamic = 'force-dynamic';
+
 interface AdminCategoriesPageProps {
-    searchParams: { page?: string; name?: string };
+    searchParams: Promise<{ page?: string; name?: string }>;
 }
 
 export default async function AdminCategoriesPage({ searchParams }: AdminCategoriesPageProps) {
     // --- Data fetching on the server ---
     try {
+        const resolvedParams = await searchParams;
         const initialCategoryData = await categoryService.getCategories({ 
-            page: searchParams.page ? Number(searchParams.page) : 1,
+            page: resolvedParams.page ? Number(resolvedParams.page) : 1,
             limit: 10,
         });
         

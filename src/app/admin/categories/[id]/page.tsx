@@ -2,11 +2,12 @@ import { categoryService } from '@/services/categoryService'; // You'll create t
 import CategoryEditClient from './CategoryEditClient';
 
 interface EditCategoryPageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export default async function EditCategoryPage({ params }: EditCategoryPageProps) {
-    const id = Number(params.id);
+    const resolvedParams = await params;
+    const id = Number(resolvedParams.id);
     try {
         const category = await categoryService.getCategoryById(id);
         return <CategoryEditClient category={category} />;

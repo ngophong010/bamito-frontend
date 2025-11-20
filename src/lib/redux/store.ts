@@ -89,8 +89,9 @@ export const makeStore = () => {
 
 // Infer the type of makeStore
 export type AppStore = ReturnType<typeof makeStore>;
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<AppStore['getState']>;
+// Root state should reflect the shape of the combined reducers, not the persisted wrapper
+export type RootState = ReturnType<typeof rootReducer>;
+// Infer the `AppDispatch` type from the store
 export type AppDispatch = AppStore['dispatch'];
 
 // Create store instance for client-side usage

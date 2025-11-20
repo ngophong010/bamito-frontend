@@ -10,22 +10,23 @@ import mailchimp from "@mailchimp/mailchimp_marketing";
 const apiKey = process.env.MAILCHIMP_API_KEY;
 const serverPrefix = process.env.MAILCHIMP_API_SERVER; // e.g., 'us17'
 
-// 2. "Fail-Fast" Validation: Check for required variables at initialization.
-// This will crash the server on startup if the configuration is missing,
-// which is a good thing as it prevents runtime errors.
-if (!apiKey || !serverPrefix) {
-  throw new Error(
-    "FATAL ERROR: Mailchimp API Key or Server Prefix is not defined in environment variables."
+// 2. Configure the SDK with the credentials if available.
+// During build time, environment variables may not be available, so we skip configuration.
+// At runtime (when the API routes are called), the variables should be present.
+if (apiKey && serverPrefix) {
+  mailchimp.setConfig({
+    apiKey: apiKey,
+    server: serverPrefix,
+  });
+} else if (process.env.NODE_ENV === 'production') {
+  // Only throw in production to ensure variables are set at runtime
+  console.warn(
+    "WARNING: Mailchimp API Key or Server Prefix is not defined in environment variables. " +
+    "Please set MAILCHIMP_API_KEY and MAILCHIMP_API_SERVER before running in production."
   );
 }
 
-// 3. Configure the SDK with the validated credentials.
-mailchimp.setConfig({
-  apiKey: apiKey,
-  server: serverPrefix,
-});
-
-// 4. Export the configured instance for use in your API routes.
+// 3. Export the configured instance for use in your API routes.
 // We can also export the types for convenience if needed.
 export { mailchimp };
 

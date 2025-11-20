@@ -5,14 +5,15 @@ import { orderService } from '@/services/orderService';
 import OrderDetailClient from "./OrderDetailClient";
 
 interface AdminOrderDetailPagesProps {
-    params: {
+    params: Promise<{
         id: string;
-    }
+    }>;
 }
 
 export async function generateMetadata({ params }: AdminOrderDetailPagesProps): Promise<Metadata> {
     try {
-        const order = await orderService.getOrderDetails(Number(params.id));
+        const resolvedParams = await params;
+        const order = await orderService.getOrderDetails(Number(resolvedParams.id));
         return {
             title: `Chi tiết Đơn hàn #${order.orderId}`,
         };
@@ -25,7 +26,8 @@ export async function generateMetadata({ params }: AdminOrderDetailPagesProps): 
 }
 
 export default async function AdminOrderDetailPage({params}: AdminOrderDetailPagesProps) {
-    const orderId = Number(params.id);
+    const resolvedParams = await params;
+    const orderId = Number(resolvedParams.id);
 
     if (isNaN(orderId)) {
         notFound();

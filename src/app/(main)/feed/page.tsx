@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     description: 'Cập nhật các tin tức mới nhất về cầu lông trong nước và quốc tế.',
 };
 
+export const dynamic = 'force-dynamic';
+
 // This is a simple service function to fetch the feed on the server
 // You can place this in a new `/services/feedService.ts` file
 // const getRssFeed = async () => {

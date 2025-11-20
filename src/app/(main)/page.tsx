@@ -1,4 +1,4 @@
-import Banner from "@/components/Banner/Banner";
+import Hero from "@/components/Hero/Hero";
 import Introduce from "@/components/Introduce/Introduce";
 import { Metadata } from 'next';
 import { ProductListItem } from '@/types/product';
@@ -72,7 +72,7 @@ export default async function HomePage() {
 
     return (
       <div className="home-container">
-        <Banner />
+        <Hero />
         <div className="home-content">
           <Introduce featuredData={featuredData} />
         </div>
@@ -82,7 +82,7 @@ export default async function HomePage() {
     console.error("Failed to load homepage data:", error);
     return (
       <div className="home-container">
-        <Banner />
+        <Hero />
         <div className="home-content">
           <div style={{ padding: '2rem', textAlign: 'center' }}>
             <h2>Chào mừng đến với BAMITO Shop</h2>

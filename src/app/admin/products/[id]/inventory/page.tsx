@@ -7,18 +7,19 @@ import { productService } from '@/services/productService'; // To get the produc
 import InventoryClient from './InventoryClient'; // Import the new Client Component
 
 interface AdminInventoryPageProps {
-  params: {
+  params: Promise<{
     id: string; // The numeric primary key of the product
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
 // 2. Dynamically generate metadata for the page
 export async function generateMetadata({ params }: AdminInventoryPageProps): Promise<Metadata> {
     try {
-        const product = await productService.getProductDetails(params.id);
+        const resolvedParams = await params;
+        const product = await productService.getProductDetails(resolvedParams.id);
         return {
             title: `Quản lý Kho cho: ${product.name}`,
         };
@@ -28,7 +29,9 @@ export async function generateMetadata({ params }: AdminInventoryPageProps): Pro
 }
 
 export default async function AdminInventoryPage({ params, searchParams }: AdminInventoryPageProps) {
-  const productId = params.id;
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const productId = resolvedParams.id;
 
   if (!productId) {
     notFound();
@@ -36,7 +39,7 @@ export default async function AdminInventoryPage({ params, searchParams }: Admin
 
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const page = resolvedSearchParams.page ? Number(resolvedSearchParams.page) : 1;
     
     // Fetch the product details and its inventory in parallel
     const [product, initialInventoryData] = await Promise.all([

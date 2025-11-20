@@ -7,17 +7,20 @@ export const metadata: Metadata = {
     title: 'Quản lý Người dùng',
 };
 
+export const dynamic = 'force-dynamic';
+
 interface AdminUsersPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     name?: string; // For searching by user name
-  };
+  }>;
 }
 
 export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
-    const name = searchParams.name || undefined;
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
+    const name = resolvedParams.name || undefined;
 
     // Fetch the initial list of users on the server
     const initialUserData = await userService.getUsers({

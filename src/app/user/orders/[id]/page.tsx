@@ -6,15 +6,16 @@ import { getMyOrderDetails } from '@/services/profileOrderService';
 import OrderDetailClient from './OrderDetailClient'; // Import the new Client Component
 
 interface MyOrderDetailPageProps {
-  params: {
+  params: Promise<{
     id: string; // The numeric primary key of the order
-  };
+  }>;
 }
 
 // 2. Dynamically generate metadata for the page
 export async function generateMetadata({ params }: MyOrderDetailPageProps): Promise<Metadata> {
     try {
-        const order = await getMyOrderDetails(Number(params.id));
+        const resolvedParams = await params;
+        const order = await getMyOrderDetails(Number(resolvedParams.id));
         return {
             title: `Chi tiết Đơn hàng #${order.orderId}`,
             robots: { index: false, follow: false },
@@ -25,7 +26,8 @@ export async function generateMetadata({ params }: MyOrderDetailPageProps): Prom
 }
 
 export default async function MyOrderDetailPage({ params }: MyOrderDetailPageProps) {
-  const orderId = Number(params.id);
+  const resolvedParams = await params;
+  const orderId = Number(resolvedParams.id);
 
   if (isNaN(orderId)) {
     notFound();

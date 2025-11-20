@@ -2,11 +2,12 @@ import { brandService } from '@/services/brandService'; // You'll need to create
 import BrandEditClient from './BrandEditClient';
 
 interface EditBrandPageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export default async function EditBrandPage({ params }: EditBrandPageProps) {
-    const id = Number(params.id);
+    const resolvedParams = await params;
+    const id = Number(resolvedParams.id);
 
     try {
         const brand = await brandService.getBrandById(id);

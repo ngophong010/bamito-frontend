@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     title: 'Bảng điều khiển | Trang quản trị',
 };
 
+export const dynamic = 'force-dynamic';
+
 // A server-side helper function to process the raw report data for the chart
 const processChartData = (reportData: any) => {
     const monthlyData = Array(12).fill(0);

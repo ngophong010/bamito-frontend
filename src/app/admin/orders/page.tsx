@@ -9,20 +9,23 @@ export const metadata: Metadata = {
     title: 'Quản lý Đơn hàng',
 };
 
+export const dynamic = 'force-dynamic';
+
 // 2. Define the shape of the props Next.js will provide (searchParams for filters)
 interface AdminOrdersPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     status?: string;
     // You could add more filters here, like 'search' by orderId or userName
-  };
+  }>;
 }
 
 export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
-    const status = searchParams.status ? [Number(searchParams.status) as OrderStatus] : undefined;
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
+    const status = resolvedParams.status ? [Number(resolvedParams.status) as OrderStatus] : undefined;
 
     // Fetch the initial list of orders based on the URL query params
     const initialOrderData = await orderService.getOrderSummaries({

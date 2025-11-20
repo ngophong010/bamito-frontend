@@ -2,8 +2,9 @@ import { sizeService } from '@/services/sizeService'; // Create this service
 import { categoryService } from '@/services/categoryService';
 import EditSizeClient from './EditSizeClient';
 
-export default async function EditSizePage({ params }: { params: { id: string } }) {
-    const id = Number(params.id);
+export default async function EditSizePage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = await params;
+    const id = Number(resolvedParams.id);
 
     // Fetch all necessary data in parallel
     const [size, categories] = await Promise.all([

@@ -10,6 +10,8 @@ export const metadata: Metadata = {
     robots: { index: false, follow: false }, // Don't index personal cart pages
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function CartPage() {
   // --- 2. DATA FETCHING ON THE SERVER ---
   // Fetch all necessary data in parallel for the initial page load.

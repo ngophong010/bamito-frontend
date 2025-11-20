@@ -2,8 +2,9 @@ import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import EditUserClient from './EditUserClient';
 
-export default async function EditUserPage({ params }: { params: { id: string } }) {
-    const id = Number(params.id);
+export default async function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = await params;
+    const id = Number(resolvedParams.id);
 
     try {
         // Fetch the user to edit AND the list of roles in parallel

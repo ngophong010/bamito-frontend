@@ -18,6 +18,8 @@ export const metadata = {
     description: 'Khám phá các sản phẩm cầu lông đang được giảm giá tại Bamito Shop.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function SaleOffPage({ searchParams }: SaleOffPageProps) {
   // --- DATA FETCHING ON THE SERVER ---
   try {

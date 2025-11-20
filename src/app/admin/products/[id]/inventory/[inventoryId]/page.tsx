@@ -3,15 +3,18 @@ import { sizeService } from '@/services/sizeService';
 import { inventoryService } from '@/services/inventoryService'; // You'll create this
 import EditInventoryClient from './EditInventoryClient';
 
-export default async function EditInventoryPage({ params }: Readonly<{ params: { id: string, inventoryId: string } }>) {
-    const inventoryId = Number(params.inventoryId);
+export const dynamic = 'force-dynamic';
+
+export default async function EditInventoryPage({ params }: Readonly<{ params: Promise<{ id: string, inventoryId: string }> }>) {
+    const resolvedParams = await params;
+    const inventoryId = Number(resolvedParams.inventoryId);
 
     // Fetch the product details first to get the category
-    const product = await productService.getProductDetails(params.id);
+    const product = await productService.getProductDetails(resolvedParams.id);
     
     // Then fetch inventory and sizes in parallel
     const [inventoryResponse, availableSizes] = await Promise.all([
-        inventoryService.getProductInventory(Number(params.id)),
+        inventoryService.getProductInventory(Number(resolvedParams.id)),
         sizeService.getSizesForCategory(Number(product.category.categoryId))
     ]);
 

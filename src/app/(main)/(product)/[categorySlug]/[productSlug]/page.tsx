@@ -1,8 +1,6 @@
-// NO "use client" directive here. This is a Server Component.
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-// Import our new, clean, and typed service function
 import { productService } from '@/services/productService';
 import { feedbackService } from '@/services/feedbackService';
 // Import the Client Component that will handle all interactivity

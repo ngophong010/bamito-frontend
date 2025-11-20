@@ -7,18 +7,21 @@ export const metadata: Metadata = {
   title: 'Lịch sử Đơn hàng',
   robots: { index: false, follow: false },
 };
+
+export const dynamic = 'force-dynamic';
 // 2. Define the shape of the props Next.js will provide
 interface MyOrdersPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     status?: string; // e.g., ?status=1
-  };
+  }>;
 }
 export default async function MyOrdersPage({ searchParams }: MyOrdersPageProps) {
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
-    const status = searchParams.status ? Number(searchParams.status) : 1; // Default to "Pending"
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
+    const status = resolvedParams.status ? Number(resolvedParams.status) : 1; // Default to "Pending"
 
     // Fetch the user's orders based on the URL query params
     const initialOrderData = await getMyOrders({

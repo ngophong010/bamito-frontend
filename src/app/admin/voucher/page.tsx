@@ -7,17 +7,20 @@ export const metadata: Metadata = {
     title: 'Quản lý Voucher',
 };
 
+export const dynamic = 'force-dynamic';
+
 interface AdminVouchersPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     name?: string; // For searching by voucher ID
-  };
+  }>;
 }
 
 export default async function AdminVouchersPage({ searchParams }: AdminVouchersPageProps) {
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
-    const name = searchParams.name || undefined;
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
+    const name = resolvedParams.name || undefined;
 
     // Fetch the initial list of vouchers on the server
     const initialVoucherData = await voucherService.getAllVouchers({

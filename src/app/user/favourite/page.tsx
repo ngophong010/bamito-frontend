@@ -12,17 +12,20 @@ export const metadata: Metadata = {
      }, // Personal pages should not be indexed
 };
 
+export const dynamic = 'force-dynamic';
+
 // 2. Define the shape of the props Next.js will provide
 interface FavouritePageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
 export default async function FavouritePage({ searchParams }: FavouritePageProps) {
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
     
     // Fetch the initial list of the user's favourite products
     const initialFavouriteData = await favouriteService.getMyFavourites({ page, limit: 12 });

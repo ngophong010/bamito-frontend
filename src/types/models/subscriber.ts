@@ -29,7 +29,7 @@ export interface Subscriber {
     /** Unsubscribe date if applicable */
     unsubscribedAt?: Date;
     /** Additional metadata */
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     /** Creation timestamp */
     createdAt: Date;
     /** Last update timestamp */

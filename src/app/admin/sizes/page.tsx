@@ -8,19 +8,22 @@ export const metadata: Metadata = {
     title: 'Quản lý Kích thước',
 };
 
+export const dynamic = 'force-dynamic';
+
 // 2. Define the shape of the props Next.js will provide
 interface AdminSizesPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     name?: string; // For searching by size name
-  };
+  }>;
 }
 
 export default async function AdminSizesPage({ searchParams }: AdminSizesPageProps) {
   // --- 3. DATA FETCHING ON THE SERVER ---
   try {
-    const page = searchParams.page ? Number(searchParams.page) : 1;
-    const name = searchParams.name || undefined;
+    const resolvedParams = await searchParams;
+    const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
+    const name = resolvedParams.name || undefined;
 
     // Fetch the initial list of sizes based on the URL query params
     const initialSizeData = await sizeService.getAllSizes({

@@ -5,15 +5,16 @@ import SearchClient from './SearchClient'; // Import the new Client Component
 import { Metadata } from 'next';
 // Define the shape of the props Next.js will provide
 interface SearchPageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string; // The search query, e.g., ?q=yonex
     page?: string;
     sort?: string;
-  };
+  }>;
 }
 // Dynamically generate metadata based on the search query
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
-  const searchTerm = searchParams.q || '';
+  const resolvedParams = await searchParams;
+  const searchTerm = resolvedParams.q || '';
   return {
     title: searchTerm ? `Kết quả cho "${searchTerm}"`: 'Tìm kiếm sản phẩm',
     description: `Tìm kiếm và mua sắm các sản phẩm cầu lông chất lượng cao tại Bamito Shop.Kết quả cho: ${ searchTerm }`,
@@ -22,8 +23,9 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   // --- DATA FETCHING ON THE SERVER ---
-  const searchTerm = searchParams.q || '';
-  const page = searchParams.page ? Number(searchParams.page) : 1;
+  const resolvedParams = await searchParams;
+  const searchTerm = resolvedParams.q || '';
+  const page = resolvedParams.page ? Number(resolvedParams.page) : 1;
   // If there's no search term, we can show a prompt or just an empty result set.
   if (!searchTerm) {
     return (
@@ -39,7 +41,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       name: searchTerm,
       page,
       limit: 12,
-      sort: searchParams.sort
+      sort: resolvedParams.sort
     });
 
     // Pass the server-fetched data as a prop to the Client Component
